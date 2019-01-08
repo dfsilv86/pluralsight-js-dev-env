@@ -1,0 +1,92 @@
+﻿<div class="row">
+    <modal-breadcrumb title="{{::'relatedItemCosts'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="col-md-12" style="padding: 0 24px;">
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier">{{::'item'|translate}}</th>
+                            <th>{{::'description'|translate}}</th>
+                            <th class="currency">{{::'buyCost'|translate}}</th>
+                            <th class="number">{{::'conversionFactor'|translate}}</th>
+                            <th class="currency">{{::'accountingCost'|translate}}</th>
+                            <th class="date">{{::'receiveDateCondensed'|translate}}</th>
+                            <th class="identifier">{{::'invoiceNumber'|translate}}</th>
+                            <th class="date">{{::'emissionDateCondensed'|translate}}</th>
+                            <th class="domain">{{::'registerCost'|translate}}</th>
+                            <th class="number" ng-if="data.custosPrincipal && data.custosPrincipal.length && data.custosPrincipal[0].relacionamentoPrincipal.tipoRelacionamento == 2">{{'quantity'|translate}}</th>
+                            <th class="number" ng-if="data.custosPrincipal && data.custosPrincipal.length && data.custosPrincipal[0].relacionamentoPrincipal.tipoRelacionamento == 3">{{'yield'|translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.custosPrincipal && data.custosPrincipal.length > 0">
+                        <tr ng-repeat="item in data.custosPrincipal">
+                            <td class="identifier">{{item.relacionamentoSecundario.itemDetalhe.cdItem}}</td>
+                            <td>{{item.relacionamentoSecundario.itemDetalhe.dsItem}}</td>
+                            <td class="currency">{{(item.custoMaisRecente.notaFiscal || {itens:[]}).itens[0].vlCusto|money:'BRL':2|coalesce:'-'}}</td>
+                            <td class="number">{{item.relacionamentoSecundario.itemDetalhe.vlFatorConversao|number:2}}</td>
+                            <td class="currency">{{item.custoMaisRecente.estoque.vlCustoContabilAtual|money:'BRL':2|coalesce:'-'}}</td>
+                            <td class="date">{{item.custoMaisRecente.notaFiscal.dtRecebimento|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="identifier">{{item.custoMaisRecente.notaFiscal.nrNotaFiscal|coalesce:'-'}}</td>
+                            <td class="date">{{item.custoMaisRecente.notaFiscal.dtEmissao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="domain">{{item.custoMaisRecente.estoque.blNotaFiscal|enum:'tpYesNo'|translate|coalesce:'-'}}</td>
+                            <td class="number" ng-if="item.relacionamentoPrincipal.tipoRelacionamento == 2">{{item.relacionamentoSecundario.psItem|number:4}}</td>
+                            <td class="number" ng-if="item.relacionamentoPrincipal.tipoRelacionamento == 3">{{item.relacionamentoSecundario.pcRendimentoDerivado|percentage:2}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.custosPrincipal || data.custosPrincipal.length === 0">
+                        <tr>
+                            <td colspan="9" class="domain">{{::'noRelatedInputItems'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </widget>
+    </div>
+    <div class="col-md-12" style="padding: 0 24px;">
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <!-- TODO: componente de grid -->
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier">{{::'item'|translate}}</th>
+                            <th>{{::'description'|translate}}</th>
+                            <th class="currency">{{::'buyCost'|translate}}</th>
+                            <th class="number">{{::'conversionFactor'|translate}}</th>
+                            <th class="currency">{{::'accountingCost'|translate}}</th>
+                            <th class="date">{{::'receiveDateCondensed'|translate}}</th>
+                            <th class="identifier">{{::'invoiceNumber'|translate}}</th>
+                            <th class="date">{{::'emissionDateCondensed'|translate}}</th>
+                            <th class="domain">{{::'registerCost'|translate}}</th>
+                            <th class="number" ng-if="item.relacionamentoPrincipal.tipoRelacionamento == 2">{{::'quantity'|translate}}</th>
+                            <th class="number" ng-if="item.relacionamentoPrincipal.tipoRelacionamento == 3">{{::'yield'|translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.custosSecundario && data.custosSecundario.length > 0">
+                        <tr ng-repeat="item in data.custosSecundario">
+                            <td class="identifier">{{item.relacionamentoSecundario.itemDetalhe.cdItem}}</td>
+                            <td>{{item.relacionamentoSecundario.itemDetalhe.dsItem}}</td>
+                            <td class="currency">{{(item.custoMaisRecente.notaFiscal || {itens:[]}).itens[0].vlCusto|money:'BRL':2|coalesce:'-'}}</td>
+                            <td class="number">{{item.relacionamentoSecundario.itemDetalhe.vlFatorConversao|number:2}}</td>
+                            <td class="currency">{{item.custoMaisRecente.estoque.vlCustoContabilAtual|money:'BRL':2|coalesce:'-'}}</td>
+                            <td class="date">{{item.custoMaisRecente.notaFiscal.dtRecebimento|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="identifier">{{item.custoMaisRecente.notaFiscal.nrNotaFiscal|coalesce:'-'}}</td>
+                            <td class="date">{{item.custoMaisRecente.notaFiscal.dtEmissao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="domain">{{item.custoMaisRecente.estoque.blNotaFiscal|enum:'tpYesNo'|translate|coalesce:'-'}}</td>
+                            <td class="number" ng-if="item.relacionamentoPrincipal.tipoRelacionamento == 2">{{::item.relacionamentoSecundario.psItem|number:4}}</td>
+                            <td class="number" ng-if="item.relacionamentoPrincipal.tipoRelacionamento == 3">{{::item.relacionamentoSecundario.pcRendimentoDerivado|percentage:2}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.custosSecundario || data.custosSecundario.length === 0">
+                        <tr>
+                            <td colspan="9" class="domain">{{::'noRelatedInputItems'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </widget>
+    </div>
+</div>

@@ -1,0 +1,65 @@
+﻿<div class="paging_bootstrap">
+    <div class="paging-summary" ng-if="!!ngModel.totalCount">
+        Registros de {{ firstRegisterHumanIndex() }} até {{ lastRegisterHumanIndex() }} de {{ ngModel.totalCount }}
+    </div>
+    <ul class="pagination">
+        <li class="first">
+            <a ng-click="firstPage()" title="{{::'goToFirstPage'|translate}}"><span class="glyphicon glyphicon-fast-backward"></span></a>
+        </li>
+        <li class="prev">
+            <a ng-click="previousPage()" title="{{::'goToPreviousPage'|translate}}"><span class="glyphicon glyphicon-triangle-left"></span></a>
+        </li>
+        <li ng-repeat="pageNumber in ngModel.pages" class="page-{{::pageNumber}}" ng-class="{'active':isCurrentPage(pageNumber)}">
+            <a ng-click="page(pageNumber)" title="{{::'goToPage'|translate}} {{::pageNumber}}">{{::pageNumber}}</a>
+        </li>
+        <li class="next">
+            <a ng-click="nextPage()" title="{{::'goToNextPage'|translate}}"><span class="glyphicon glyphicon-triangle-right"></span></a>
+        </li>
+        <li class="last">
+            <a ng-click="lastPage()" title="{{::'goToLastPage'|translate}}"><span class="glyphicon glyphicon-fast-forward"></span></a>
+        </li>
+    </ul>
+    <ul class="pagination" style="margin-right: 10px;" ng-if="!!settings">
+        <li class="settings" ng-class="{'disabled':(!ngModel || hasNoPagingData())}">
+            <div class="pager-settings-dialog" ng-if="showPagerSettingsDialog">
+                <div class="backdrop" ng-click="hideSettings()"></div>
+                <div class="container pager-settings">
+                    <div class="form-horizontal">
+                        <div class="chevron"></div>
+                        <div class="cover"></div>
+                        <div class="row">
+                            <div class="col-md-12 popover-title" style="margin-top: -10px;margin-bottom: 8px;height: 33px;padding-top: 6px;">
+                                <span class="glyphicon glyphicon-wrench"></span> &nbsp;
+                                {{::'settings'|translate|capitalize}}
+                            </div>
+                            <label class="col-xs-6 control-label">{{::'goToPage'|translate}}:</label>
+                            <div class="col-xs-6 right-column">
+                                <input type="number" min="1" max="ngModel.lastPageNumber" ng-model="pageNumber" class="form-control pull-left" style="width: 58px !important; margin-right: 4px !important;" />
+                                <button class="btn btn-primary" ng-click="page(pageNumber);hideSettings()" title="{{::'goToPage'|translate}} {{pageNumber}}">
+                                    <span class="glyphicon glyphicon-log-in"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-xs-6 control-label">{{::'itemsPerPage'|translate}}:</label>
+                            <div class="col-xs-6 right-column">
+                                <select name="pageLimit" ng-model="temp" ng-options="item for item in limitOptions" class="dropdown form-control pull-left" style="width: 58px !important; margin-right: 4px !important;"></select>
+                                <button class="btn btn-primary" ng-click="setLimit(temp);hideSettings()" title="{{::'apply'|translate}}" ng-if="temp < 51">
+                                    <span class="glyphicon glyphicon-refresh"></span>
+                                </button>
+                                <button class="btn btn-primary" title="{{::'apply'|translate}}" ng-if="temp > 50"
+                                        mwl-confirm
+                                        message="{{::'gridPerformanceWarning'|translate }}"
+                                        on-confirm="setLimit(temp); hideSettings()"
+                                        placement="top">
+                                    <span class="glyphicon glyphicon-refresh"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a ng-click="showSettings()" title="{{::'gridPagerSettings'|translate}}"><span class="glyphicon glyphicon-wrench"></span></a>
+        </li>
+    </ul>
+</div>

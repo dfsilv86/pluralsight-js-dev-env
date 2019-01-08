@@ -1,0 +1,66 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="melhorias-pos-implantacao_LogMensagemReturnSheetVigente-criacao" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				CREATE TABLE LogMensagemReturnSheetVigente (
+					IDLogMensagemReturnSheetVigente INT  IDENTITY(1,1) NOT NULL,
+					IDUsuario INT NOT NULL,
+					IDLoja INT NOT NULL,
+					dhCriacao DATETIME NOT NULL
+				);
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					DROP TABLE LogMensagemReturnSheetVigente;
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+	
+	<changeSet id="melhorias-pos-implantacao_LogMensagemReturnSheetVigente-fk-usuario" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				ALTER TABLE LogMensagemReturnSheetVigente 
+					ADD CONSTRAINT FK_LogMensagemReturnSheetVigente_CWIUser 
+					FOREIGN KEY (IDUsuario)
+					REFERENCES CWIUser (Id);
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					ALTER TABLE LogMensagemReturnSheetVigente 
+						DROP CONSTRAINT FK_LogMensagemReturnSheetVigente_CWIUser;
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+	
+	<changeSet id="melhorias-pos-implantacao_LogMensagemReturnSheetVigente-fk-loja" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				ALTER TABLE LogMensagemReturnSheetVigente 
+					ADD CONSTRAINT FK_LogMensagemReturnSheetVigente_Loja 
+					FOREIGN KEY (IDLoja)
+					REFERENCES Loja (IDLoja);
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					ALTER TABLE LogMensagemReturnSheetVigente 
+						DROP CONSTRAINT FK_LogMensagemReturnSheetVigente_Loja;
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

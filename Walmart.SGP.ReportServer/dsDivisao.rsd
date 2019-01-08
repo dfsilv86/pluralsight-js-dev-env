@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <CommandText>SELECT NULL as  IDDivisao, 'Todas' as dsDivisao, -1 as cdDivisao
+UNION 
+SELECT IDDivisao,
+CONVERT(VARCHAR, cdDivisao) + ' - ' + dsDivisao AS dsDivisao,
+cdDivisao
+FROM Divisao
+WHERE
+	cdSistema = 1
+	and blAtivo = 1
+ORDER BY IDDivisao</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IDDivisao">
+        <DataField>IDDivisao</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="dsDivisao">
+        <DataField>dsDivisao</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="cdDivisao">
+        <DataField>cdDivisao</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

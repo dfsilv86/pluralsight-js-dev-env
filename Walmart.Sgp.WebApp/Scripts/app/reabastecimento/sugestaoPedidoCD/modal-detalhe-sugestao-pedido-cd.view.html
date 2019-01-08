@@ -1,0 +1,109 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="modalDetalheSugestaoPedidoCD">
+    <modal-breadcrumb title="{{::'suggestedRequestCD'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group form-group-without-actions">
+        <form-field title="{{::'cd'|translate|uppercase}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" maxlength="4" value="{{::item.cd.cdCD}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'leadTime'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.vlLeadTime}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'fineline'|translate|capitalize}}" line-width="6" grid-width="10">
+            <lookup-fine-line ng-model="item.itemDetalhePedido.fineLine.cdFineLine" sistema="1" departamento="item.fornecedorParametro.cdDepartamento" description-width="large" ng-disabled="true"></lookup-fine-line>
+        </form-field>
+        <form-field title="{{::'expectedSalePeriod'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.dtInicioForecast|date:'dd/MM/yyyy'}} {{::'to'|translate}} {{::item.dtFimForecast|date:'dd/MM/yyyy'}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'stockControlItemCode'|translate|capitalize}}" line-width="6" grid-width="10">
+            <lookup-item ng-model="item.itemDetalheSugestao.cdItem" sistema="1" description-width="medium" ng-disabled="true"></lookup-item>
+        </form-field>
+        <form-field title="{{::'reviewTime'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{item.vlReviewTime | number:0}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'inputItemCodeShort'|translate|capitalize}}" line-width="6" grid-width="10">
+            <lookup-item ng-model="item.itemDetalhePedido.cdItem" sistema="1" description-width="medium" ng-disabled="true"></lookup-item>
+        </form-field>
+        <form-field title="{{::'pack'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.qtVendorPackage}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'replenishmentType'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.vlTipoReabastecimento}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'netWeight'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.vlPesoLiquido}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'cost'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{item.vlCusto | number:2}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'securityStockDays'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.vlEstoqueSeguranca}}" ng-disabled="true" />
+        </form-field>
+        
+        <form-field title="{{::'productType'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.tpCaixaFornecedor|fixedValue:'tipoCaixaFornecedorFixoVariavel'|translate|capitalize}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'minimumCD'|translate}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.tempoMinimoCD}}" ng-disabled="true" />
+        </form-field>
+        
+        <form-field title="{{::'vendor9DigitsInput'|translate|capitalize}}" line-width="6" grid-width="10">
+            <lookup-vendor-nove-digitos name="CdDV9" ng-model="item.fornecedorParametro.cdV9D" sistema="1" item-out="filters.vendor" description-width="large" ng-disabled="true"></lookup-vendor-nove-digitos>
+        </form-field>
+        <form-field title="{{::'ohCd'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.qtdOnHand}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'vendorChannel'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.fornecedorParametro.cdTipo}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'onOrder2'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.qtdOnOrder}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'orderDate'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.dtPedido|date:'dd/MM/yyyy'}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'pipeline'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.qtdPipeline}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'sourceRDLT'|translate}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.origemDadosCalculo.dsOrigem}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'expectedSaleDay'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.forecastMedio}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'reviewDate'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.cdReviewDate}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'forecastSalePeriod'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.qtdForecast}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'tpWeek'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{item.tpWeek | fixedValue:'tipoSemana'}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'originalSuggest'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.qtdPackCompraOriginal}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'interval'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{item.tpInterval | fixedValue:'tipoIntervalo'}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'requestedQuantity'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.qtdPackCompra}}" ng-disabled="true" />
+        </form-field>
+
+        <form-field title="{{::'nextOrderDay'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{::item.proximoReviewDate|date:'dd/MM/yyyy'}}" ng-disabled="true" />
+        </form-field>
+        <form-field title="{{::'orderFinalized'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" class="form-control input-width-large" value="{{item.blFinalizado ? 'yes' : 'no'|translate}}" ng-disabled="true" />
+        </form-field>
+    </div>
+</form>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <CommandText>SELECT 1 as IdSistema, 'Varejo' as dsSistema
+UNION
+SELECT 2 as IdSistema, 'Atacado' as dsSistema</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IdSistema">
+        <DataField>IdSistema</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="dsSistema">
+        <DataField>dsSistema</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

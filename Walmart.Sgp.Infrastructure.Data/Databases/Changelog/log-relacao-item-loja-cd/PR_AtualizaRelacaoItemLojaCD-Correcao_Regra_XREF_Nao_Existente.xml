@@ -1,0 +1,2924 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-PR_AtualizaRelacaoItemLojaCD-PR_AtualizaRelacaoItemLojaCD-Correcao_Regra_XREF_Nao_Existente" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+			/*
+			=======================================================================================================================
+			Procedure..............: PR_AtualizaRelacaoItemLojaCD
+			Autor..................: 
+			Data de criação........: 
+			Objetivo...............: Atualizar tabelas RelacaoItemLojaCD e RelacaoItemCD com dados da STAGE
+			Parâmetros.............: 
+			Exemplo de uso.........: 
+			=======================================================================================================================
+			HISTÓRICO DE ALTERAÇÃO
+
+			Alterado por...........: Evandro Henrique Dapper
+			Data Alteração.........: 25/04/2016 (Projeto PESS)
+			Descrição da alteração.: Inclusão da atualização da tabela RelacaoItemCD com dados da STAGE
+
+			Alterado por...........: Rafael de Souza Bueno
+			Data Alteração.........: 23/09/2016 (Projeto PESS)
+			Descrição da alteração.: Inclusão de log na tabela RelacaoItemLojaCD
+
+			Alterado por...........: Rafael de Souza Bueno
+			Data Alteração.........: 06/10/2016 (Projeto PESS)
+			Descrição da alteração.: Inclusão de novas regras identificadas após comparação com os processos de Carga Massiva e Cadastro de Relacionamento Item/Loja
+			=======================================================================================================================
+			*/
+			ALTER PROCEDURE [dbo].[PR_AtualizaRelacaoItemLojaCD]
+			AS
+			BEGIN
+				DECLARE @IDCD INT
+					,@IDLoja INT
+					,@IDItemDetalheSaida BIGINT
+					,@IDItemDetalheEntradaAnterior BIGINT
+					,@IDItemDetalheEntradaNovo BIGINT
+					,@IdAuditUser INT = 3
+					,-- root
+					@IDLogTipoProcesso INT = 23
+					,-- Rotina Diária de Reabastecimento Item/Loja
+					@cdCrossRefAnterior VARCHAR(50)
+					,@cdCrossRefNovo VARCHAR(50)
+					,@vlTipoReabastecimento SMALLINT
+					,@Observacao VARCHAR(150)
+
+				SELECT idItem
+					,idItemEntrada
+					,idLoja
+					,vlTipoReabastecimento
+					,cdCrossRef
+					,LCP.IDLojaCDParametro
+				INTO #Antigo
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				WHERE idItemEntrada IS NOT NULL
+
+				TRUNCATE TABLE AtualizacaoRelacionamentoItem
+
+				TRUNCATE TABLE RelacaoItemLojaCD
+
+				INSERT INTO RelacaoItemLojaCD (
+					idItem
+					,idLojaCDParametro
+					,cdSistema
+					,blAtivo
+					,cdUsuarioCriacao
+					,cdUsuarioAtualizacao
+					,dhCriacao
+					,dhAtualizacao
+					,idItemEntrada
+					,vlTipoReabastecimento
+					,cdCrossRef
+					)
+				SELECT ID.IDItemDetalhe
+					,LCP.IDLojaCDParametro
+					,RILC.cdFormato
+					,1
+					,3
+					,3
+					,GETDATE()
+					,GETDATE()
+					,idItemEntrada
+					,CASE 
+						WHEN idItemEntrada IS NOT NULL
+							AND cdCrossRef IS NULL
+							THEN dbo.fnObterTipoReabastecimento(idItemEntrada, LCP.IDCD, LCP.IDLoja)
+						WHEN cdCrossRef IS NOT NULL
+							THEN ANT.vlTipoReabastecimento
+						WHEN id.tpVinculado IS NULL
+							THEN dbo.fnObterTipoReabastecimento(id.IDItemDetalhe, LCP.IDCD, LCP.IDLoja)
+						ELSE NULL
+						END
+					,cdCrossRef
+				FROM STAGE_RelacaoItemLojaCD RILC WITH (NOLOCK)
+				JOIN ItemDetalhe ID WITH (NOLOCK) ON ID.cdItem = RILC.cdItem
+					AND ID.blAtivo = 1
+					AND ID.tpStatus = 'A'
+					AND ID.cdSistema = RILC.cdFormato
+					AND (
+						ID.tpVinculado = 'S'
+						OR ID.tpManipulado = 'P'
+						OR ID.tpReceituario = 'I'
+						OR COALESCE(tpVinculado, tpManipulado, tpReceituario) IS NULL
+						)
+				JOIN Loja L WITH (NOLOCK) ON L.cdLoja = RILC.cdLoja
+					AND L.cdSistema = RILC.cdFormato
+					AND L.blCalculaSugestao = 1
+				JOIN CD C WITH (NOLOCK) ON C.cdCD = RILC.cdCD
+					AND C.cdSistema = RILC.cdFormato
+				JOIN Trait T WITH (NOLOCK) ON T.IdLoja = L.IDLoja
+					AND T.IdItemDetalhe = ID.IDItemDetalhe
+					AND T.blAtivo = 1
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLoja = L.IDLoja
+					AND LCP.IDCD = C.IDCD
+					AND LCP.blAtivo = 1
+				LEFT JOIN #Antigo ANT WITH (NOLOCK) ON ANT.IDItem = ID.IDItemDetalhe
+					AND ANT.IDLoja = LCP.IDLoja
+
+				DELETE a
+				FROM #Antigo a
+				WHERE EXISTS (
+						SELECT 1
+						FROM RelacaoItemLojaCD r WITH (NOLOCK)
+						JOIN LojaCDParametro L WITH (NOLOCK) ON L.IDLojaCDParametro = r.IDLojaCDParametro
+						WHERE r.IDItem = a.IDItem
+							AND r.idItemEntrada = a.idItemEntrada
+							AND L.IDLoja = a.IDLoja
+						)
+
+				-- Início: Não é mais Item de Entrada ou é Item de Saída e não satisfaz as condições
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Não é mais Item de Entrada ou é Item de Saída e não satisfaz as condições' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				LEFT JOIN RelacionamentoItemPrime RIP WITH (NOLOCK) ON RIP.idItemDetalhe = RIL.IdItemEntrada
+				WHERE IDE.tpVinculado = 'S'
+					AND (
+						RIP.idItemDetalhe IS NULL
+						OR RIP.Sequencial > 1
+						OR dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) NOT IN (
+							20
+							,22
+							,40
+							,42
+							,43
+							,81
+							) --Staple
+						OR NOT EXISTS (
+							SELECT TOP 1 1
+							FROM RelacionamentoItemPrime IPSec
+							WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+								AND IPSec.Sequencial > 1
+								AND IPSec.cdCrossRef = RIP.CdCrossRef
+								AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+									20
+									,22
+									,40
+									,42
+									,43
+									,81
+									) --Staple
+							)
+						)
+
+				-- Fim: Não é mais Item de Entrada ou é Item de Saída e não satisfaz as condições
+				-- Início: Item de Entrada não possui tipo de reabastecimento
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada não possui tipo de reabastecimento' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.vlTipoReabastecimento IS NULL
+					AND IDE.tpVinculado = 'E'
+
+				-- Fim: Item de Entrada não possui tipo de reabastecimento
+				-- Início: Item de Entrada setado como Item de Transferencia
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada setado como Item de Transferencia' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.blItemTransferencia = 1
+					AND IDE.tpVinculado = 'E'
+
+				-- Fim: Item de Entrada setado como Item de Transferencia
+				-- Início: Item Filho da Compra Casada
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item Filho da Compra Casada' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE EXISTS (
+						SELECT TOP 1 1
+						FROM CompraCasada CC
+						WHERE CC.idItemDetalheEntrada = RIL.IdItemEntrada
+							AND CC.blItemPai = 0
+							AND CC.blAtivo = 1
+						)
+
+				-- Fim: Item Filho da Compra Casada
+				-- Início: Item de Entrada não vinculado a Loja na STORE ITEM
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada não vinculado a Loja na STORE ITEM' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				LEFT JOIN Trait T WITH (NOLOCK) ON T.IdLoja = L.IdLoja
+					AND T.IdItemDetalhe = RIL.IdItemEntrada
+				WHERE T.IdTrait IS NULL
+
+				-- Fim: Item de Entrada não vinculado a Loja na STORE ITEM
+				-- Início: Item de Saida não vinculado a Loja na STORE ITEM (Registros antigos)
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDS.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saida não vinculado a Loja na STORE ITEM' Observacao
+				FROM #Antigo RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = RIL.IdLoja
+				WHERE NOT EXISTS (
+						SELECT TOP 1 1
+						FROM Trait T WITH (NOLOCK)
+						WHERE T.IdLoja = L.IDLoja
+							AND T.IdItemDetalhe = IDS.IDItemDetalhe
+						)
+
+				-- Fim: Item de Saida não vinculado a Loja na STORE ITEM (Registros antigos)
+				-- Início: Item de Saida inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos (Registros antigos)
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDS.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,ANT.IDItem
+					,ANT.idItemEntrada
+					,NULL
+					,ANT.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saida inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM #Antigo ANT WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = ANT.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = ANT.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = ANT.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = ANT.IdLoja
+				WHERE NOT EXISTS (
+						SELECT TOP 1 1
+						FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+						JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+						WHERE LCP.idLoja = ANT.idLoja
+							AND RIL.idItem = ANT.idItem
+						)
+
+				-- Fim: Item de Saida inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos (Registros antigos)
+				-- Início: Item de Saída vinculado como item de entrada não possui tipo de reabastecimento
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saída vinculado como item de entrada não possui tipo de reabastecimento' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.vlTipoReabastecimento IS NULL
+					AND IDE.tpVinculado = 'S'
+
+				-- Fim: Item de Saída vinculado como item de entrada não possui tipo de reabastecimento
+				-- Início: Item de Saída vinculado como item de entrada setado como Item de Transferencia
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saída vinculado como item de entrada setado como Item de Transferencia' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.blItemTransferencia = 1
+					AND IDE.tpVinculado = 'S'
+
+				-- Fim: Item de Saída vinculado como item de entrada setado como Item de Transferencia
+				-- Início: Item de Saída setado como Item de Transferencia
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saída setado como Item de Transferencia' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDS.blItemTransferencia = 1
+					AND IDS.tpVinculado = 'S'
+
+				-- Fim: Item de Saída setado como Item de Transferencia
+				-- Início: Item de Entrada inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				WHERE IDE.blAtivo = 0
+					OR IDE.tpStatus <> 'A'
+
+				-- Fim: Item de Entrada inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos
+				-- Início: Item de Entrada não vinculado a um vendor 9 dígitos válido, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada não vinculado a um vendor 9 dígitos válido, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				WHERE IDE.idFornecedorParametro IS NULL
+
+				-- Fim: Item de Entrada não vinculado a um vendor 9 dígitos válido, item desvinculado da relação de itens a serem sugeridos
+				-- Início: Vendor 9 Dígitos e Canal Inativos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Vendor 9 Dígitos e Canal Inativos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IdFornecedorParametro = IDE.IDFornecedorParametro
+				WHERE FP.cdStatusVendor <> 'A'
+					OR FP.blAtivo = 0
+
+				-- Fim: Vendor 9 Dígitos e Canal Inativos
+				-- Início: Fornecedor inativo
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Fornecedor inativo' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IdFornecedorParametro = IDE.IDFornecedorParametro
+				JOIN Fornecedor F WITH (NOLOCK) ON F.IdFornecedor = FP.IdFornecedor
+				WHERE F.stFornecedor <> 'A'
+					OR F.blAtivo = 0
+
+				-- Fim: Fornecedor inativo
+				-- Início: Relac. entrada/saída do SGP desfeito, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Relac. entrada/saída do SGP desfeito, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemSecundario RIS ON RIS.idItemDetalhe = RIL.idItemEntrada
+				JOIN RelacionamentoItemPrincipal RIP ON RIP.IDRelacionamentoItemPrincipal = RIS.IDRelacionamentoItemPrincipal
+				WHERE RIL.cdCrossRef IS NULL
+					AND RIL.IDItem <> RIP.IDItemDetalhe
+
+				-- Fim: Relac. entrada/saída do SGP desfeito, item desvinculado da relação de itens a serem sugeridos
+				-- Início: Item Prime deixou de ser Staple na XRef do OIF, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT DISTINCT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item Prime deixou de ser Staple na XRef do OIF, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND dbo.fnObterTipoReabastecimento(RIL.idItemEntrada, LCP.idCD, LCP.idLoja) NOT IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) -- Staple
+					-- Fim: Item Prime deixou de ser Staple na XRef do OIF, item desvinculado da relação de itens a serem sugeridos
+
+				-- Início: Item não pertence a uma XRef válida, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item não pertence a uma XRef válida, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				LEFT JOIN RelacionamentoItemPrime IP ON IP.idItemDetalhe = RIL.idItemEntrada
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.IdRelacionamentoItemPrime IS NULL
+
+				-- Fim: Item não pertence a uma XRef válida, item desvinculado da relação de itens a serem sugeridos
+				/*
+					Início: XRef do OIF atualizada e item entrada satisfaz as condições:			
+					- O item continua sendo primário na nova Cross Reference
+					- O item primário seja do tipo Staple
+					- Exista ao menos um item secundário staple na nova Cross Reference
+					Resultado: Atualizar XRef.
+				*/
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,RIL.idItemEntrada
+					,RIL.cdCrossRef
+					,IP.CdCrossRef
+					,RIL.vlTipoReabastecimento
+					,'XRef do OIF atualizada e item entrada satisfaz as condições' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IP ON IP.idItemDetalhe = RIL.IDItemEntrada
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.CdCrossRef <> RIL.cdCrossRef
+					AND IP.Sequencial = 1
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+							AND IPSec.Sequencial > 1
+							AND IPSec.cdCrossRef = IP.CdCrossRef
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								)
+						) --Staple
+
+				-- Atualizar XRef
+				UPDATE RIL
+				SET RIL.CdCrossRef = IP.CdCrossRef
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IP ON IP.idItemDetalhe = RIL.IDItemEntrada
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.CdCrossRef <> RIL.cdCrossRef
+					AND IP.Sequencial = 1
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+							AND IPSec.Sequencial > 1
+							AND IPSec.cdCrossRef = IP.CdCrossRef
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								)
+						) --Staple
+					-- Fim: XRef do OIF atualizada e item entrada satisfaz as condições
+
+				/*
+					Início: XRef do OIF atualizada e item entrada NÃO satisfaz as condições:
+					- O item continua sendo primário na nova Cross Reference
+					- O item primário seja do tipo Staple
+					- Exista ao menos um item secundário staple na nova Cross Reference
+					Resultado: Desvincular (idItemEntrada = NULL, vlTipoReabastecimento = NULL, cdCrossRef = NULL).
+				*/
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'XRef do OIF atualizada e item entrada NÃO satisfaz as condições' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IP ON IP.idItemDetalhe = RIL.IDItemEntrada
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.CdCrossRef <> RIL.cdCrossRef
+					AND (
+						IP.Sequencial > 1
+						OR dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) NOT IN (
+							20
+							,22
+							,40
+							,42
+							,43
+							,81
+							) --Staple
+						OR NOT EXISTS (
+							SELECT TOP 1 1
+							FROM RelacionamentoItemPrime IPSec
+							WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+								AND IPSec.Sequencial > 1
+								AND IPSec.cdCrossRef = IP.CdCrossRef
+								AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+									20
+									,22
+									,40
+									,42
+									,43
+									,81
+									)
+							)
+						) --Staple
+					-- Fim: XRef do OIF atualizada e item entrada NÃO satisfaz as condições.
+
+				-- Início: Item primário da XRef OIF atualizado
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,IPX.idItemDetalhe
+					,RIL.cdCrossRef
+					,RIL.cdCrossRef
+					,RIL.vlTipoReabastecimento
+					,'Item primário da XRef OIF atualizado' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPE ON IPE.idItemDetalhe = RIL.IDItemEntrada
+				JOIN RelacionamentoItemPrime IPX ON IPX.CdCrossRef = RIL.cdCrossRef
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IPE.Sequencial <> 1
+					AND IPX.Sequencial = 1
+
+				-- Atualizar item primário
+				UPDATE RIL
+				SET RIL.idItemEntrada = IPX.idItemDetalhe
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPE ON IPE.idItemDetalhe = IDE.IDItemDetalhe
+				JOIN RelacionamentoItemPrime IPX ON IPX.CdCrossRef = RIL.cdCrossRef
+					AND IPX.Sequencial = 1
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IPE.Sequencial <> 1
+
+				-- Fim: Item primário da XRef OIF atualizado
+				-- Início: Item de entrada foi vinculado a uma XREF
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.IdItemEntrada
+					,PRIME.idItemDetalhe
+					,NULL
+					,PRIME.cdCrossRef
+					,dbo.fnObterTipoReabastecimento(PRIME.idItemDetalhe, LCP.IDCD, LCP.IDLoja)
+					,'Item de entrada foi vinculado a uma XREF' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPX WITH (NOLOCK) ON IPX.idItemDetalhe = RIL.IdItemEntrada
+				JOIN RelacionamentoItemPrime PRIME WITH (NOLOCK) ON (
+						IPX.Sequencial = 1
+						AND PRIME.idItemDetalhe = RIL.IdItemEntrada
+						)
+					OR (
+						IPX.Sequencial > 1
+						AND PRIME.cdCrossRef = IPX.cdCrossRef
+						AND PRIME.Sequencial = 1
+						)
+				WHERE RIL.cdCrossRef IS NULL
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.cdCrossRef = IPX.cdCrossRef
+							AND IPSec.idItemDetalhe <> IDE.IDItemDetalhe
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								) --Staple
+						)
+
+				-- Atualizar ItemEntrada = <Com o idItemDetalhe do item prime da XREF>, cdCrossRef = <Com o cdCrossRef do item prime>, vlTipoReabastecimento <Com o tipo de reabastecimento do item prime>
+				UPDATE RIL
+				SET RIL.idItemEntrada = PRIME.idItemDetalhe
+					,RIL.cdCrossRef = PRIME.cdCrossRef
+					,RIL.vlTipoReabastecimento = dbo.fnObterTipoReabastecimento(PRIME.idItemDetalhe, LCP.IDCD, LCP.IDLoja)
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPX WITH (NOLOCK) ON IPX.idItemDetalhe = RIL.IdItemEntrada
+				JOIN RelacionamentoItemPrime PRIME WITH (NOLOCK) ON (
+						IPX.Sequencial = 1
+						AND PRIME.idItemDetalhe = RIL.IdItemEntrada
+						)
+					OR (
+						IPX.Sequencial > 1
+						AND PRIME.cdCrossRef = IPX.cdCrossRef
+						AND PRIME.Sequencial = 1
+						)
+				WHERE RIL.cdCrossRef IS NULL
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.cdCrossRef = IPX.cdCrossRef
+							AND IPSec.idItemDetalhe <> IDE.IDItemDetalhe
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								) --Staple
+						)
+
+				-- Fim: Item de entrada foi vinculado a uma XREF
+				UPDATE RelacaoItemLojaCD
+				SET idItemEntrada = NULL
+					,vlTipoReabastecimento = NULL
+					,cdCrossRef = NULL
+				WHERE IDRelacaoItemLojaCD IN (
+						SELECT DISTINCT IdReabastecimentoItemLoja
+						FROM AtualizacaoRelacionamentoItem
+						)
+
+				-- Início: Insere log da RelacaoItemLojaCD
+				DECLARE AtualizacaoRelacionamentoItemCursor CURSOR LOCAL
+				FOR
+				SELECT A.IDCD
+					,A.IDLoja
+					,A.IDItemDetalheSaida
+					,A.IDItemDetalheEntradaAntigo
+					,A.IDItemDetalheEntradaNovo
+					,A.cdCrossRefAntigo
+					,A.cdCrossRefNovo
+					,A.vlTipoReabastecimento
+					,A.Observacao
+				FROM AtualizacaoRelacionamentoItem A
+
+				OPEN AtualizacaoRelacionamentoItemCursor
+
+				FETCH NEXT
+				FROM AtualizacaoRelacionamentoItemCursor
+				INTO @IDCD
+					,@IDLoja
+					,@IDItemDetalheSaida
+					,@IDItemDetalheEntradaAnterior
+					,@IDItemDetalheEntradaNovo
+					,@cdCrossRefAnterior
+					,@cdCrossRefNovo
+					,@vlTipoReabastecimento
+					,@Observacao
+
+				WHILE @@FETCH_STATUS = 0
+				BEGIN
+					EXEC PR_RegistraLogRelacaoItemLojaCD @IDCD
+						,@IDLoja
+						,@IDItemDetalheSaida
+						,@IDItemDetalheEntradaAnterior
+						,@IDItemDetalheEntradaNovo
+						,@IdAuditUser
+						,@IDLogTipoProcesso
+						,@cdCrossRefAnterior
+						,@cdCrossRefNovo
+						,@vlTipoReabastecimento
+						,@Observacao
+
+					FETCH NEXT
+					FROM AtualizacaoRelacionamentoItemCursor
+					INTO @IDCD
+						,@IDLoja
+						,@IDItemDetalheSaida
+						,@IDItemDetalheEntradaAnterior
+						,@IDItemDetalheEntradaNovo
+						,@cdCrossRefAnterior
+						,@cdCrossRefNovo
+						,@vlTipoReabastecimento
+						,@Observacao
+				END
+
+				CLOSE AtualizacaoRelacionamentoItemCursor
+
+				DEALLOCATE AtualizacaoRelacionamentoItemCursor
+
+				-- Fim: Insere log da RelacaoItemLojaCD
+				TRUNCATE TABLE RelacaoItemCD
+
+				INSERT INTO RelacaoItemCD (
+					idItemEntrada
+					,idItemSaida
+					,idCD
+					,vlTipoReabastecimento
+					,vlEstoqueSeguranca
+					)
+				SELECT id.IDItemDetalhe
+					,ids.IDItemDetalhe
+					,cd.IDCD
+					,CASE 
+						WHEN ISNULL(fcp.cdTipo, fp.cdTipo) = 'L'
+							THEN COALESCE(rifc.TipoReabastecimento, rfc.TipoReabastecimento, id.vlTipoReabastecimento)
+						ELSE id.vlTipoReabastecimento
+						END
+					,rifc.EstoqueSeguranca
+				FROM STAGE_RelacaoItemLojaCD r
+				JOIN ItemDetalhe id ON id.cdItem = r.cdItem
+				LEFT JOIN RelacionamentoItemSecundario rs ON rs.IDItemDetalhe = id.IDItemDetalhe
+				LEFT JOIN RelacionamentoItemPrincipal rp ON rp.IDRelacionamentoItemPrincipal = rs.IDRelacionamentoItemPrincipal
+					AND rp.IDTipoRelacionamento = 1
+				LEFT JOIN ItemDetalhe IDS ON IDS.IDItemDetalhe = RP.IDItemDetalhe
+					AND IDS.tpStatus = 'A'
+					AND IDS.blAtivo = 1
+					AND IDS.blItemTransferencia = 0
+				JOIN CD cd ON cd.cdCD = r.cdCD
+					AND cd.blConvertido = 1
+				JOIN FornecedorParametro fp ON fp.IDFornecedorParametro = id.idFornecedorParametro
+				LEFT JOIN FornecedorCDParametro fcp ON fcp.IDFornecedorParametro = fp.IDFornecedorParametro
+					AND fcp.IDCD = cd.IDCD
+				LEFT JOIN ReabastecimentoFornecedorCD rfc ON rfc.idFornecedorParametro = fp.IDFornecedorParametro
+					AND rfc.idCD = cd.IDCD
+				LEFT JOIN ReabastecimentoItemFornecedorCD rifc ON rifc.idFornecedorParametro = fp.IDFornecedorParametro
+					AND rifc.idCD = cd.IDCD
+					AND rifc.idItemDetalhe = id.IDItemDetalhe
+				WHERE (
+						(
+							ISNULL(fcp.cdTipo, fp.cdTipo) = 'L'
+							AND COALESCE(rifc.TipoReabastecimento, rfc.TipoReabastecimento, id.vlTipoReabastecimento) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								)
+							)
+						OR (
+							id.vlTipoReabastecimento IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								)
+							)
+						)
+					AND (
+						(
+							id.tpVinculado = 'E'
+							AND ids.IDItemDetalhe IS NOT NULL
+							)
+						OR id.tpVinculado IS NULL
+						)
+					AND (
+						id.tpManipulado = 'P'
+						OR id.tpManipulado IS NULL
+						)
+					AND (
+						id.tpReceituario = 'I'
+						OR id.tpReceituario IS NULL
+						)
+					AND id.tpStatus = 'A'
+					AND id.blAtivo = 1
+					AND id.blItemTransferencia = 0
+				GROUP BY cd.IDCD
+					,id.IDItemDetalhe
+					,ids.IDItemDetalhe
+					,fcp.cdTipo
+					,fp.cdTipo
+					,rifc.TipoReabastecimento
+					,rfc.TipoReabastecimento
+					,id.vlTipoReabastecimento
+					,rifc.EstoqueSeguranca
+			END
+
+
+			~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+								/*
+			=======================================================================================================================
+			Procedure..............: PR_AtualizaRelacaoItemLojaCD
+			Autor..................: 
+			Data de criação........: 
+			Objetivo...............: Atualizar tabelas RelacaoItemLojaCD e RelacaoItemCD com dados da STAGE
+			Parâmetros.............: 
+			Exemplo de uso.........: 
+			=======================================================================================================================
+			HISTÓRICO DE ALTERAÇÃO
+
+			Alterado por...........: Evandro Henrique Dapper
+			Data Alteração.........: 25/04/2016 (Projeto PESS)
+			Descrição da alteração.: Inclusão da atualização da tabela RelacaoItemCD com dados da STAGE
+
+			Alterado por...........: Rafael de Souza Bueno
+			Data Alteração.........: 23/09/2016 (Projeto PESS)
+			Descrição da alteração.: Inclusão de log na tabela RelacaoItemLojaCD
+
+			Alterado por...........: Rafael de Souza Bueno
+			Data Alteração.........: 06/10/2016 (Projeto PESS)
+			Descrição da alteração.: Inclusão de novas regras identificadas após comparação com os processos de Carga Massiva e Cadastro de Relacionamento Item/Loja
+			=======================================================================================================================
+			*/
+			ALTER PROCEDURE [dbo].[PR_AtualizaRelacaoItemLojaCD]
+			AS
+			BEGIN
+				DECLARE @IDCD INT
+					,@IDLoja INT
+					,@IDItemDetalheSaida BIGINT
+					,@IDItemDetalheEntradaAnterior BIGINT
+					,@IDItemDetalheEntradaNovo BIGINT
+					,@IdAuditUser INT = 3
+					,-- root
+					@IDLogTipoProcesso INT = 23
+					,-- Rotina Diária de Reabastecimento Item/Loja
+					@cdCrossRefAnterior VARCHAR(50)
+					,@cdCrossRefNovo VARCHAR(50)
+					,@vlTipoReabastecimento SMALLINT
+					,@Observacao VARCHAR(150)
+
+				SELECT idItem
+					,idItemEntrada
+					,idLoja
+					,vlTipoReabastecimento
+					,cdCrossRef
+					,LCP.IDLojaCDParametro
+				INTO #Antigo
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				WHERE idItemEntrada IS NOT NULL
+
+				TRUNCATE TABLE AtualizacaoRelacionamentoItem
+
+				TRUNCATE TABLE RelacaoItemLojaCD
+
+				INSERT INTO RelacaoItemLojaCD (
+					idItem
+					,idLojaCDParametro
+					,cdSistema
+					,blAtivo
+					,cdUsuarioCriacao
+					,cdUsuarioAtualizacao
+					,dhCriacao
+					,dhAtualizacao
+					,idItemEntrada
+					,vlTipoReabastecimento
+					,cdCrossRef
+					)
+				SELECT ID.IDItemDetalhe
+					,LCP.IDLojaCDParametro
+					,RILC.cdFormato
+					,1
+					,3
+					,3
+					,GETDATE()
+					,GETDATE()
+					,idItemEntrada
+					,CASE 
+						WHEN idItemEntrada IS NOT NULL
+							AND cdCrossRef IS NULL
+							THEN dbo.fnObterTipoReabastecimento(idItemEntrada, LCP.IDCD, LCP.IDLoja)
+						WHEN cdCrossRef IS NOT NULL
+							THEN ANT.vlTipoReabastecimento
+						WHEN id.tpVinculado IS NULL
+							THEN dbo.fnObterTipoReabastecimento(id.IDItemDetalhe, LCP.IDCD, LCP.IDLoja)
+						ELSE NULL
+						END
+					,cdCrossRef
+				FROM STAGE_RelacaoItemLojaCD RILC WITH (NOLOCK)
+				JOIN ItemDetalhe ID WITH (NOLOCK) ON ID.cdItem = RILC.cdItem
+					AND ID.blAtivo = 1
+					AND ID.tpStatus = 'A'
+					AND ID.cdSistema = RILC.cdFormato
+					AND (
+						ID.tpVinculado = 'S'
+						OR ID.tpManipulado = 'P'
+						OR ID.tpReceituario = 'I'
+						OR COALESCE(tpVinculado, tpManipulado, tpReceituario) IS NULL
+						)
+				JOIN Loja L WITH (NOLOCK) ON L.cdLoja = RILC.cdLoja
+					AND L.cdSistema = RILC.cdFormato
+					AND L.blCalculaSugestao = 1
+				JOIN CD C WITH (NOLOCK) ON C.cdCD = RILC.cdCD
+					AND C.cdSistema = RILC.cdFormato
+				JOIN Trait T WITH (NOLOCK) ON T.IdLoja = L.IDLoja
+					AND T.IdItemDetalhe = ID.IDItemDetalhe
+					AND T.blAtivo = 1
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLoja = L.IDLoja
+					AND LCP.IDCD = C.IDCD
+					AND LCP.blAtivo = 1
+				LEFT JOIN #Antigo ANT WITH (NOLOCK) ON ANT.IDItem = ID.IDItemDetalhe
+					AND ANT.IDLoja = LCP.IDLoja
+
+				DELETE a
+				FROM #Antigo a
+				WHERE EXISTS (
+						SELECT 1
+						FROM RelacaoItemLojaCD r WITH (NOLOCK)
+						JOIN LojaCDParametro L WITH (NOLOCK) ON L.IDLojaCDParametro = r.IDLojaCDParametro
+						WHERE r.IDItem = a.IDItem
+							AND r.idItemEntrada = a.idItemEntrada
+							AND L.IDLoja = a.IDLoja
+						)
+
+				-- Início: Não é mais Item de Entrada ou é Item de Saída e não satisfaz as condições
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Não é mais Item de Entrada ou é Item de Saída e não satisfaz as condições' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				LEFT JOIN RelacionamentoItemPrime RIP WITH (NOLOCK) ON RIP.idItemDetalhe = RIL.IdItemEntrada
+				WHERE IDE.tpVinculado = 'S'
+					AND (
+						RIP.idItemDetalhe IS NULL
+						OR RIP.Sequencial > 1
+						OR dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) NOT IN (
+							20
+							,22
+							,40
+							,42
+							,43
+							,81
+							) --Staple
+						OR NOT EXISTS (
+							SELECT TOP 1 1
+							FROM RelacionamentoItemPrime IPSec
+							WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+								AND IPSec.Sequencial > 1
+								AND IPSec.cdCrossRef = RIP.CdCrossRef
+								AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+									20
+									,22
+									,40
+									,42
+									,43
+									,81
+									) --Staple
+							)
+						)
+
+				-- Fim: Não é mais Item de Entrada ou é Item de Saída e não satisfaz as condições
+				-- Início: Item de Entrada não possui tipo de reabastecimento
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada não possui tipo de reabastecimento' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.vlTipoReabastecimento IS NULL
+					AND IDE.tpVinculado = 'E'
+
+				-- Fim: Item de Entrada não possui tipo de reabastecimento
+				-- Início: Item de Entrada setado como Item de Transferencia
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada setado como Item de Transferencia' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.blItemTransferencia = 1
+					AND IDE.tpVinculado = 'E'
+
+				-- Fim: Item de Entrada setado como Item de Transferencia
+				-- Início: Item Filho da Compra Casada
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item Filho da Compra Casada' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE EXISTS (
+						SELECT TOP 1 1
+						FROM CompraCasada CC
+						WHERE CC.idItemDetalheEntrada = RIL.IdItemEntrada
+							AND CC.blItemPai = 0
+							AND CC.blAtivo = 1
+						)
+
+				-- Fim: Item Filho da Compra Casada
+				-- Início: Item de Entrada não vinculado a Loja na STORE ITEM
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada não vinculado a Loja na STORE ITEM' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				LEFT JOIN Trait T WITH (NOLOCK) ON T.IdLoja = L.IdLoja
+					AND T.IdItemDetalhe = RIL.IdItemEntrada
+				WHERE T.IdTrait IS NULL
+
+				-- Fim: Item de Entrada não vinculado a Loja na STORE ITEM
+				-- Início: Item de Saida não vinculado a Loja na STORE ITEM (Registros antigos)
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDS.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saida não vinculado a Loja na STORE ITEM' Observacao
+				FROM #Antigo RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = RIL.IdLoja
+				WHERE NOT EXISTS (
+						SELECT TOP 1 1
+						FROM Trait T WITH (NOLOCK)
+						WHERE T.IdLoja = L.IDLoja
+							AND T.IdItemDetalhe = IDS.IDItemDetalhe
+						)
+
+				-- Fim: Item de Saida não vinculado a Loja na STORE ITEM (Registros antigos)
+				-- Início: Item de Saida inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos (Registros antigos)
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDS.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,ANT.IDItem
+					,ANT.idItemEntrada
+					,NULL
+					,ANT.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saida inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM #Antigo ANT WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = ANT.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = ANT.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = ANT.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = ANT.IdLoja
+				WHERE NOT EXISTS (
+						SELECT TOP 1 1
+						FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+						JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+						WHERE LCP.idLoja = ANT.idLoja
+							AND RIL.idItem = ANT.idItem
+						)
+
+				-- Fim: Item de Saida inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos (Registros antigos)
+				-- Início: Item de Saída vinculado como item de entrada não possui tipo de reabastecimento
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saída vinculado como item de entrada não possui tipo de reabastecimento' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.vlTipoReabastecimento IS NULL
+					AND IDE.tpVinculado = 'S'
+
+				-- Fim: Item de Saída vinculado como item de entrada não possui tipo de reabastecimento
+				-- Início: Item de Saída vinculado como item de entrada setado como Item de Transferencia
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saída vinculado como item de entrada setado como Item de Transferencia' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDE.blItemTransferencia = 1
+					AND IDE.tpVinculado = 'S'
+
+				-- Fim: Item de Saída vinculado como item de entrada setado como Item de Transferencia
+				-- Início: Item de Saída setado como Item de Transferencia
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Saída setado como Item de Transferencia' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				WHERE IDS.blItemTransferencia = 1
+					AND IDS.tpVinculado = 'S'
+
+				-- Fim: Item de Saída setado como Item de Transferencia
+				-- Início: Item de Entrada inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				WHERE IDE.blAtivo = 0
+					OR IDE.tpStatus <> 'A'
+
+				-- Fim: Item de Entrada inativo ou deletado na origem (OIF), item desvinculado da relação de itens a serem sugeridos
+				-- Início: Item de Entrada não vinculado a um vendor 9 dígitos válido, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item de Entrada não vinculado a um vendor 9 dígitos válido, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.idItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				WHERE IDE.idFornecedorParametro IS NULL
+
+				-- Fim: Item de Entrada não vinculado a um vendor 9 dígitos válido, item desvinculado da relação de itens a serem sugeridos
+				-- Início: Vendor 9 Dígitos e Canal Inativos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Vendor 9 Dígitos e Canal Inativos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IdFornecedorParametro = IDE.IDFornecedorParametro
+				WHERE FP.cdStatusVendor <> 'A'
+					OR FP.blAtivo = 0
+
+				-- Fim: Vendor 9 Dígitos e Canal Inativos
+				-- Início: Fornecedor inativo
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Fornecedor inativo' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IDLoja
+				JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IdFornecedorParametro = IDE.IDFornecedorParametro
+				JOIN Fornecedor F WITH (NOLOCK) ON F.IdFornecedor = FP.IdFornecedor
+				WHERE F.stFornecedor <> 'A'
+					OR F.blAtivo = 0
+
+				-- Fim: Fornecedor inativo
+				-- Início: Relac. entrada/saída do SGP desfeito, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Relac. entrada/saída do SGP desfeito, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemSecundario RIS ON RIS.idItemDetalhe = RIL.idItemEntrada
+				JOIN RelacionamentoItemPrincipal RIP ON RIP.IDRelacionamentoItemPrincipal = RIS.IDRelacionamentoItemPrincipal
+				WHERE RIL.cdCrossRef IS NULL
+					AND RIL.IDItem <> RIP.IDItemDetalhe
+
+				-- Fim: Relac. entrada/saída do SGP desfeito, item desvinculado da relação de itens a serem sugeridos
+				-- Início: Item Prime deixou de ser Staple na XRef do OIF, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT DISTINCT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item Prime deixou de ser Staple na XRef do OIF, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND dbo.fnObterTipoReabastecimento(RIL.idItemEntrada, LCP.idCD, LCP.idLoja) NOT IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) -- Staple
+					-- Fim: Item Prime deixou de ser Staple na XRef do OIF, item desvinculado da relação de itens a serem sugeridos
+
+				-- Início: Item não pertence a uma XRef válida, item desvinculado da relação de itens a serem sugeridos
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'Item não pertence a uma XRef válida, item desvinculado da relação de itens a serem sugeridos' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				LEFT JOIN RelacionamentoItemPrime IP ON IP.CdCrossRef = RIL.cdCrossRef
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.IdRelacionamentoItemPrime IS NULL
+
+				-- Fim: Item não pertence a uma XRef válida, item desvinculado da relação de itens a serem sugeridos
+				/*
+					Início: XRef do OIF atualizada e item entrada satisfaz as condições:			
+					- O item continua sendo primário na nova Cross Reference
+					- O item primário seja do tipo Staple
+					- Exista ao menos um item secundário staple na nova Cross Reference
+					Resultado: Atualizar XRef.
+				*/
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,RIL.idItemEntrada
+					,RIL.cdCrossRef
+					,IP.CdCrossRef
+					,RIL.vlTipoReabastecimento
+					,'XRef do OIF atualizada e item entrada satisfaz as condições' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IP ON IP.idItemDetalhe = RIL.IDItemEntrada
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.CdCrossRef <> RIL.cdCrossRef
+					AND IP.Sequencial = 1
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+							AND IPSec.Sequencial > 1
+							AND IPSec.cdCrossRef = IP.CdCrossRef
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								)
+						) --Staple
+
+				-- Atualizar XRef
+				UPDATE RIL
+				SET RIL.CdCrossRef = IP.CdCrossRef
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IP ON IP.idItemDetalhe = RIL.IDItemEntrada
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.CdCrossRef <> RIL.cdCrossRef
+					AND IP.Sequencial = 1
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+							AND IPSec.Sequencial > 1
+							AND IPSec.cdCrossRef = IP.CdCrossRef
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								)
+						) --Staple
+					-- Fim: XRef do OIF atualizada e item entrada satisfaz as condições
+
+				/*
+					Início: XRef do OIF atualizada e item entrada NÃO satisfaz as condições:
+					- O item continua sendo primário na nova Cross Reference
+					- O item primário seja do tipo Staple
+					- Exista ao menos um item secundário staple na nova Cross Reference
+					Resultado: Desvincular (idItemEntrada = NULL, vlTipoReabastecimento = NULL, cdCrossRef = NULL).
+				*/
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT RIL.IDRelacaoItemLojaCD
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,NULL
+					,RIL.cdCrossRef
+					,NULL
+					,NULL
+					,'XRef do OIF atualizada e item entrada NÃO satisfaz as condições' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IP ON IP.idItemDetalhe = RIL.IDItemEntrada
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IP.CdCrossRef <> RIL.cdCrossRef
+					AND (
+						IP.Sequencial > 1
+						OR dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) NOT IN (
+							20
+							,22
+							,40
+							,42
+							,43
+							,81
+							) --Staple
+						OR NOT EXISTS (
+							SELECT TOP 1 1
+							FROM RelacionamentoItemPrime IPSec
+							WHERE IPSec.idItemDetalhe <> RIL.IDItemEntrada
+								AND IPSec.Sequencial > 1
+								AND IPSec.cdCrossRef = IP.CdCrossRef
+								AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+									20
+									,22
+									,40
+									,42
+									,43
+									,81
+									)
+							)
+						) --Staple
+					-- Fim: XRef do OIF atualizada e item entrada NÃO satisfaz as condições.
+
+				-- Início: Item primário da XRef OIF atualizado
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.idItemEntrada
+					,IPX.idItemDetalhe
+					,RIL.cdCrossRef
+					,RIL.cdCrossRef
+					,RIL.vlTipoReabastecimento
+					,'Item primário da XRef OIF atualizado' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPE ON IPE.idItemDetalhe = RIL.IDItemEntrada
+				JOIN RelacionamentoItemPrime IPX ON IPX.CdCrossRef = RIL.cdCrossRef
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IPE.Sequencial <> 1
+					AND IPX.Sequencial = 1
+
+				-- Atualizar item primário
+				UPDATE RIL
+				SET RIL.idItemEntrada = IPX.idItemDetalhe
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPE ON IPE.idItemDetalhe = IDE.IDItemDetalhe
+				JOIN RelacionamentoItemPrime IPX ON IPX.CdCrossRef = RIL.cdCrossRef
+					AND IPX.Sequencial = 1
+				WHERE RIL.cdCrossRef IS NOT NULL
+					AND IPE.Sequencial <> 1
+
+				-- Fim: Item primário da XRef OIF atualizado
+				-- Início: Item de entrada foi vinculado a uma XREF
+				INSERT INTO AtualizacaoRelacionamentoItem (
+					IdReabastecimentoItemLoja
+					,cdItemEntrada
+					,dsItemEntrada
+					,cdItemSaida
+					,dsItemSaida
+					,cdLoja
+					,tpVinculadoEntrada
+					,IDCD
+					,IDLoja
+					,IDItemDetalheSaida
+					,IDItemDetalheEntradaAntigo
+					,IDItemDetalheEntradaNovo
+					,cdCrossRefAntigo
+					,cdCrossRefNovo
+					,vlTipoReabastecimento
+					,Observacao
+					)
+				SELECT - 1
+					,IDE.cdItem cdItemEntrada
+					,IDE.dsItem dsItemEntrada
+					,IDS.cdItem cdItemSaida
+					,IDS.dsItem dsItemSaida
+					,L.cdLoja
+					,IDE.tpVinculado tpVinculadoEntrada
+					,LCP.IDCD
+					,LCP.IDLoja
+					,RIL.IDItem
+					,RIL.IdItemEntrada
+					,PRIME.idItemDetalhe
+					,NULL
+					,PRIME.cdCrossRef
+					,dbo.fnObterTipoReabastecimento(PRIME.idItemDetalhe, LCP.IDCD, LCP.IDLoja)
+					,'Item de entrada foi vinculado a uma XREF' Observacao
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPX WITH (NOLOCK) ON IPX.idItemDetalhe = RIL.IdItemEntrada
+				JOIN RelacionamentoItemPrime PRIME WITH (NOLOCK) ON (
+						IPX.Sequencial = 1
+						AND PRIME.idItemDetalhe = RIL.IdItemEntrada
+						)
+					OR (
+						IPX.Sequencial > 1
+						AND PRIME.cdCrossRef = IPX.cdCrossRef
+						AND PRIME.Sequencial = 1
+						)
+				WHERE RIL.cdCrossRef IS NULL
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.cdCrossRef = IPX.cdCrossRef
+							AND IPSec.idItemDetalhe <> IDE.IDItemDetalhe
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								) --Staple
+						)
+
+				-- Atualizar ItemEntrada = <Com o idItemDetalhe do item prime da XREF>, cdCrossRef = <Com o cdCrossRef do item prime>, vlTipoReabastecimento <Com o tipo de reabastecimento do item prime>
+				UPDATE RIL
+				SET RIL.idItemEntrada = PRIME.idItemDetalhe
+					,RIL.cdCrossRef = PRIME.cdCrossRef
+					,RIL.vlTipoReabastecimento = dbo.fnObterTipoReabastecimento(PRIME.idItemDetalhe, LCP.IDCD, LCP.IDLoja)
+				FROM RelacaoItemLojaCD RIL WITH (NOLOCK)
+				JOIN ItemDetalhe IDE WITH (NOLOCK) ON IDE.IDItemDetalhe = RIL.IdItemEntrada
+				JOIN ItemDetalhe IDS WITH (NOLOCK) ON IDS.IDItemDetalhe = RIL.IDItem
+				JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+				JOIN Loja L WITH (NOLOCK) ON L.IdLoja = LCP.IdLoja
+				JOIN RelacionamentoItemPrime IPX WITH (NOLOCK) ON IPX.idItemDetalhe = RIL.IdItemEntrada
+				JOIN RelacionamentoItemPrime PRIME WITH (NOLOCK) ON (
+						IPX.Sequencial = 1
+						AND PRIME.idItemDetalhe = RIL.IdItemEntrada
+						)
+					OR (
+						IPX.Sequencial > 1
+						AND PRIME.cdCrossRef = IPX.cdCrossRef
+						AND PRIME.Sequencial = 1
+						)
+				WHERE RIL.cdCrossRef IS NULL
+					AND dbo.fnObterTipoReabastecimento(IDE.IDItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+						20
+						,22
+						,40
+						,42
+						,43
+						,81
+						) --Staple
+					AND EXISTS (
+						SELECT TOP 1 1
+						FROM RelacionamentoItemPrime IPSec
+						WHERE IPSec.cdCrossRef = IPX.cdCrossRef
+							AND IPSec.idItemDetalhe <> IDE.IDItemDetalhe
+							AND dbo.fnObterTipoReabastecimento(IPSec.idItemDetalhe, LCP.IDCD, LCP.IDLoja) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,81
+								) --Staple
+						)
+
+				-- Fim: Item de entrada foi vinculado a uma XREF
+				UPDATE RelacaoItemLojaCD
+				SET idItemEntrada = NULL
+					,vlTipoReabastecimento = NULL
+					,cdCrossRef = NULL
+				WHERE IDRelacaoItemLojaCD IN (
+						SELECT DISTINCT IdReabastecimentoItemLoja
+						FROM AtualizacaoRelacionamentoItem
+						)
+
+				-- Início: Insere log da RelacaoItemLojaCD
+				DECLARE AtualizacaoRelacionamentoItemCursor CURSOR LOCAL
+				FOR
+				SELECT A.IDCD
+					,A.IDLoja
+					,A.IDItemDetalheSaida
+					,A.IDItemDetalheEntradaAntigo
+					,A.IDItemDetalheEntradaNovo
+					,A.cdCrossRefAntigo
+					,A.cdCrossRefNovo
+					,A.vlTipoReabastecimento
+					,A.Observacao
+				FROM AtualizacaoRelacionamentoItem A
+
+				OPEN AtualizacaoRelacionamentoItemCursor
+
+				FETCH NEXT
+				FROM AtualizacaoRelacionamentoItemCursor
+				INTO @IDCD
+					,@IDLoja
+					,@IDItemDetalheSaida
+					,@IDItemDetalheEntradaAnterior
+					,@IDItemDetalheEntradaNovo
+					,@cdCrossRefAnterior
+					,@cdCrossRefNovo
+					,@vlTipoReabastecimento
+					,@Observacao
+
+				WHILE @@FETCH_STATUS = 0
+				BEGIN
+					EXEC PR_RegistraLogRelacaoItemLojaCD @IDCD
+						,@IDLoja
+						,@IDItemDetalheSaida
+						,@IDItemDetalheEntradaAnterior
+						,@IDItemDetalheEntradaNovo
+						,@IdAuditUser
+						,@IDLogTipoProcesso
+						,@cdCrossRefAnterior
+						,@cdCrossRefNovo
+						,@vlTipoReabastecimento
+						,@Observacao
+
+					FETCH NEXT
+					FROM AtualizacaoRelacionamentoItemCursor
+					INTO @IDCD
+						,@IDLoja
+						,@IDItemDetalheSaida
+						,@IDItemDetalheEntradaAnterior
+						,@IDItemDetalheEntradaNovo
+						,@cdCrossRefAnterior
+						,@cdCrossRefNovo
+						,@vlTipoReabastecimento
+						,@Observacao
+				END
+
+				CLOSE AtualizacaoRelacionamentoItemCursor
+
+				DEALLOCATE AtualizacaoRelacionamentoItemCursor
+
+				-- Fim: Insere log da RelacaoItemLojaCD
+				TRUNCATE TABLE RelacaoItemCD
+
+				INSERT INTO RelacaoItemCD (
+					idItemEntrada
+					,idItemSaida
+					,idCD
+					,vlTipoReabastecimento
+					,vlEstoqueSeguranca
+					)
+				SELECT id.IDItemDetalhe
+					,ids.IDItemDetalhe
+					,cd.IDCD
+					,CASE 
+						WHEN ISNULL(fcp.cdTipo, fp.cdTipo) = 'L'
+							THEN COALESCE(rifc.TipoReabastecimento, rfc.TipoReabastecimento, id.vlTipoReabastecimento)
+						ELSE id.vlTipoReabastecimento
+						END
+					,rifc.EstoqueSeguranca
+				FROM STAGE_RelacaoItemLojaCD r
+				JOIN ItemDetalhe id ON id.cdItem = r.cdItem
+				LEFT JOIN RelacionamentoItemSecundario rs ON rs.IDItemDetalhe = id.IDItemDetalhe
+				LEFT JOIN RelacionamentoItemPrincipal rp ON rp.IDRelacionamentoItemPrincipal = rs.IDRelacionamentoItemPrincipal
+					AND rp.IDTipoRelacionamento = 1
+				LEFT JOIN ItemDetalhe IDS ON IDS.IDItemDetalhe = RP.IDItemDetalhe
+					AND IDS.tpStatus = 'A'
+					AND IDS.blAtivo = 1
+					AND IDS.blItemTransferencia = 0
+				JOIN CD cd ON cd.cdCD = r.cdCD
+					AND cd.blConvertido = 1
+				JOIN FornecedorParametro fp ON fp.IDFornecedorParametro = id.idFornecedorParametro
+				LEFT JOIN FornecedorCDParametro fcp ON fcp.IDFornecedorParametro = fp.IDFornecedorParametro
+					AND fcp.IDCD = cd.IDCD
+				LEFT JOIN ReabastecimentoFornecedorCD rfc ON rfc.idFornecedorParametro = fp.IDFornecedorParametro
+					AND rfc.idCD = cd.IDCD
+				LEFT JOIN ReabastecimentoItemFornecedorCD rifc ON rifc.idFornecedorParametro = fp.IDFornecedorParametro
+					AND rifc.idCD = cd.IDCD
+					AND rifc.idItemDetalhe = id.IDItemDetalhe
+				WHERE (
+						(
+							ISNULL(fcp.cdTipo, fp.cdTipo) = 'L'
+							AND COALESCE(rifc.TipoReabastecimento, rfc.TipoReabastecimento, id.vlTipoReabastecimento) IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								)
+							)
+						OR (
+							id.vlTipoReabastecimento IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								)
+							)
+						)
+					AND (
+						(
+							id.tpVinculado = 'E'
+							AND ids.IDItemDetalhe IS NOT NULL
+							)
+						OR id.tpVinculado IS NULL
+						)
+					AND (
+						id.tpManipulado = 'P'
+						OR id.tpManipulado IS NULL
+						)
+					AND (
+						id.tpReceituario = 'I'
+						OR id.tpReceituario IS NULL
+						)
+					AND id.tpStatus = 'A'
+					AND id.blAtivo = 1
+					AND id.blItemTransferencia = 0
+				GROUP BY cd.IDCD
+					,id.IDItemDetalhe
+					,ids.IDItemDetalhe
+					,fcp.cdTipo
+					,fp.cdTipo
+					,rifc.TipoReabastecimento
+					,rfc.TipoReabastecimento
+					,id.vlTipoReabastecimento
+					,rifc.EstoqueSeguranca
+			END
+				~
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

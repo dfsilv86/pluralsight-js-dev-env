@@ -1,0 +1,105 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'itemValidStores'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="pesquisaItensReturnSheet">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary"
+                                ng-disabled="!hasChanges() || !data.podeSerEditada"
+                                ng-click="save()">
+                            <i class="glyphicon glyphicon-save" security-action="ReturnSheetItemPrincipal.SalvarLojas" /> &nbsp; {{::'save'|translate}}
+                        </button>
+                        <button class="btn btn-danger"
+                                mwl-confirm
+                                title="{{::'confirmRemoveTitle'|translate }}"
+                                message="{{ data.jaComecou ? 'runningReturnSheetItemDeletingWarning' : 'confirmRemoveMessage'|translate }}"
+                                on-confirm="remove()"
+                                confirm-text="{{::'confirm'|translate|capitalize }}"
+                                cancel-text="{{::'cancel'|translate|capitalize }}"
+                                ng-disabled="!data.enableRemove || !data.podeSerEditada" security-action="ReturnSheetItemPrincipal.RemoverItem">
+                            <i class=" glyphicon glyphicon-remove" /> &nbsp; {{::'exclude'|translate}}
+                        </button>
+                        <button class="btn btn-default"
+                                mwl-confirm
+                                title="{{::'confirmBackTitle'|translate }}"
+                                message="{{::'confirmBackMessage'|translate }}"
+                                on-confirm="back(false)"
+                                is-disabled="!hasChanges()"
+                                ng-click="backWithoutChanges()">
+                            <i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'returnSheetPeriod'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <input type="text" ng-model="data.returnSheet.periodo" class="form-control input-width-large" ng-disabled="true" />
+                    </form-field>
+                    <form-field title="{{::'returnDescription'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <input type="text" ng-model="data.returnSheet.descricao" class="form-control input-width-large" ng-disabled="true" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <lookup-departamento name="department" ng-model="data.returnSheet.departamento.cdDepartamento" item-out="data.departamento" sistema="1" required ng-disabled="true"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'stockControlItem'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <lookup-item ng-model="data.cdItem" sistema="data.cdSistema" item-out="data.item" disabled required></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'priceSale'|translate|capitalize}}" line-w line-width="12" grid-width="12">
+                        <input type="text" ng-model="data.precoVenda" maxlength="13" ui-number-mask="2" class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'uF'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <select ui-select2 class="dropdown full-width-fix input-width-small" name="uf" ng-model="data.dsEstado">
+                            <option value="">{{::'all'|translate}}</option>
+                            <option ng-repeat="item in data.estados" value="{{::item}}">
+                                {{::item}}
+                            </option>
+                        </select>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding" style="margin-bottom: 4px;">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier" ng-click="orderBy('cdLoja')">{{::'store'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdLoja"></sort-indicator></th>
+                            <th class="domain" ng-click="orderBy('nmLoja')">{{::'storeName'|translate|capitalize}} <sort-indicator ng-model="data.values" name="nmLoja"></sort-indicator></th>
+                            <th class="domain" ng-click="orderBy('dsEstado')">{{::'state'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsEstado"></sort-indicator></th>
+                            <th class="identifier" ng-click="orderBy('cdCD')">{{::'cd'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdCD"></sort-indicator></th>
+                            <th class="currency">{{::'priceSale'|translate|capitalize}}</th>
+                            <th class="double domain symbol" ng-click="orderBy('selecionado')">
+                                <input type="checkbox" ng-model="data.todosMarcado" ng-click="marcarTodos(event)" ng-checked="data.todosMarcado" />
+                                {{::'selectAll'|translate|capitalize}}
+                                <sort-indicator ng-model="data.values" name="selecionado" style="margin-right: 2px;"></sort-indicator>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values">
+                            <td class="identifier">{{item.cdLoja}}</td>
+                            <td>{{item.nmLoja}}</td>
+                            <td class="domain">{{item.dsEstado}}</td>
+                            <td class="identifier">{{item.cdCD}}</td>
+                            <td class="currency">
+                                <input type="text" ng-model="item.precoVenda" ng-change="changedItem(item)" maxlength="13" ui-number-mask="2" class="form-control input-width-xlarge number" />
+                            </td>
+                            <td class="double domain symbol">
+                                <input type="checkbox" ng-model="item.selecionado" ng-checked="item.selecionado" />
+                            </td>
+                        </tr>
+                        <tr ng-if="!data.values || data.values.length === 0">
+                            <td colspan="6" class="domain">{{::'noStoreFound'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

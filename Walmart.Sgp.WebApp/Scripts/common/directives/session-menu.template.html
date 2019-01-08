@@ -1,0 +1,49 @@
+﻿<div class="session-info">
+    
+    <div>
+        <span class="glyphicon glyphicon-time"></span> {{lastRequestDate|amDateFormat:'DD/MM/YY HH:mm'}}
+    </div>
+
+    <div class="full-name">
+        <span class="glyphicon glyphicon-user"></span> {{::user|userProfile}} - {{::user.role.name}}
+    </div>
+
+    <div>
+        <span class="glyphicon glyphicon-cloud"></span> {{::serverName}}
+    </div>
+
+    <div class="change-password">
+        <a ng-click="alterarSenha()"><span class="glyphicon glyphicon-lock"></span>{{ ::'changePassword'|translate}}</a>
+    </div>
+
+    <div class="log-out">
+        <a ng-click="logout()"><span class="glyphicon glyphicon-off"></span>{{::'logOut'|translate}}</a>
+    </div>
+
+    <ul class="nav navbar-nav navbar-right" ng-if="false">
+        <!-- User Login Dropdown -->
+        <li class="dropdown user">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="max-width:186px;white-space:nowrap;" title="{{::user|userProfile}}">
+                <i class="icon-male pull-left" style="font-size:14px;margin-top:2px;"></i>
+                <i class="icon-caret-down pull-right" style="font-size:14px;margin-top:2px;"></i>
+                <div class="unbreakable pull-left user-full-name" style="max-width:0px;font-weight:bold;">
+                    {{::user.fullName}}
+                </div>
+                <span class="user-login-name" style="font-weight:bold;">
+                    ({{::user.userName}})
+                </span>
+            </a>
+            <ul class="dropdown-menu">
+                <li class="align-center" style="cursor:default"> <i class="icon-group"></i> {{::user.role.name}} </li>
+                <li class="divider"></li>
+                <!--<li class="align-center" style="cursor:default"> <i class="icon-cloud"></i> Versão da web api: {{::webApi.version}} </li>
+                <li class="divider"></li>-->
+                <li> <a ng-click="alterarSenha()"><i class="icon-key"></i>{{ ::'changePassword'|translate}}</a></li>
+                <li class="divider"></li>
+                <li> <a ng-click="lockScreen()"><i class="glyphicon glyphicon-lock"></i>{{::'doLockScreen'|translate}}</a></li>
+                <li> <a ng-click="logout()"><i class="glyphicon glyphicon-off"></i>{{::'logOut'|translate}}</a></li>
+            </ul>
+        </li>
+        <!-- /user login dropdown -->
+    </ul>
+</div>

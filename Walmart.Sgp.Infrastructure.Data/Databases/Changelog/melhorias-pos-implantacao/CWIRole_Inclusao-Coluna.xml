@@ -1,0 +1,59 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="melhorias-pos-implantacao_CWIRole_Inclusao-Coluna" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[  
+				ALTER TABLE CWIRole 
+					ADD IsLoja BIT;
+				~
+				
+				ALTER TABLE CWIRole 
+					ADD CONSTRAINT DF_CWIRole_isLoja DEFAULT ((0)) FOR isLoja;
+				~
+
+				UPDATE CWIRole 
+					SET IsLoja = 0;
+				~
+				
+				ALTER TABLE CWIRole 
+					ALTER COLUMN IsLoja BIT NOT NULL;
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					ALTER TABLE CWIRole
+						DROP CONSTRAINT DF_CWIRole_isLoja;
+				
+					ALTER TABLE CWIRole
+						DROP COLUMN IsLoja;
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+	
+	<changeSet id="melhorias-pos-implantacao_CWIRole_Atualizacao-IsLoja" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				UPDATE CWIRole
+					SET IsLoja = 1
+					WHERE Description like '%GA%'
+						OR Description like '%GD%';
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					UPDATE CWIRole
+						SET IsLoja = 0;
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

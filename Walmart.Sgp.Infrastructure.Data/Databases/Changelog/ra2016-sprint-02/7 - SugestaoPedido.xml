@@ -1,0 +1,40 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-SugestaoPedido" author="edapper">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				IF NOT EXISTS (
+				  SELECT * 
+				  FROM   sys.columns 
+				  WHERE  object_id = OBJECT_ID(N'[dbo].[SugestaoPedido]') 
+						 AND name = 'blAtendePedidoMinimoItem'
+				)
+				BEGIN
+					ALTER TABLE SugestaoPedido ADD blAtendePedidoMinimoItem BIT NULL;
+				END
+
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					IF EXISTS (
+					  SELECT * 
+					  FROM   sys.columns 
+					  WHERE  object_id = OBJECT_ID(N'[dbo].[SugestaoPedido]') 
+							 AND name = 'blAtendePedidoMinimoItem'
+					)
+					BEGIN
+						ALTER TABLE SugestaoPedido DROP COLUMN blAtendePedidoMinimoItem;
+					END
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

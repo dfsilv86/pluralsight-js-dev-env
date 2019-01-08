@@ -1,0 +1,48 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::(modo=='new'?'stateCadastroInventarioAgendamentoNewName':(modo=='edit'?'stateCadastroInventarioAgendamentoEditName':'stateCadastroInventarioAgendamentoManyEditName'))|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalheLojaCdParametro">
+                <div class="form-group actions">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary" ng-click="confirmSave()" security-action="Inventario.SalvarAgendamento"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                    <div class="col-md-4 align-right">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.bandeira.cdSistema" required ng-disabled="modo != 'new'"></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8" ng-if="modo != 'editMany'">
+                        <dropdown-bandeira ng-model="data.bandeira.idBandeira" sistema="data.bandeira.cdSistema" item-out="data.tempBandeira" required ng-disabled="modo != 'new'"></dropdown-bandeira>
+                    </form-field>
+                </div>
+                <div class="form-group" ng-if="modo != 'editMany' || modo == 'new'">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12" ng-if="modo != 'editMany'">
+                        <lookup-loja ng-model="data.loja.cdLoja" bandeira="data.bandeira.idBandeira" sistema="data.bandeira.cdSistema" description-width="large" ng-disabled="modo != 'new' || data.todasLojasMarcado"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'allStores'|translate|capitalize}}" line-width="6" grid-width="12" ng-if="modo == 'new'">
+                        <input type="checkbox" name="allStores" ng-model="data.todasLojasMarcado" class="input-width-medium" ng-click="data.loja.cdLoja = null" />
+                    </form-field>
+                </div>
+                <div class="form-group" ng-if="modo != 'editMany' || modo == 'new'">
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12" ng-if="modo != 'editMany'">
+                        <lookup-departamento ng-model="data.departamento.cdDepartamento" sistema="data.bandeira.cdSistema" modo-pereciveis="restrito" description-width="large" ng-disabled="modo != 'new' || data.todosDepartamentosMarcado"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'allDepartaments'|translate|capitalize}}" line-width="6" grid-width="12" ng-if="modo == 'new'">
+                        <input type="checkbox" name="allDepartaments" ng-model="data.todosDepartamentosMarcado" class="input-width-medium" ng-click="data.departamento.cdDepartamento = null" />
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'date'|translate|capitalize}}" line-width="6">
+                        <datepicker name="date" ng-model="data.dtAgendamento" required></datepicker>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+

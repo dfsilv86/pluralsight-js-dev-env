@@ -1,0 +1,69 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaDepartamentoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStruct'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required read-only></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'division'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-divisao ng-model="filters.cdDivisao" sistema="filters.cdSistema" item-out="filters.divisao" description-width="medium"></lookup-divisao>
+                    </form-field>
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="cdDepartamento" ng-model="filters.cdDepartamento" number maxlength="2" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="dsDepartamento" ng-model="filters.dsDepartamento" maxlength="25" class="form-control input-full-width" />
+                    </form-field>
+                    <form-field title="{{::'perishablesOnly'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <checkbox name="blPerecivel" ng-model="filters.blPerecivel" ng-disabled="modoPereciveis == 'restrito'" label="{{::'perishablesOnly'|translate|capitalize}}" show-label="false"></checkbox>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier" ng-click="orderBy('cdDepartamento')">{{::'code'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdDepartamento"></sort-indicator></th>
+                            <th ng-click="orderBy('dsDepartamento')">{{::'description'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsDepartamento"></sort-indicator></th>
+                            <th class="domain" ng-click="orderBy('blPerecivel')">{{::'perishable'|translate}} <sort-indicator ng-model="data.values" name="blPerecivel"></sort-indicator></th>
+                            <th ng-click="orderBy('cdDivisao')">{{::'division'|translate}} <sort-indicator ng-model="data.values" name="cdDivisao"></sort-indicator></th>
+                            <th class="number percentual-divergencia" ng-click="orderBy('pcDivergenciaNF')">{{::'divergencePercentage'|translate|capitalize}} <sort-indicator ng-model="data.values" name="pcDivergenciaNF"></sort-indicator></th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values" ng-click="select(item)">
+                            <td class="identifier">{{item.cdDepartamento}}</td>
+                            <td>{{item.dsDepartamento}}</td>
+                            <td class="domain">{{item.blPerecivel|lowercase|translate}}</td>
+                            <td>{{item.divisao|divisionProfile}}</td>
+                            <td class="number percentual-divergencia">{{item.pcDivergenciaNF|percentage}}</td>
+                            <td class="action">
+                                <edit-button ng-click="detail(item)"></edit-button>
+                            </td>
+                        </tr>
+                        <tr ng-if="!data.values || data.values.length === 0">
+                            <td colspan="6" class="domain">{{::'noData'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>                
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

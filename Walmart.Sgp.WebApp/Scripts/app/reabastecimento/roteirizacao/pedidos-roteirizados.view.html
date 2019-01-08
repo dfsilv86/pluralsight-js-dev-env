@@ -1,0 +1,86 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'scriptedOrders'|translate|capitalize}} {{::filters.titulo|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                        <button class="btn btn-default" ng-click="authorize()" ng-disabled="!filters.temMarcado" security-action="RoteiroPedido.AutorizarPedidos"><i class="glyphicon glyphicon-pencil" /> &nbsp; {{::'authOrder'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'orderDate'|translate|capitalize}}" line-width="6">
+                        <datepicker name="orderDate" ng-model="filters.dtPedido" required></datepicker>
+                    </form-field>
+                    <form-field title="{{::'orderScript'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" class="form-control" ng-model="filters.script" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" item-out="filters.departamento" sistema="1" modo-pereciveis="restrito" required></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'orderStatus'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <select ui-select2 class="dropdown" data-placeholder="Todos" ng-model="filters.status">
+                            <option></option>
+                            <option value="">Todos</option>
+                            <option value="true">Autorizado</option>
+                            <option value="false">Não Autorizado</option>
+                        </select>
+                    </form-field>
+                    <form-field title="{{::'vendorNineDigitsCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-vendor-nove-digitos ng-model="filters.v9D" name="vendor" sistema="1"></lookup-vendor-nove-digitos>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <!-- TODO: componente de grid -->
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="double identifier" ng-click="orderBy('cdV9D')">{{::'vendorNineDigitsCode'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdV9D"></sort-indicator></th>
+                            <th ng-click="orderBy('nmFornecedor')">{{::'vendorName'|translate|capitalize}} <sort-indicator ng-model="data.values" name="nmFornecedor"></sort-indicator></th>
+                            <th ng-click="orderBy('descricao')">{{::'orderScript'|translate|capitalize}} <sort-indicator ng-model="data.values" name="descricao"></sort-indicator></th>
+                            <th class="double number">{{::'orderingTotal'|translate|capitalize}}</th>
+                            <th class="double number">{{::'finishedTotal'|translate|capitalize}}</th>
+                            <th class="double domain">{{::'typeOfReference'|translate|capitalize}}</th>
+                            <th class="double number">{{::'totalReferenceLoad'|translate|capitalize}}</th>
+                            <th ng-click="orderBy('blAutorizado')">{{::'authorizedScript'|translate|capitalize}} <sort-indicator ng-model="data.values" name="blAutorizado"></sort-indicator></th>
+                            <th class="domain message">{{::'authOrder'|translate|capitalize}}?</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="double identifier">{{item.cdV9D}}</td>
+                            <td>{{item.nmFornecedor}}</td>
+                            <td>{{item.descricao}}</td>
+                            <td class="double number">{{item.totalPedido}}</td>
+                            <td class="double number">{{item.totalPedidoRA}}</td>
+                            <td class="double domain">{{item.blKgCx|fixedValue:'tipoCarga'|translate}}</td>
+                            <td class="double number">{{item.vlCargaMinima}}</td>
+                            <td title="{{item.blAutorizado ? (item.dhAutorizacao|date:'dd/MM/yyyy HH:mm:ss') + ' - ' + item.usuarioAutorizacao : ''}}" ng-click="">{{item.blAutorizado ? 'yes' : 'no' |translate|capitalize}}</td>
+                            <td class="domain message"><input type="checkbox" ng-model="item.chkAutorizar" value="{{item.blAutorizado}}" ng-disabled="item.blAutorizado" ng-change="temMarcadoParaAutorizar()" /></td>
+                            <td class="action">
+                                <edit-button ng-click="edit(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="10" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

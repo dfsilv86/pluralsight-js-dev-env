@@ -1,0 +1,21 @@
+﻿<div class="navbar navbar-fixed-top" role="banner" ng-if="header.show">
+    <div class="container">
+
+        <!-- Logo -->
+        <a class="navbar-brand" ng-click="goHome()">
+            <div style="color: #5F799B; font-size: 21px;">
+                <strong>Walmart</strong>
+                <img src="Content/images/logo.png" width="41" height="41" style="margin-top:-4px;">
+                <strong>SGP</strong>
+            </div>
+        </a>
+        <!-- /logo -->
+
+        <session-menu></session-menu>
+
+    </div>
+</div>
+
+<application-menu ng-if="header.show"></application-menu>
+
+<application-breadcrumbs ng-if="header.show"></application-breadcrumbs>

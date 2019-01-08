@@ -1,0 +1,83 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaMonitorCargaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema"></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.bandeira" show-select="true"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.loja" description-width="large"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'date'|translate|capitalize}}" line-width="6">
+                        <datepicker name="date" ng-model="filters.data" required></datepicker>
+                    </form-field>                   
+                </div>
+            </form>
+        </widget>         
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;"><div class="unbreakable" style="width: 80px;">{{::'chain'|translate|capitalize}}</div></th>
+                            <th style="width: 140px;"><div class="unbreakable" style="width: 140px;">{{::'store'|translate|capitalize}}</div></th>
+                            <th class="domain message">{{::'generalStatus'|translate|capitalize}}</th>
+                            <th ng-repeat="carga in data.colunasCargas" class="domain symbol">{{::carga.nome}}</th>     
+                            <th class="action"></th>                                                   
+                        </tr>                        
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td style="width: 80px;" title="{{item.bandeira.dsBandeira}}"><div class="unbreakable" style="width: 80px;">{{item.bandeira.dsBandeira}}</div></td>
+                            <td style="width: 140px;" title="{{item.loja|storeProfile}}"><div class="unbreakable" style="width: 140px;">{{item.loja|storeProfile}}</div></td>
+                            <td class="domain message"><processo-carga-status ng-model="item.statusGeral"></processo-carga-status></td>
+                            <td ng-repeat="carga in ::item.cargas" class="domain symbol"><processo-carga-status ng-model="carga.status"></processo-carga-status></td>
+                            <td class="action">
+                                <detail-button ng-click="detail(item)"></detail-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <!-- colspan="4" porque uma das colunas acima é template para geração dinâmica, não estando presente caso não haja resultados. -->
+                            <td colspan="4" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>   
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>           
+            </div>
+        </widget>
+        <widget title="{{::'legend'|translate|capitalize}}" has-box="true" is-open="false">            
+            <dl class="list-inline">
+                <li>
+                    <processo-carga-status value="NaoIniciado"></processo-carga-status> {{ ::'processoCargaStatusFixedValueNaoIniciado'|translate}}
+                </li>
+                <li>
+                    <processo-carga-status value="EmAndamento"></processo-carga-status> {{ ::'processoCargaStatusFixedValueEmAndamento'|translate}}
+                </li>  
+                <li>
+                    <processo-carga-status value="Concluido"></processo-carga-status> {{ ::'processoCargaStatusFixedValueConcluido'|translate}}
+                </li>
+                <li>
+                    <processo-carga-status value="Erro"></processo-carga-status> {{ ::'processoCargaStatusFixedValueErro'|translate}}
+                </li>                  
+            </dl>            
+        </widget>
+    </div>
+</div>

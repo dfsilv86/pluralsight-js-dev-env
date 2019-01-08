@@ -1,0 +1,36 @@
+﻿<div class="process-notification-area" ng-if="isVisible || isPresentingNotification">
+    <a class="title" ng-click="toggleOpen()">
+        <span class="title-icon icon-gears"></span>
+        {{::'processNotificationArea'|translate|capitalize}} <span class="title-complement label label-danger" ng-if="data.processOrders.totalCount > 0">{{data.processOrders.totalCount|number:0}}</span>
+        <div class="title-button">
+            <span ng-if="isVisible&&isOpen" class="icon-chevron-down"></span>
+            <span ng-if="isVisible&&!isOpen&&!isPresentingNotification" class="icon-chevron-up"></span>
+            <span ng-if="(!isVisible||!isOpen)&&isPresentingNotification" class="icon-pushpin"></span>
+        </div>
+    </a>
+    <div class="content" ng-if="isOpen || isPresentingNotification">
+        <table class="table table-condensed">
+            <tbody ng-if="data.processOrders && data.processOrders.length > 0">
+                <tr ng-repeat="order in data.processOrders | orderBy:'modifiedDate':true | limitTo:3 track by order.ticket" title="{{order.message}}">
+                    <td>{{'process' + order.processName|translate}}</td>
+                    <td>{{order.state|enum:'processOrderState'|translate}} (<span am-time-ago="order.endDate||order.startDate||order.modifiedDate||order.createdDate"></span>)</td>
+                    <td class="domain">                        
+                        <process-state-indicator ng-model="order"></process-state-indicator>
+                    </td>
+                    <td class="action">
+                        <detail-button ng-if="order.state != 'ResultsAvailable'" ng-click="viewDetails(order)"></detail-button>
+                        <button ng-if="order.state == 'ResultsAvailable'" ng-click="viewResults(order)" title="{{::'viewResults'|translate}}"><span class="glyphicon glyphicon-new-window"></span></button>
+                    </td>
+                </tr>
+                <tr ng-if="data.processOrders.length > 3">
+                    <td colspan="4" class="domain message"><a ng-click="viewManager()" style="cursor:pointer;">{{::'seeMore'|translate}}</a></td>
+                </tr>
+            </tbody>
+            <tbody ng-if="!data.processOrders || data.processOrders.length == 0">
+                <tr>
+                    <td class="domain">{{::'noData'|translate}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

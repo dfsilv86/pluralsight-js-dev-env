@@ -1,0 +1,17 @@
+<Project ToolsVersion="4.0" DefaultTargets="DeployPublish" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+	<VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+	</PropertyGroup>
+    <UsingTask TaskName="HttpRequest " 
+        AssemblyFile="..\packages\MSBuildTasks.1.5.0.196\tools\MSBuild.Community.Tasks.dll"/>
+    
+    	<Target Name="DeployPublish">
+    		<Message text="Starting Slack notification..." />
+    		
+    		<HttpRequest Url="hdsfasdfdsfsafdsom/index.php?checkdb=1" 
+                EnsureResponseContains="Database upgrade check completed successfully." 
+                FailOnNon2xxResponse="true" />
+
+    		<Message text="Slack notification." />
+	</Target>
+</Project>

@@ -1,0 +1,71 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateCadastroRoteiroEntregaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                        <button class="btn btn-default" ng-click="new()"><i class="glyphicon glyphicon-file" /> &nbsp; {{::'new'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'vendorNineDigitsCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-vendor-nove-digitos name="vendor" ng-model="filters.cdV9D" sistema="filters.cdSistema" item-out="filters.vendor" description-width="large"></lookup-vendor-nove-digitos>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" divisao="filters.cdDivisao" modo-pereciveis="restrito" excluir-padaria="true" description-width="large" item-out="temp.departamento"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.bandeira" sistema="filters.cdSistema" description-width="large" item-out="temp.loja"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'orderScript'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" class="form-control" ng-model="filters.script" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <!-- TODO: componente de grid -->
+                <table class="table pesquisa-roteiro table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier" ng-click="orderBy('cdV9D')">{{::'vendorNineDigitsCode'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdV9D"></sort-indicator></th>
+                            <th>{{::'vendorName'|translate|capitalize}}</th>
+                            <th class="domain">{{::'typeOfReference'|translate|capitalize}}</th>
+                            <th class="number">{{::'totalReferenceLoad'|translate|capitalize}}</th>
+                            <th ng-click="orderBy('Descricao')">{{::'orderScript'|translate|capitalize}} <sort-indicator ng-model="data.values" name="Descricao"></sort-indicator></th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="identifier">{{item.cdV9D}}</td>
+                            <td>{{item.fornecedor.nmFornecedor}}</td>
+                            <td class="domain">{{item.blKgCx|fixedValue:'tipoCarga'|translate}}</td>
+                            <td class="number">{{item.vlCargaMinima}}</td>
+                            <td>{{item.descricao}}</td>
+                            <td class="action">
+                                <edit-button ng-click="edit(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="6" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

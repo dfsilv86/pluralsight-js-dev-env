@@ -1,0 +1,73 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="manageProcesses">
+    <modal-breadcrumb title="{{::'manageProcess'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button ng-click="refresh()" class="btn btn-primary">
+                <span class="glyphicon glyphicon-refresh"></span> &nbsp; {{::'refresh'|translate}}
+            </button>
+            <button ng-click="viewLogs()" class="btn btn-default">
+                <span class="glyphicon glyphicon-list-alt"></span> &nbsp; {{::'viewLogs'|translate|capitalize}}
+            </button>
+            <button ng-click="viewResults()" ng-disabled="data.state!=='ResultsAvailable'" class="btn btn-default">
+                <span class="glyphicon glyphicon-download-alt"></span> &nbsp; {{::'viewResults'|translate|capitalize}}
+            </button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'processName'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" class="form-control look-alive input-width-large" value="{{'process' + data.processName|translate}}" readonly="readonly" />
+        </form-field>
+        <form-field title="{{::'ticket'|translate}}" line-width="6" grid-width="12">
+            <input type="text" class="form-control look-alive input-width-large" value="{{data.ticket}}" readonly="readonly" />
+        </form-field>
+        <form-field title="{{::'createdBy'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-usuario ng-model="data.createdUser.userName" usuario="data.createdUserId" ng-disabled="true" item-out="data.createdUser"></lookup-usuario>
+        </form-field>
+        <form-field title="{{::'createdDate'|translate|capitalize}}" line-width="6" grid-width="7">
+            <input type="text" class="form-control look-alive input-width-large" value="{{data.createdDate|amDateFormat:'DD/MM/YYYY HH:mm:ss'|coalesce:'-'}}" readonly="readonly" />
+        </form-field>
+        <form-field title="{{::'processState'|translate|capitalize}}" line-width="6" grid-width="8">
+            <input type="text" class="form-control look-alive input-width-large" value="{{data.state|enum:'processOrderState'|translate}}" readonly="readonly" />
+        </form-field>
+        <form-field title="{{::'statusDate'|translate|capitalize}}" line-width="6" grid-width="7">
+            <input type="text" class="form-control look-alive input-width-large" value="{{data.modifiedDate|amDateFormat:'DD/MM/YYYY HH:mm:ss'|coalesce:'-'}}" readonly="readonly" />
+        </form-field>
+        <form-field title="{{::'currentProgress'|translate|capitalize}}" line-width="6" grid-width="6">
+            <input type="text" class="form-control look-alive input-width-large" value="{{data.currentProgressPercentage|number:0}}%" readonly="readonly" />
+        </form-field>
+        <form-field-placeholder>
+        </form-field-placeholder>
+        <form-field title="{{::'message'|translate|capitalize}}" line-width="12" grid-width="12">
+            <span class="form-control" style="height:auto;max-height:50px;overflow-y:auto;">{{data.message|coalesce:'-'}}</span>
+        </form-field>
+    </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table complex table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width:30%;">{{::'parameter'|translate}}</th>
+                        <th style="width:70%;">{{::'value'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.pagedArguments && data.pagedArguments.length > 0" ng-repeat="item in data.pagedArguments">
+                        <td>{{item.argumentName|translate|capitalize}}</td>
+                        <td>{{item.argumentValue}}</td>
+                    </tr>
+                    <tr ng-if="!data.pagedArguments || data.pagedArguments.length === 0">
+                        <td colspan="2" class="domain">{{::'noData'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.pagedArguments" page-method="searchArguments" settings="data.pagedArguments"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

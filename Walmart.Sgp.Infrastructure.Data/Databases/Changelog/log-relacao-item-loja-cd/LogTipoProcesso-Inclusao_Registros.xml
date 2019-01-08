@@ -1,0 +1,42 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-LogTipoProcesso-Inclusao_Registros" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				INSERT INTO LogTipoProcesso (Descricao) VALUES('Rotina Diária de Compra Casada');
+				~
+				
+				INSERT INTO LogTipoProcesso (Descricao) VALUES('Rotina Diária de Reabastecimento Item/Loja');
+				~
+				
+				INSERT INTO LogTipoProcesso (Descricao) VALUES('Vincular Massivamente Cadastro Reabastecimento Item/Loja');
+				~
+				
+				INSERT INTO LogTipoProcesso (Descricao) VALUES('Desvincular Massivamente Cadastro Reabastecimento Item/Loja');
+				~
+				
+				INSERT INTO LogTipoProcesso (Descricao) VALUES('Cadastro Manual de Reabastecimento Item/Loja');
+				~
+				
+				INSERT INTO LogTipoProcesso (Descricao) VALUES('Cadastro de Compra Casada');
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+				DELETE FROM LogTipoProcesso WHERE IdProcesso BETWEEN 22 AND 27;
+				~
+				
+				DBCC CHECKIDENT (LogTipoProcesso, RESEED, 21);
+				~
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,13 @@
+﻿<div class="input-group datepicker-container">
+    <input type="text" class="form-control" ng-model="vm.value" ng-required="ngRequired || isRequired" ng-blur="blur($event)" ng-style="ngStyle"
+           is-open="vm.isOpen" uib-datepicker-popup="{{options.format}}" clear-text="{{options.clearText}}" show-weeks="false"
+           close-text="{{options.closeText}}" current-text="{{options.currentText}}"
+           datepicker-append-to-body="true"
+           min-date="minDate" max-date="maxDate" placeholder="{{options.formatPlaceholder}}"           
+           ng-disabled="ngDisabled" name="{{datepickerName}}" on-open-focus="false" ui-inputmask-date="{{options.format}}" fix-datemask />
+    <span class="input-group-btn">
+        <button type="button" ng-style="ngStyleButton" class="btn btn-info datepicker-button" ng-click="toggle($event)" ng-disabled="ngDisabled">
+            <i class="glyphicon glyphicon-calendar"></i>
+        </button>
+    </span>
+</div>

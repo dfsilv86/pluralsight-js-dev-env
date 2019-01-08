@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@Sistema">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT NULL AS IDDepartamento, 'Todos' AS dsDepartamento, @Sistema as cdSistema
+UNION 
+SELECT IDDepartamento, 
+CONVERT(VARCHAR, cdDepartamento) + ' - ' + dsDepartamento  AS  dsDepartamento
+, cdSistema 
+FROM Departamento 
+WHERE cdSistema = ISNULL(@Sistema, cdSistema)
+	AND blPerecivel = 'S'
+ORDER BY IDDepartamento</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IDDepartamento">
+        <DataField>IDDepartamento</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="dsDepartamento">
+        <DataField>dsDepartamento</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="cdSistema">
+        <DataField>cdSistema</DataField>
+        <rd:TypeName>System.Object</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

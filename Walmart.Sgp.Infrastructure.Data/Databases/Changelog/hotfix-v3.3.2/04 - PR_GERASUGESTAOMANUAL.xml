@@ -1,0 +1,745 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="hotfix-3-3-2-PR_GERASUGESTAOMANUAL" author="dzanell">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[ 
+
+ALTER PROCEDURE [dbo].[PR_GeraSugestaoManual]
+AS
+BEGIN
+
+	DECLARE @qtdRegistrosHojePreRotina INT, @qtdRegistrosHojePosRotina INT;
+	DECLARE @dtHoje DATE = GETDATE();
+	DECLARE @dtSemanaPassada DATE = DATEADD(DAY, -7, @dtHoje);
+	DECLARE @IDLoja INT = NULL;
+	DECLARE @IDFornecedorParametro BIGINT = NULL;
+	DECLARE @DataHoraInicial DATETIME;
+	
+	SET @DataHoraInicial = GETDATE()
+
+	SELECT
+		@qtdRegistrosHojePreRotina = COUNT(*)
+	FROM
+		SugestaoPedido WITH (NOLOCK)
+	WHERE
+		dtPedido = @dtHoje
+		AND
+		cdOrigemCalculo != 'M'
+
+		
+	IF @qtdRegistrosHojePreRotina = 0
+	BEGIN
+	
+		BEGIN TRY
+
+			BEGIN TRANSACTION
+
+				IF OBJECT_ID('Tempdb..#ItensEntrada') IS NOT NULL
+					DROP TABLE #ItensEntrada
+
+
+				-- Insere todos os itens da view em tabela temporária.
+				SELECT
+					*
+				INTO
+					#ItensEntrada
+				FROM
+					VW_REAB_SugestaoPedidoItensEntrada
+
+				
+				-- Insere, na tabela de sugestões na data de hoje, sugestões que a view contenha + as da semana passada da tabela de sugestões que existam na view.
+				INSERT
+				INTO
+					SugestaoPedido (
+						IDItemDetalhePedido, 
+						IDItemDetalheSugestao,
+						IdLoja,
+						dtPedido,
+						tpWeek,
+						tpInterval,
+						cdReviewDate,
+						vlLeadTime,
+						qtVendorPackage,
+						dtProximoReviewDate,
+						dtInicioForecast,
+						dtFimForecast,
+						vlEstoqueSeguranca,
+						vlShelfLife,
+						vlLeadTimeReal,
+						blAtendePedidoMinimo,
+						IDFornecedorParametro,
+						qtdPackCompra,
+						qtdPackCompraOriginal,
+						cdOrigemCalculo,
+						vlPackSugerido1,
+						vlModulo,
+						vlEstoque,
+						vlTotalPedidosAberto,
+						vlPipeline,
+						vlForecast,
+						vlForecastMedio,
+						vlEstoqueSegurancaQtd,
+						vlQtdDiasEstoque,
+						vlSugestaoPedido,
+						vlEstoqueOriginal,
+						vlFatorConversao,
+						blPossuiVendasUltimaSemana,
+						tpStatusEnvio,
+						dhEnvioSugestao,
+						IDOrigemDadosCalculo,
+						blReturnSheet,
+						tpCaixaFornecedor,
+						vlPesoLiquido,
+						idCd,
+						vlTipoReabastecimento,
+						qtdSugestaoRoteiroRA,
+						blCDConvertido,
+						vlSaldoOO,
+						vlSaldoIW,
+						vlSaldoIT
+						)
+				SELECT
+					ID_ITEM_ENTRADA,
+					ID_ITEM_SAIDA,
+					v.IdLoja,
+					@dtHoje, -- dtPedido
+					V.TPWEEK, -- tpWeek
+					V.TPINTERVAL, -- tpInterval
+					V.CDREVIEWDATE, -- cdReviewDate
+					V.VLLEADTIME, -- vlLeadTime
+					v.qtVendorPackage,
+					'', -- dtProximoReviewDate, valor antigo: '1900-01-01' (precisa tratar na aplicação)
+					'', -- dtInicioForecast, valor antigo: '1900-01-01' (precisa tratar na aplicação)
+					'', -- dtFimForecast, valor antigo: '1900-01-01' (precisa tratar na aplicação)
+					0, -- vlEstoqueSeguranca
+					V.vlShelfLife, -- vlShelfLife
+					0, -- vlLeadTimeReal
+					0, -- blAtendePedidoMinimo, valor antigo: ISNULL(S.blAtendePedidoMinimo, 0) - Não precisará mais trazer, calculará na rotina.
+					v.IDFornecedorParametro,
+					ISNULL(S.qtdPackCompra, 0),
+					ISNULL(S.qtdPackCompraOriginal, 0), -- qtdPackCompraOriginal
+					'M', -- cdOrigemCalculo
+					0, -- vlPackSugerido1
+					v.vlModulo,
+					Estoque,
+					0, -- vlTotalPedidosAberto
+					0, -- vlPipeline
+					0, -- vlForecast
+					0, -- vlForecastMedio
+					0, -- vlEstoqueSegurancaQtd
+					0, -- vlQtdDiasEstoque
+					0, -- vlSugestaoPedido
+					0, -- vlEstoqueOriginal
+					v.vlFatorConversao,
+					0, -- blPossuiVendasUltimaSemana
+					NULL, -- tpStatusEnvio
+					NULL, -- dhEnvioSugestao
+					S.IDOrigemDadosCalculo, -- IDOrigemDadosCalculo
+					NULL, -- blReturnSheet
+					v.tpCaixaFornecedor, -- tpCaixaFornecedor
+					v.vlPesoLiquido, -- vlPesoLiquido
+					v.idCD, -- idCD
+					v.vlTipoReabastecimento, -- vlTipoReabastecimento
+					NULL, -- qtdSugestaoRoteiroRA
+					v.blCDConvertido, -- blCDConvertido
+					NULL, -- vlSaldoOO
+					NULL, -- vlSaldoIW
+					NULL  -- vlSaldoIT
+				FROM
+					#ItensEntrada AS V
+				LEFT JOIN
+					SugestaoPedido AS S WITH (NOLOCK)
+						ON S.IDItemDetalhePedido = V.ID_ITEM_ENTRADA
+						AND
+						S.IDLoja = V.IDLoja
+						AND
+						S.dtPedido = @dtSemanaPassada
+
+				-- Insere, na tabela de sugestões na data de hoje, sugestões de itens diretos que haviam na semana passada da própria tabela de sugestões.
+				INSERT
+				INTO
+					SugestaoPedido (
+						IDItemDetalhePedido, 
+						IDItemDetalheSugestao,
+						IdLoja,
+						dtPedido,
+						tpWeek,
+						tpInterval,
+						cdReviewDate,
+						vlLeadTime,
+						qtVendorPackage,
+						dtProximoReviewDate,
+						dtInicioForecast,
+						dtFimForecast,
+						vlEstoqueSeguranca,
+						vlShelfLife,
+						vlLeadTimeReal,
+						blAtendePedidoMinimo,
+						IDFornecedorParametro,
+						qtdPackCompra,
+						qtdPackCompraOriginal,
+						cdOrigemCalculo,
+						vlPackSugerido1,
+						vlModulo,
+						vlEstoque,
+						vlTotalPedidosAberto,
+						vlPipeline,
+						vlForecast,
+						vlForecastMedio,
+						vlEstoqueSegurancaQtd,
+						vlQtdDiasEstoque,
+						vlSugestaoPedido,
+						vlEstoqueOriginal,
+						vlFatorConversao,
+						blPossuiVendasUltimaSemana,
+						tpStatusEnvio,
+						dhEnvioSugestao,
+						IDOrigemDadosCalculo,
+						tpCaixaFornecedor,
+						vlPesoLiquido,
+						idCd,
+						vlTipoReabastecimento,
+						blCDConvertido)
+				SELECT
+					SP.IDItemDetalhePedido, 
+					SP.IDItemDetalheSugestao,
+					SP.IdLoja,
+					@dtHoje,
+					SP.tpWeek,
+					SP.tpInterval,
+					SP.cdReviewDate,
+					SP.vlLeadTime,
+					SP.qtVendorPackage,
+					'' AS dtProximoReviewDate, -- valor antigo: '1900-01-01' dtProximoReviewDate (precisa tratar na aplicação)
+					'' AS dtInicioForecast, -- valor antigo: '1900-01-01' dtInicioForecast (precisa tratar na aplicação)
+					'' AS dtFimForecast, -- valor antigo: '1900-01-01' dtFimForecast (precisa tratar na aplicação)
+					SP.vlEstoqueSeguranca,
+					SP.vlShelfLife,
+					SP.vlLeadTimeReal,
+					0, -- blAtendePedidoMinimo, valor antigo: SP.blAtendePedidoMinimo - Não precisará mais trazer, calculará na rotina.
+					SP.IDFornecedorParametro,
+					SP.qtdPackCompra,
+					SP.qtdPackCompraOriginal,
+					'M', -- cdOrigemCalculo
+					SP.vlPackSugerido1,
+					SP.vlModulo,
+					SP.vlEstoque,
+					SP.vlTotalPedidosAberto,
+					SP.vlPipeline,
+					0 AS vlForecast,
+					0 AS vlForecastMedio,
+					SP.vlEstoqueSegurancaQtd,
+					SP.vlQtdDiasEstoque,
+					SP.vlSugestaoPedido,
+					SP.vlEstoqueOriginal,
+					SP.vlFatorConversao,
+					SP.blPossuiVendasUltimaSemana,
+					NULL, -- tpStatusEnvio
+					NULL, -- dhEnvioSugestao
+					IDOrigemDadosCalculo,
+					SP.tpCaixaFornecedor,
+					SP.vlPesoLiquido,
+					SP.idCd,
+					SP.vlTipoReabastecimento,
+					SP.blCDConvertido
+				FROM
+					SugestaoPedido AS SP WITH (NOLOCK)
+				INNER JOIN
+					ItemDetalhe AS ID WITH (NOLOCK)
+						ON SP.IdItemDetalhePedido = ID.IdItemDetalhe
+				WHERE
+					SP.dtPedido = @dtSemanaPassada
+					AND
+					ID.tpVinculado IS NULL
+					AND
+					ID.tpReceituario IS NULL
+					AND
+					ID.tpManipulado IS NULL
+				
+				
+				-- Verifica se sugestões não-manuais fora geradas em paralelo com as manuais.
+				SELECT
+					@qtdRegistrosHojePosRotina = COUNT(*)
+				FROM
+					SugestaoPedido WITH (NOLOCK)
+				WHERE
+					dtPedido = @dtHoje
+					AND
+					cdOrigemCalculo != 'M'
+					
+					
+				-- Se não (IF), conclui o processo. Se sim (ELSE), cancela as manuais e mantêm as não-manuais geradas.
+				IF @qtdRegistrosHojePosRotina = 0
+				BEGIN
+					DROP TABLE #ItensEntrada
+					
+					
+					-- Inicia a consolidação do pedido mínimo sem adição de packs
+					SELECT DISTINCT
+						SP.IdLoja,					
+						SP.IDFornecedorParametro
+					INTO
+						#LojasFornecedores
+					FROM
+						SugestaoPedido SP
+					INNER JOIN
+						ItemDetalhe ID ON
+							SP.IDItemDetalhePedido = ID.IDItemDetalhe
+							AND
+							ID.vlTipoReabastecimento IN (33,37,7)
+					INNER JOIN
+						Loja L ON
+							L.IdLoja = SP.IdLoja
+					WHERE
+						SP.dtPedido = @dtHoje
+						
+										
+					SELECT TOP 1
+						@IDLoja = LF.IdLoja,
+						@IDFornecedorParametro = LF.IDFornecedorParametro
+					FROM
+						#LojasFornecedores AS LF
+
+
+					WHILE @IDLoja IS NOT NULL AND @IDFornecedorParametro IS NOT NULL
+					BEGIN
+
+						EXEC PRC_ATENDEPEDIDOMINIMO @IDLoja, @IDFornecedorParametro, @dtHoje, 0
+															   
+						DELETE
+							#LojasFornecedores
+						WHERE
+							IdLoja = @IDLoja
+							AND
+							IDFornecedorParametro = @IDFornecedorParametro
+
+						SET @IDLoja = NULL
+						SET @IDFornecedorParametro = NULL
+
+						SELECT TOP 1
+							@IDLoja = LF.IdLoja,
+							@IDFornecedorParametro = LF.IDFornecedorParametro
+						FROM
+							#LojasFornecedores AS LF
+							
+					END					
+					
+					EXEC PRC_ATENDEPEDIDOMINIMO_XDoc @dtHoje, NULL, NULL, 0
+
+					UPDATE SP
+						SET blReturnSheet = 1
+						FROM SugestaoPedido SP
+						INNER JOIN ReturnSheetItemLoja RSIL ON RSIL.idItemDetalhe = SP.IDItemDetalheSugestao
+							   AND RSIL.idLoja = SP.IdLoja
+							   AND RSIL.blAtivo = 1
+						INNER JOIN ReturnSheetItemPrincipal RSIP ON RSIP.idReturnSheetItemPrincipal = RSIL.idReturnSheetItemPrincipal
+							   AND RSIP.blAtivo = 1
+						INNER JOIN ReturnSheet RS ON RS.idReturnSheet = RSIP.idReturnSheet
+							   AND CAST(RS.dhInicioReturn as DATE) = SP.dtPedido
+						WHERE SP.dtPedido = @dtHoje;
+
+					DROP TABLE #LojasFornecedores					
+								
+					-- Registra na tabela de log de evento a "Rotina manual"
+					INSERT INTO [LogExecucao] (IDProcesso, DataInicio, DataTermino, dsDescricaoExecucao)
+						VALUES (
+							(SELECT IdProcesso FROM [LogTipoProcesso] WHERE Descricao = 'Importação Sugestão de Compra'),
+							@DataHoraInicial, 
+							GETDATE(),
+							'Rotina Manual')
+
+					EXEC PR_AutorizaPedido
+					
+					COMMIT TRANSACTION					
+				END
+				ELSE
+					ROLLBACK TRANSACTION
+
+		END TRY
+
+		BEGIN CATCH
+
+			ROLLBACK TRANSACTION
+
+		END CATCH
+	END
+
+END
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+
+ALTER PROCEDURE [dbo].[PR_GeraSugestaoManual]
+AS
+BEGIN
+
+	DECLARE @qtdRegistrosHojePreRotina INT, @qtdRegistrosHojePosRotina INT;
+	DECLARE @dtHoje DATE = GETDATE();
+	DECLARE @dtSemanaPassada DATE = DATEADD(DAY, -7, @dtHoje);
+	DECLARE @IDLoja INT = NULL;
+	DECLARE @IDFornecedorParametro BIGINT = NULL;
+	DECLARE @DataHoraInicial DATETIME;
+	
+	SET @DataHoraInicial = GETDATE()
+
+	SELECT
+		@qtdRegistrosHojePreRotina = COUNT(*)
+	FROM
+		SugestaoPedido WITH (NOLOCK)
+	WHERE
+		dtPedido = @dtHoje
+		AND
+		cdOrigemCalculo != 'M'
+
+		
+	IF @qtdRegistrosHojePreRotina = 0
+	BEGIN
+	
+		BEGIN TRY
+
+			BEGIN TRANSACTION
+
+				IF OBJECT_ID('Tempdb..#ItensEntrada') IS NOT NULL
+					DROP TABLE #ItensEntrada
+
+
+				-- Insere todos os itens da view em tabela temporária.
+				SELECT
+					*
+				INTO
+					#ItensEntrada
+				FROM
+					VW_REAB_SugestaoPedidoItensEntrada
+
+				
+				-- Insere, na tabela de sugestões na data de hoje, sugestões que a view contenha + as da semana passada da tabela de sugestões que existam na view.
+				INSERT
+				INTO
+					SugestaoPedido (
+						IDItemDetalhePedido, 
+						IDItemDetalheSugestao,
+						IdLoja,
+						dtPedido,
+						tpWeek,
+						tpInterval,
+						cdReviewDate,
+						vlLeadTime,
+						qtVendorPackage,
+						dtProximoReviewDate,
+						dtInicioForecast,
+						dtFimForecast,
+						vlEstoqueSeguranca,
+						vlShelfLife,
+						vlLeadTimeReal,
+						blAtendePedidoMinimo,
+						IDFornecedorParametro,
+						qtdPackCompra,
+						qtdPackCompraOriginal,
+						cdOrigemCalculo,
+						vlPackSugerido1,
+						vlModulo,
+						vlEstoque,
+						vlTotalPedidosAberto,
+						vlPipeline,
+						vlForecast,
+						vlForecastMedio,
+						vlEstoqueSegurancaQtd,
+						vlQtdDiasEstoque,
+						vlSugestaoPedido,
+						vlEstoqueOriginal,
+						vlFatorConversao,
+						blPossuiVendasUltimaSemana,
+						tpStatusEnvio,
+						dhEnvioSugestao,
+						IDOrigemDadosCalculo,
+						blReturnSheet,
+						tpCaixaFornecedor,
+						vlPesoLiquido,
+						idCd,
+						vlTipoReabastecimento,
+						qtdSugestaoRoteiroRA,
+						blCDConvertido,
+						vlSaldoOO,
+						vlSaldoIW,
+						vlSaldoIT
+						)
+				SELECT
+					ID_ITEM_ENTRADA,
+					ID_ITEM_SAIDA,
+					v.IdLoja,
+					@dtHoje, -- dtPedido
+					V.TPWEEK, -- tpWeek
+					V.TPINTERVAL, -- tpInterval
+					V.CDREVIEWDATE, -- cdReviewDate
+					V.VLLEADTIME, -- vlLeadTime
+					v.qtVendorPackage,
+					'', -- dtProximoReviewDate, valor antigo: '1900-01-01' (precisa tratar na aplicação)
+					'', -- dtInicioForecast, valor antigo: '1900-01-01' (precisa tratar na aplicação)
+					'', -- dtFimForecast, valor antigo: '1900-01-01' (precisa tratar na aplicação)
+					0, -- vlEstoqueSeguranca
+					V.vlShelfLife, -- vlShelfLife
+					0, -- vlLeadTimeReal
+					0, -- blAtendePedidoMinimo, valor antigo: ISNULL(S.blAtendePedidoMinimo, 0) - Não precisará mais trazer, calculará na rotina.
+					v.IDFornecedorParametro,
+					ISNULL(S.qtdPackCompra, 0),
+					ISNULL(S.qtdPackCompraOriginal, 0), -- qtdPackCompraOriginal
+					'M', -- cdOrigemCalculo
+					0, -- vlPackSugerido1
+					v.vlModulo,
+					Estoque,
+					0, -- vlTotalPedidosAberto
+					0, -- vlPipeline
+					0, -- vlForecast
+					0, -- vlForecastMedio
+					0, -- vlEstoqueSegurancaQtd
+					0, -- vlQtdDiasEstoque
+					0, -- vlSugestaoPedido
+					0, -- vlEstoqueOriginal
+					v.vlFatorConversao,
+					0, -- blPossuiVendasUltimaSemana
+					NULL, -- tpStatusEnvio
+					NULL, -- dhEnvioSugestao
+					S.IDOrigemDadosCalculo, -- IDOrigemDadosCalculo
+					NULL, -- blReturnSheet
+					v.tpCaixaFornecedor, -- tpCaixaFornecedor
+					v.vlPesoLiquido, -- vlPesoLiquido
+					v.idCD, -- idCD
+					v.vlTipoReabastecimento, -- vlTipoReabastecimento
+					NULL, -- qtdSugestaoRoteiroRA
+					v.blCDConvertido, -- blCDConvertido
+					NULL, -- vlSaldoOO
+					NULL, -- vlSaldoIW
+					NULL  -- vlSaldoIT
+				FROM
+					#ItensEntrada AS V
+				LEFT JOIN
+					SugestaoPedido AS S WITH (NOLOCK)
+						ON S.IDItemDetalhePedido = V.ID_ITEM_ENTRADA
+						AND
+						S.IDLoja = V.IDLoja
+						AND
+						S.dtPedido = @dtSemanaPassada
+
+				-- Insere, na tabela de sugestões na data de hoje, sugestões de itens diretos que haviam na semana passada da própria tabela de sugestões.
+				INSERT
+				INTO
+					SugestaoPedido (
+						IDItemDetalhePedido, 
+						IDItemDetalheSugestao,
+						IdLoja,
+						dtPedido,
+						tpWeek,
+						tpInterval,
+						cdReviewDate,
+						vlLeadTime,
+						qtVendorPackage,
+						dtProximoReviewDate,
+						dtInicioForecast,
+						dtFimForecast,
+						vlEstoqueSeguranca,
+						vlShelfLife,
+						vlLeadTimeReal,
+						blAtendePedidoMinimo,
+						IDFornecedorParametro,
+						qtdPackCompra,
+						qtdPackCompraOriginal,
+						cdOrigemCalculo,
+						vlPackSugerido1,
+						vlModulo,
+						vlEstoque,
+						vlTotalPedidosAberto,
+						vlPipeline,
+						vlForecast,
+						vlForecastMedio,
+						vlEstoqueSegurancaQtd,
+						vlQtdDiasEstoque,
+						vlSugestaoPedido,
+						vlEstoqueOriginal,
+						vlFatorConversao,
+						blPossuiVendasUltimaSemana,
+						tpStatusEnvio,
+						dhEnvioSugestao,
+						IDOrigemDadosCalculo,
+						tpCaixaFornecedor,
+						vlPesoLiquido,
+						idCd,
+						vlTipoReabastecimento,
+						blCDConvertido)
+				SELECT
+					SP.IDItemDetalhePedido, 
+					SP.IDItemDetalheSugestao,
+					SP.IdLoja,
+					@dtHoje,
+					SP.tpWeek,
+					SP.tpInterval,
+					SP.cdReviewDate,
+					SP.vlLeadTime,
+					SP.qtVendorPackage,
+					'' AS dtProximoReviewDate, -- valor antigo: '1900-01-01' dtProximoReviewDate (precisa tratar na aplicação)
+					'' AS dtInicioForecast, -- valor antigo: '1900-01-01' dtInicioForecast (precisa tratar na aplicação)
+					'' AS dtFimForecast, -- valor antigo: '1900-01-01' dtFimForecast (precisa tratar na aplicação)
+					SP.vlEstoqueSeguranca,
+					SP.vlShelfLife,
+					SP.vlLeadTimeReal,
+					0, -- blAtendePedidoMinimo, valor antigo: SP.blAtendePedidoMinimo - Não precisará mais trazer, calculará na rotina.
+					SP.IDFornecedorParametro,
+					SP.qtdPackCompra,
+					SP.qtdPackCompraOriginal,
+					'M', -- cdOrigemCalculo
+					SP.vlPackSugerido1,
+					SP.vlModulo,
+					SP.vlEstoque,
+					SP.vlTotalPedidosAberto,
+					SP.vlPipeline,
+					0 AS vlForecast,
+					0 AS vlForecastMedio,
+					SP.vlEstoqueSegurancaQtd,
+					SP.vlQtdDiasEstoque,
+					SP.vlSugestaoPedido,
+					SP.vlEstoqueOriginal,
+					SP.vlFatorConversao,
+					SP.blPossuiVendasUltimaSemana,
+					NULL, -- tpStatusEnvio
+					NULL, -- dhEnvioSugestao
+					IDOrigemDadosCalculo,
+					SP.tpCaixaFornecedor,
+					SP.vlPesoLiquido,
+					SP.idCd,
+					SP.vlTipoReabastecimento,
+					SP.blCDConvertido
+				FROM
+					SugestaoPedido AS SP WITH (NOLOCK)
+				INNER JOIN
+					ItemDetalhe AS ID WITH (NOLOCK)
+						ON SP.IdItemDetalhePedido = ID.IdItemDetalhe
+				WHERE
+					SP.dtPedido = @dtSemanaPassada
+					AND
+					ID.tpVinculado IS NULL
+					AND
+					ID.tpReceituario IS NULL
+					AND
+					ID.tpManipulado IS NULL
+				
+				
+				-- Verifica se sugestões não-manuais fora geradas em paralelo com as manuais.
+				SELECT
+					@qtdRegistrosHojePosRotina = COUNT(*)
+				FROM
+					SugestaoPedido WITH (NOLOCK)
+				WHERE
+					dtPedido = @dtHoje
+					AND
+					cdOrigemCalculo != 'M'
+					
+					
+				-- Se não (IF), conclui o processo. Se sim (ELSE), cancela as manuais e mantêm as não-manuais geradas.
+				IF @qtdRegistrosHojePosRotina = 0
+				BEGIN
+					DROP TABLE #ItensEntrada
+					
+					
+					-- Inicia a consolidação do pedido mínimo sem adição de packs
+					SELECT DISTINCT
+						SP.IdLoja,					
+						SP.IDFornecedorParametro
+					INTO
+						#LojasFornecedores
+					FROM
+						SugestaoPedido SP
+					INNER JOIN
+						ItemDetalhe ID ON
+							SP.IDItemDetalhePedido = ID.IDItemDetalhe
+							AND
+							ID.vlTipoReabastecimento IN (33,37,7)
+					INNER JOIN
+						Loja L ON
+							L.IdLoja = SP.IdLoja
+					WHERE
+						SP.dtPedido = @dtHoje
+						
+										
+					SELECT TOP 1
+						@IDLoja = LF.IdLoja,
+						@IDFornecedorParametro = LF.IDFornecedorParametro
+					FROM
+						#LojasFornecedores AS LF
+
+
+					WHILE @IDLoja IS NOT NULL AND @IDFornecedorParametro IS NOT NULL
+					BEGIN
+
+						EXEC PRC_ATENDEPEDIDOMINIMO @IDLoja, @IDFornecedorParametro, @dtHoje, 0
+															   
+						DELETE
+							#LojasFornecedores
+						WHERE
+							IdLoja = @IDLoja
+							AND
+							IDFornecedorParametro = @IDFornecedorParametro
+
+						SET @IDLoja = NULL
+						SET @IDFornecedorParametro = NULL
+
+						SELECT TOP 1
+							@IDLoja = LF.IdLoja,
+							@IDFornecedorParametro = LF.IDFornecedorParametro
+						FROM
+							#LojasFornecedores AS LF
+							
+					END					
+					
+					EXEC PRC_ATENDEPEDIDOMINIMO_XDoc @dtHoje, NULL, NULL
+
+					UPDATE SP
+						SET blReturnSheet = 1
+						FROM SugestaoPedido SP
+						INNER JOIN ReturnSheetItemLoja RSIL ON RSIL.idItemDetalhe = SP.IDItemDetalheSugestao
+							   AND RSIL.idLoja = SP.IdLoja
+							   AND RSIL.blAtivo = 1
+						INNER JOIN ReturnSheetItemPrincipal RSIP ON RSIP.idReturnSheetItemPrincipal = RSIL.idReturnSheetItemPrincipal
+							   AND RSIP.blAtivo = 1
+						INNER JOIN ReturnSheet RS ON RS.idReturnSheet = RSIP.idReturnSheet
+							   AND CAST(RS.dhInicioReturn as DATE) = SP.dtPedido
+						WHERE SP.dtPedido = @dtHoje;
+
+					DROP TABLE #LojasFornecedores					
+								
+					-- Registra na tabela de log de evento a "Rotina manual"
+					INSERT INTO [LogExecucao] (IDProcesso, DataInicio, DataTermino, dsDescricaoExecucao)
+						VALUES (
+							(SELECT IdProcesso FROM [LogTipoProcesso] WHERE Descricao = 'Importação Sugestão de Compra'),
+							@DataHoraInicial, 
+							GETDATE(),
+							'Rotina Manual')
+
+					EXEC PR_AutorizaPedido
+					
+					COMMIT TRANSACTION					
+				END
+				ELSE
+					ROLLBACK TRANSACTION
+
+		END TRY
+
+		BEGIN CATCH
+
+			ROLLBACK TRANSACTION
+
+		END CATCH
+	END
+
+END
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

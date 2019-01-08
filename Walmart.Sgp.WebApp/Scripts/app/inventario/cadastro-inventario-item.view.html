@@ -1,0 +1,60 @@
+﻿<div class="">
+    <modal-breadcrumb title="{{::'inventoryItemMaintenance'|translate|capitalize}}"></modal-breadcrumb>
+    <form class="form-normal form form-horizontal" novalidate="novalidate" name="filtroPesquisa">
+        <div class="form-group actions">
+            <button class="btn btn-primary" ng-click="salvar()" security-action="Inventario.SalvarInventarioItem"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'saveChanges'|translate}}</button>
+            <button class="btn btn-danger" security-action="Inventario.RemoverInventarioItem"
+                    mwl-confirm
+                    title="{{::'confirmRemoveTitle'|translate }}"
+                    message="{{ ::'doYouReallyWantToRemoveThisItemFromTheInventory'|translate }}"
+                    on-confirm="remover()"
+                    ng-disabled="!configuracao.podeExcluirItem">
+                <i class="glyphicon glyphicon-remove" /> &nbsp; {{::'remove'|translate}}
+            </button>
+            <button class="btn btn-default" ng-if="sair" ng-click="sair()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'backQuit'|translate}}</button>
+        </div>
+        <div class="form-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <form-group caption="{{::'searchBy'|translate|capitalize}}">
+                        <radio-cditem-plu name="tipoPesquisa" ng-model="configuracao.tipoPesquisa" ng-disabled="!configuracao.podeAlterarItem"></radio-cditem-plu>
+                    </form-group>                    
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <form-group caption="{{::'item'|translate|capitalize}}" ng-if="configuracao.tipoPesquisa === 'cdItem'">
+                        <lookup-item ng-model="configuracao.cdItem" sistema="configuracao.cdSistema" item-out="configuracao.itemDetalhePorCodigo" description-width="large" ng-required="configuracao.tipoPesquisa === 'cdItem'" ng-disabled="!configuracao.podeAlterarItem"></lookup-item>
+                    </form-group>
+                    <form-group caption="{{::'item'|translate|capitalize}}" ng-if="configuracao.tipoPesquisa === 'cdPLU'">
+                        <lookup-item-plu ng-model="configuracao.cdPLU" sistema="configuracao.cdSistema" item-out="configuracao.itemDetalhePorPLU" description-width="large" ng-required="configuracao.tipoPesquisa === 'cdPLU'" ng-disabled="!configuracao.podeAlterarItem"></lookup-item-plu>
+                    </form-group>
+                </div>
+                <div class="col-md-6">
+                    <form-group caption="{{::'quantity'|translate|capitalize}}" control-width="4">
+                        <input type="text" name="quantity" ng-model="data.qtItem" ui-number-mask="3" required class="form-control number" />
+                    </form-group>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <form-group caption="{{::'justified'|translate|capitalize}}">
+                        <input type="checkbox" name="justified" ng-model="data.blJustificado" class="checkbox" />
+                    </form-group>
+                </div>
+                <div class="col-md-6">
+                    <form-group caption="{{::'measurementUnit'|translate|capitalize}}" control-width="4">
+                        <input type="text" value="{{ data.itemDetalhe.tpUnidadeMedida | enum:'tipoUnidadeMedida' | translate }}" class="form-control look-alive" disabled="disabled" />
+                    </form-group>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <form-group caption="{{::'comments'|translate|capitalize}}">
+                        <textarea class="form-control" rows="4" ng-model="data.dsComentario" maxlength="800"></textarea>
+                    </form-group>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

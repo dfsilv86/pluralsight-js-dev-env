@@ -1,0 +1,139 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateManutencaoItemPrecosCustoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalhesCusto">
+                <div class="form-group actions">
+                    <div class="col-md-12 align-right">
+                        <button class="btn btn-default" ng-if="!!back" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.cdItem}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'format'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.bandeira.formato.dsFormato}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.dsItem}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'division'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.departamento.divisao|divisionProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'description2'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.dsHostItem}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.departamento|departmentProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'upc'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.cdupc}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.categoria|categoryProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'plu'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.cdplu" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'subcategory'|translate}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.subcategoria|subcategoryProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'sellUnit'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.tpUnidadeMedida|fixedValue:'tipoUnidadeMedida'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'fineline'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.fineLine|fineLineProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'itemStatus'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.tpStatus|fixedValue:'tipoStatusItem'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                </div>              
+            </form>
+        </widget>
+        <widget title="{{::'itemCostPerStore'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="loja">
+                <div class="form-group" style="margin-top: -11px">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" sistema="filters.cdSistema" item-out="filters.loja" bandeira="filters.cdBandeira"></lookup-loja>
+                    </form-field>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="action"></th>
+                                <th ng-click="sortBy('cdLoja')">{{::'store'|translate}} <sort-indicator ng-model="data.values" name="cdLoja"></sort-indicator></th>
+                                <th class="currency" ng-click="sortBy('custoCompra')">{{::'buyCost'|translate}} <sort-indicator ng-model="data.values" name="custoCompra"></sort-indicator></th>
+                                <th class="currency" ng-click="sortBy('custoContabil')">{{::'accountingCost'|translate}} <sort-indicator ng-model="data.values" name="custoContabil"></sort-indicator></th>
+                                <th class="currency" ng-click="sortBy('custoGerencial')">{{::'managementCost'|translate}} <sort-indicator ng-model="data.values" name="custoGerencial"></sort-indicator></th>
+                                <th class="currency" ng-click="sortBy('custoCadastro')">{{::'registerCost'|translate}} <sort-indicator ng-model="data.values" name="custoCadastro"></sort-indicator></th>
+                                <th class="action"></th>
+                           </tr>
+                        </thead>
+                        <tbody ng-if="data.values && data.values.length > 0">
+                            <tr ng-repeat-start="item in data.values" ng-class="{'is-expanded root':isExpanded(item)}">
+                                <td class="action">
+                                    <button ng-click="collapse(item)" ng-if="isExpanded(item)"><span class="glyphicon glyphicon-minus"></span></button>
+                                    <button ng-click="expand(item)" ng-if="!isExpanded(item)"><span class="glyphicon glyphicon-plus"></span></button>
+                                    <!-- TODO: expand-button -->
+                                </td>
+                                <td>{{item.loja|storeProfile}}</td>
+                                <td class="currency" title="{{item.custoCompra|money:'BRL':6}}">{{item.custoCompra|money:'BRL':2}}</td>
+                                <td class="currency" title="{{item.custoContabil|money:'BRL':6}}">{{item.custoContabil|money:'BRL':2}}</td>
+                                <td class="currency" title="{{item.custoGerencial|money:'BRL':6}}">{{item.custoGerencial|money:'BRL':2}}</td>
+                                <td class="currency" title="{{item.custoCadastro|money:'BRL':6}}">{{item.custoCadastro|money:'BRL':2}}</td>
+                                <td class="action">
+                                    <detail-button ng-click="detail(data.itemDetalhe, item.loja)"></detail-button>
+                                </td>
+                            </tr>
+                            <tr ng-if="isExpanded(item)" class="is-expanded" ng-repeat-end>
+                                <td></td>
+                                <td colspan="6">
+                                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                                        <thead>
+                                            <tr>
+                                                <th>{{::'item'|translate}}</th>
+                                                <th class="identifier">{{::'invoiceNumber'|translate}}</th>
+                                                <th class="number">{{::'lineNumber'|translate}}</th>
+                                                <th class="currency">{{::'buyCost'|translate}}</th>
+                                                <th class="date">{{::'receiptDate'|translate}}</th>
+                                                <th class="date">{{::'emissionDate'|translate}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody ng-if="!!item.detalhe && !!item.detalhe.length">
+                                            <tr ng-repeat="detalhe in item.detalhe">
+                                                <td>{{detalhe.estoque.itemDetalhe.dsItem}}</td>
+                                                <td class="identifier">{{detalhe.notaFiscal.nrNotaFiscal}}</td>
+                                                <td class="number">{{detalhe.nrLinha|number:0}}</td>
+                                                <td class="currency">{{detalhe.estoque.vlCustoCompraAtual|money:'BRL':2}}</td>
+                                                <td class="date">{{detalhe.notaFiscal.dtRecebimento|amDateFormat:'DD/MM/YYYY'}}</td>
+                                                <td class="date">{{detalhe.notaFiscal.dtEmissao|amDateFormat:'DD/MM/YYYY'}}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody ng-if="!item.detalhe || !item.detalhe.length">
+                                            <tr>
+                                                <td colspan="6" class="domain">{{::'noItemCostsFound'|translate}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!data.values || data.values.length === 0">
+                            <tr>
+                                <td colspan="7" class="domain">{{::'noLatestItemCostFound'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="table-footer">
+                            <div class="col-md-12">
+                                <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

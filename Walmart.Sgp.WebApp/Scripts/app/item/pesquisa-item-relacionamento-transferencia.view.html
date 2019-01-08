@@ -1,0 +1,90 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaRelacionamentoTransferenciaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.loja" description-width="large"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.departamento" description-width="large"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'itemCode2'|translate|capitalize}}" grid-width="6" line-width="6">
+                        <input type="text" name="cdItem" ng-model="filters.cdItem" ui-number-mask="0" ui-hide-group-sep maxlength="10" class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'itemDescription'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="dsItem" ng-model="filters.dsItem" maxlength="50" class="form-control input-width-large" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <!-- Grid -->
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>{{::'chain'|translate}}</th>
+                            <th>{{::'store'|translate|capitalize}}</th>
+                            <th>{{::'destDepartment'|translate|capitalize}}</th>
+                            <th class="identifier">{{::'destItemCode'|translate|capitalize}}</th>
+                            <th>{{::'description'|translate}}</th>
+                            <th class="number">{{::'destFatorConversao'|translate|capitalize}}</th>
+                            <th class="domain">{{::'measurementUnitDest'|translate|capitalize}}</th>
+                            <th>{{::'sourceDepartment'|translate|capitalize}}</th>
+                            <th class="identifier">{{::'sourceItemCode'|translate|capitalize}}</th>
+                            <th>{{::'description'|translate}}</th>
+                            <th class="number">{{::'sourceFatorConversao'|translate|capitalize}}</th>
+                            <th class="domain">{{::'measurementUnitSource'|translate|capitalize}}</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td>{{item.dsBandeira}}</td>
+                            <td>{{item.dsLoja}}</td>
+                            <td>{{item.dsDepartamentoItemDestino}}</td>
+                            <td class="identifier">{{item.cdItemDestino}}</td>
+                            <td>{{item.dsItemDestino}}</td>
+                            <td class="number">{{item.fatorConversaoItemDestino}}</td>
+                            <td class="domain">{{item.unidadeMedidaItemDestino}}</td>
+                            <td>{{item.dsDepartamentoItemOrigem}}</td>
+                            <td class="identifier">{{item.cdItemOrigem}}</td>
+                            <td>{{item.dsItemOrigem}}</td>
+                            <td class="number">{{item.fatorConversaoItemOrigem}}</td>
+                            <td class="domain">{{item.unidadeMedidaItemOrigem}}</td>
+                            <td class="action">
+                                <edit-button ng-click="select(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="13" class="domain">{{::'noData'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

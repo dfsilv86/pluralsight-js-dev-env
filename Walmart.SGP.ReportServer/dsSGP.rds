@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RptDataSource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="dsSGP">
+  <ConnectionProperties>
+    <Extension>SQL</Extension>
+    <ConnectString>Initial Catalog=WLMSLP_REE_UAT;Data Source=LABBRNTS5018; Application Name=Solução de Pereciveis; User Id=SLPUSER; password=qNpUPj;</ConnectString>
+  </ConnectionProperties>
+  <DataSourceID>fe690daf-332a-4be0-bf8f-89bc7c651f48</DataSourceID>
+</RptDataSource>

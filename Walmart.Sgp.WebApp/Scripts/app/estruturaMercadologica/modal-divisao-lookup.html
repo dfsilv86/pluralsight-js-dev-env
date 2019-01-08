@@ -1,0 +1,50 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="pesquisaDivisao">
+    <modal-breadcrumb title="{{::'divisionSearch'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+            <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'marketingStruct'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-sistema ng-model="filters.cdSistema" required read-only></dropdown-sistema>
+        </form-field>
+        <form-field-placeholder></form-field-placeholder>
+        <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="cdDivisao" ng-model="filters.cdDivisao" number maxlength="2" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+        </form-field>
+        <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="dsDivisao" ng-model="filters.dsDivisao" maxlength="25" class="form-control input-width-medium" />
+        </form-field>
+    </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="identifier">{{::'code'|translate}}</th>
+                        <th>{{::'description'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values" ng-click="select(item)">
+                        <td class="identifier">{{item.cdDivisao}}</td>
+                        <td>{{item.dsDivisao}}</td>
+                    </tr>
+                    <tr ng-if="!data.values || data.values.length === 0">
+                        <td colspan="2" class="domain">{{::'noDivisionFound'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

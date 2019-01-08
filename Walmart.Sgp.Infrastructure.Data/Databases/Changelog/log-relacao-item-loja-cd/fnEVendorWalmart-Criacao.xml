@@ -1,0 +1,50 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-fnEVendorWalmart-Criacao" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				-- =============================================
+				-- Author:		Rafael de Souza Bueno (CWI)
+				-- Create date: 10/10/2016
+				-- Description:	Verifica se o vendor passado como parâmetro é Walmart.
+				-- =============================================
+				CREATE FUNCTION fnEVendorWalmart (@cdFornecedor BIGINT)
+				RETURNS BIT
+				AS
+				BEGIN
+					RETURN (
+							SELECT CASE 
+									WHEN @cdFornecedor IN (
+											28802
+											,43690
+											,244012
+											,254586
+											,277517
+											,277650
+											,357525
+											,387093
+											,387095
+											,427101
+											,517964
+											)
+										THEN 1
+									ELSE 0
+									END
+							)
+				END
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+					DROP FUNCTION fnEVendorWalmart
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

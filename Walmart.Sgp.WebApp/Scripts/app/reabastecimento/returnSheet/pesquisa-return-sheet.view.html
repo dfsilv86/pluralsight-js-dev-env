@@ -1,0 +1,95 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'returnSheetSearch'|translate }}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+
+                        <button class="btn btn-default" ng-click="new()"><i class="glyphicon glyphicon-file" /> &nbsp; {{::'new'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'searchReturnSheetBetween'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <div class="col-md-12" style="padding:0px;margin:0px;">
+                            <div class="col-md-5" style="padding:0px;margin:0px;">
+                                <datepicker name="returnStart" class="input-width-xlarge" ng-model="filters.inicioReturn" format="dd/MM/yyyy" style="padding:0px;margin:0px;" />
+                            </div>
+                            <div class="col-md-1" style="padding:0px;margin:0px;">
+                                <label class="control-label" style="padding-left:10px;">{{::'and'|translate|capitalize}}</label>
+                            </div>
+                            <div class="col-md-5" style="padding:0px;margin:0px;">
+                                <datepicker name="returnEnd" class="input-width-xlarge" ng-model="filters.finalReturn" format="dd/MM/yyyy" style="padding:0px;margin:0px;" />
+                            </div>
+                        </div>
+                    </form-field>
+
+                    <form-field title="{{::'returnDescription'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <input type="text" name="event" class="form-control input-width-xlarge" ng-model="filters.evento" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <lookup-departamento name="department" ng-model="filters.cdDepartamento" item-out="filters.departamento" sistema="1"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'activeOnly'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <select ui-select2 class="dropdown" data-placeholder="Sim" ng-model="filters.somenteAtivos" name="somenteAtivos">
+                            <option></option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                            <option value="2">Todos</option>
+                        </select>
+                    </form-field>
+                    <form-field title="{{::'purchaseArea'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <dropdown-regiao-compra name="regiaoCompra" ng-model="filters.idRegiaoCompra" item-out="filters.regiaoCompra" class="input-width-medium" show-all></dropdown-regiao-compra>
+                    </form-field>                   
+                </div>
+            </form>
+        </widget>
+
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <!-- TODO: componente de grid -->
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th ng-click="orderBy('dsRegiaoCompra')">{{::'region'|translate}} <sort-indicator ng-model="data.values" name="dsRegiaoCompra"></sort-indicator></th>
+                            <th ng-click="orderBy('descricao')">{{::'event'|translate}} <sort-indicator ng-model="data.values" name="descricao"></sort-indicator></th>
+                            <th class="date double" ng-click="orderBy('dhInicioEvento' , 'dhFinalEvento')">{{::'eventPeriod'|translate}} <sort-indicator ng-model="data.values" name="dhInicioEvento"></sort-indicator></th>
+                            <th class="date" ng-click="orderBy('dhInicioReturn')">{{::'startDateReturnSheet'|translate}} <sort-indicator ng-model="data.values" name="dhInicioReturn"></sort-indicator></th>
+                            <th class="date time" ng-click="orderBy('dhFinalReturn')">{{::'endingDateTimeReturnSheet'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dhFinalReturn"></sort-indicator></th>
+                            <th ng-click="orderBy('username')">{{::'userName'|translate|capitalize}} <sort-indicator ng-model="data.values" name="username"></sort-indicator></th>
+                            <th class="domain symbol">{{::'active'|translate|capitalize}}</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td>{{item.regiaoCompra.dsRegiaoCompra}}</td>
+                            <td>{{item.descricao}}</td>
+                            <td>{{item.dhInicioEvento | date:'dd/MM/yyyy'}} - {{item.dhFinalEvento | date:'dd/MM/yyyy'}}</td>
+                            <td>{{item.dhInicioReturn | date:'dd/MM/yyyy'}}</td>
+                            <td>{{item.dhFinalReturn | date:'dd/MM/yyyy // HH:mm'}}</td>
+                            <td>{{item.usuario.fullName}}</td>
+                            <td>{{item.blAtivo ? 'Sim' : 'Não'}}</td>
+                            <td class="action">
+                                <edit-button class="" ng-click="edit(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="8" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

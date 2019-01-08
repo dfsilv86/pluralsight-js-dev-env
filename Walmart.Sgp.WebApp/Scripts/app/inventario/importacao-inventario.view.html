@@ -1,0 +1,66 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateImportacaoInventarioName'|translate|capitalize}}" has-b has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="ajusteEstoque">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="importar()" security-action="Inventario.ImportarManual"><i class="glyphicon glyphicon-import" /> &nbsp; {{::'import'|translate}}</button>
+                        <div class="fileUpload btn btn-info">
+                            <i class="glyphicon glyphicon-save"></i>&nbsp;
+                            {{::'addFile'|translate}}
+                            <input type="file" nv-file-select="" uploader="uploader" multiple class="upload" /><br />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="data.idBandeira" sistema="data.cdSistema"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="data.cdLoja" bandeira="data.idBandeira" sistema="data.cdSistema" item-out="data.loja" description-width="large" required></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'date'|translate|capitalize}}" line-width="6">
+                        <datepicker name="date" ng-model="data.dataInventario" required></datepicker>
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'inventoryFiles'|translate|capitalize}}" line-width="12" grid-width="12">
+                        <div nv-file-drop nv-file-over uploader="uploader">{{::'dragFilesHere'|translate}}</div>
+                    </form-field>
+                    <form-field title="" line-width="12" grid-width="12">
+                        <table class="table simple table-condensed table-no-inner-border table-responsive" ng-if="uploader.queue.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>{{::'file'|translate}}</th>
+                                    <th style="width:200px;">{{::'status'|translate}}</th>
+                                    <th style="width: 24px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in uploader.queue">
+                                    <td><span class="{{::item.isInvalid?'icon-file':'icon-file-text'}}" style="font-size: 14px;"></span> &nbsp; {{item.file.name}}</td>
+                                    <td>
+                                        <span ng-if="item.isInvalid">{{::'invalidFormat'|translate}}</span>
+                                        <span ng-if="!item.isInvalid && !item.isUploaded && !item.isUploading && !item.isSuccess && !item.isCancel && !item.isError">{{::'notSent'|translate}}</span>
+                                        <span ng-if="!item.isInvalid && item.isUploading">{{::'sending'|translate}}</span>
+                                        <span ng-if="!item.isInvalid && item.isUploaded && item.isSuccess">{{::'sent'|translate}}</span>
+                                        <span ng-if="!item.isInvalid && item.isUploaded && item.isCancel">{{::'cancelled'|translate}}</span>
+                                        <span ng-if="!item.isInvalid && item.isUploaded && item.isError">{{::'errorWhileSending'|translate}}</span>
+                                    </td>
+                                    <td>
+                                        <button ng-click="removerArquivo(item)">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

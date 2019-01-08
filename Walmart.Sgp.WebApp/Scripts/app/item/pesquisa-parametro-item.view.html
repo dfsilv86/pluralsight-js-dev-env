@@ -1,0 +1,87 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaParametroProdutoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required disabled></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'itemStatus'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-status-item-host ng-model="filters.tpStatus"></dropdown-status-item-host>
+                    </form-field>                    
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" description-width="large"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-categoria ng-model="filters.cdCategoria" sistema="filters.cdSistema" departamento="filters.cdDepartamento" description-width="large"></lookup-categoria>
+                    </form-field>
+                    <form-field title="{{::'subcategory'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-subcategoria ng-model="filters.cdSubcategoria" sistema="filters.cdSistema" departamento="filters.cdDepartamento" categoria="filters.cdCategoria" description-width="large"></lookup-subcategoria>
+                    </form-field>
+                    <form-field title="{{::'fineline'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-fine-line ng-model="filters.cdFineLine" sistema="filters.cdSistema" departamento="filters.cdDepartamento" categoria="filters.cdCategoria" subcategoria="filters.cdSubcategoria" description-width="large"></lookup-fine-line>
+                    </form-field>
+                    <form-field title="{{::'itemCode2'|translate|capitalize}}" grid-width="6" line-width="6">
+                        <input type="text" name="cdItem" ng-model="filters.cdItem" number maxlength="10" class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'itemDescription'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="dsItem" ng-model="filters.dsItem" maxlength="50" class="form-control input-width-large" />
+                    </form-field>
+                    <form-field title="{{ ::'purchaseArea'|translate|capitalize}}" g grid-width="6" line-width="6">
+                        <dropdown-regiao-compra ng-model="filters.idRegiaoCompra" show-all></dropdown-regiao-compra>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier" ng-click="orderBy('cdItem')">{{::'itemCode'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdItem"></sort-indicator></th>
+                            <th ng-click="orderBy('dsItem')">{{::'itemDescription'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsItem"></sort-indicator></th>
+                            <th class="domain parametro-item-status" ng-click="orderBy('tpStatus')">{{::'itemStatus'|translate|capitalize}} <sort-indicator ng-model="data.values" name="tpStatus"></sort-indicator></th>
+                            <th ng-click="orderBy('IDDepartamento')">{{::'department'|translate}} <sort-indicator ng-model="data.values" name="IDDepartamento"></sort-indicator></th>
+                            <th ng-click="orderBy('IDCategoria')">{{::'category'|translate}} <sort-indicator ng-model="data.values" name="IDCategoria"></sort-indicator></th>                            
+                            <th ng-click="orderBy('IDSubcategoria')">{{::'subcategory'|translate}} <sort-indicator ng-model="data.values" name="IDSubcategoria"></sort-indicator></th>
+                            <th ng-click="orderBy('IDFineLine')">{{::'fineLine'|translate}} <sort-indicator ng-model="data.values" name="IDFineLine"></sort-indicator></th>                            
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="identifier">{{item.cdItem}}</td>
+                            <td>{{item.dsItem}}</td>
+                            <td class="domain parametro-item-status">{{item.tpStatus|enum:'enTpStatusItemHost'|translate|capitalize}}</td>
+                            <td>{{item.departamento|departmentProfile}}</td>
+                            <td>{{item.categoria|categoryProfile}}</td>
+                            <td>{{item.subcategoria|subcategoryProfile}}</td>
+                            <td>{{item.fineLine|fineLineProfile}}</td>                            
+                            <td class="action">
+                                <detail-button ng-click="detail(item)"></detail-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="8" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

@@ -1,0 +1,149 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateDetalheParametroFornecedorName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal" novalidate="novalidate" name="detalhesCusto">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.cdV9D}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'vendorStatus'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.fornecedor.stFornecedor|enum:'tipoStatusItem'|translate}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'companyName'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.fornecedor.nmFornecedor}}" class="form-control input-full-width look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.fornecedor.cdSistema" disabled></dropdown-sistema>
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'corporateWeek'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-semana ng-model="data.tpWeek" disabled></dropdown-tipo-semana>
+                    </form-field>
+                    <form-field title="{{::'minimumValue'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.vlValorMinimo|number:2}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'corporateInterval'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-intervalo ng-model="data.tpInterval" disabled></dropdown-tipo-intervalo>
+                    </form-field>
+                    <form-field title="{{::'corporateLeadTime'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.vlLeadTime}}" class="form-control look-alive" number ui-number min="0" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'minimumRequest'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-pedido-minimo ng-model="data.tpPedidoMinimo" disabled></dropdown-tipo-pedido-minimo>
+                    </form-field>
+                    <form-field title="{{::'fillRate'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{ data.vlFillRate|number:2 }}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'codeType'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.cdTipo|enum:'tipoCodigoReabastecimento'|translate}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'vendorStatusRA'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.cdStatusVendor|enum:'tipoStatusFornecedorReabastecimento'|translate}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'storeApproval'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.tpStoreApprovalRequired}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget title="{{::'corporateReviewDate'|translate|capitalize}}" has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="domain">{{::'monday'|translate|capitalize}}</th>
+                            <th class="domain">{{::'tuesday'|translate|capitalize}}</th>
+                            <th class="domain">{{::'wednesday'|translate|capitalize}}</th>
+                            <th class="domain">{{::'thursday'|translate|capitalize}}</th>
+                            <th class="domain">{{::'friday'|translate|capitalize}}</th>
+                            <th class="domain">{{::'saturday'|translate|capitalize}}</th>
+                            <th class="domain">{{::'sunday'|translate|capitalize}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.cdReviewDate">
+                        <tr>
+                            <td class="domain"><semaphore value="{{data.cdReviewDate|cdReviewDate:2}}"></semaphore></td>
+                            <td class="domain"><semaphore value="{{data.cdReviewDate|cdReviewDate:3}}"></semaphore></td>
+                            <td class="domain"><semaphore value="{{data.cdReviewDate|cdReviewDate:4}}"></semaphore></td>
+                            <td class="domain"><semaphore value="{{data.cdReviewDate|cdReviewDate:5}}"></semaphore></td>
+                            <td class="domain"><semaphore value="{{data.cdReviewDate|cdReviewDate:6}}"></semaphore></td>
+                            <td class="domain"><semaphore value="{{data.cdReviewDate|cdReviewDate:7}}"></semaphore></td>
+                            <td class="domain"><semaphore value="{{data.cdReviewDate|cdReviewDate:1}}"></semaphore></td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.cdReviewDate">
+                        <tr>
+                            <td colspan="7" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </widget>
+
+        <widget title="{{::'reviewDateStoreDc'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal" name="reviewDateStoreDc" novalidate="novalidate">
+                <div class="form-group">
+                    <form-field title="{{::'details'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-detalhamento-review-date ng-model="detalhamento.tipo" ng-change="detalhar()"></dropdown-tipo-detalhamento-review-date>
+                    </form-field>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="identifier">{{::'storeDc'|translate|capitalize}}</th>
+                                <th class="number">{{::'leadTime'|translate|capitalize}}</th>
+                                <th class="domain">{{::'tpWeek'|translate|capitalize}}</th>
+                                <th class="domain">{{::'tpInterval'|translate|capitalize}}</th>
+                                <th class="domain">{{::'monday'|translate|capitalize}}</th>
+                                <th class="domain">{{::'tuesday'|translate|capitalize}}</th>
+                                <th class="domain">{{::'wednesday'|translate|capitalize}}</th>
+                                <th class="domain">{{::'thursday'|translate|capitalize}}</th>
+                                <th class="domain">{{::'friday'|translate|capitalize}}</th>
+                                <th class="domain">{{::'saturday'|translate|capitalize}}</th>
+                                <th class="domain">{{::'sunday'|translate|capitalize}}</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="detalhamento.values && detalhamento.values.length > 0">
+                            <tr ng-repeat="item in detalhamento.values">
+                                <td class="identifier">{{ item.lojaCD }}</td>
+                                <td class="number">{{ item.vlLeadTime }}</td>
+                                <td class="domain">{{ item.tpWeek|enum:'tipoSemana'|translate}}</td>
+                                <td class="domain">{{ item.tpInterval|enum:'tipoIntervalo'|translate}}</td>
+                                <td class="domain"><semaphore value="{{item.isSegunda}}"></semaphore></td>
+                                <td class="domain"><semaphore value="{{item.isTerca}}"></semaphore></td>
+                                <td class="domain"><semaphore value="{{item.isQuarta}}"></semaphore></td>
+                                <td class="domain"><semaphore value="{{item.isQuinta}}"></semaphore></td>
+                                <td class="domain"><semaphore value="{{item.isSexta}}"></semaphore></td>
+                                <td class="domain"><semaphore value="{{item.isSabado}}"></semaphore></td>
+                                <td class="domain"><semaphore value="{{item.isDomingo}}"></semaphore></td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!detalhamento.values || detalhamento.values.length === 0">
+                            <tr>
+                                <td colspan="11" class="domain">{{::'noData'|translate|capitalize}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="detalhamento.values" page-method="detalhar" settings="detalhamento.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+
+
+
+

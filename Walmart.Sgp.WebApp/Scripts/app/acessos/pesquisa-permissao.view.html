@@ -1,0 +1,72 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaPermissaoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="create()"><i class="glyphicon glyphicon-file" /> &nbsp; {{::'new'|translate}}</button>
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'user'|translate}}" line-width="6" grid-width="12">
+                        <lookup-usuario ng-model="filters.userName" item-out="filters.user" usuario="filters.cdUsuario"></lookup-usuario>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.bandeira" show-all="true"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="zero.idBandeira" sistema="filters.cdSistema" item-out="filters.loja" description-width="large"></lookup-loja>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>{{::'name'|translate|capitalize}}</th>
+                            <th class="identifier">{{::'user'|translate|capitalize}}</th>
+                            <th>{{::'chains'|translate|capitalize}}</th>
+                            <th>{{::'stores'|translate|capitalize}}</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td>{{item.usuario.fullName}}</td>
+                            <td class="identifier">{{item.usuario.userName}}</td>
+
+                            <td ng-if="item.bandeiras.length === 0"></td>
+                            <td ng-if="item.bandeiras.length === 1">{{item.bandeiras[0].bandeira.dsBandeira}}</td>
+                            <td ng-if="item.bandeiras.length > 1">{{item.bandeiras[0].bandeira.dsBandeira}} {{::'andMore'|translate}} {{item.bandeiras.length - 1}} {{::'records'|translate}}</td>
+
+                            <td ng-if="item.lojas.length === 0"></td>
+                            <td ng-if="item.lojas.length === 1">{{formatLoja(item)}}</td>
+                            <td ng-if="item.lojas.length > 1">{{formatLoja(item)}} {{::'andMore'|translate}} {{item.lojas.length - 1}} {{::'records'|translate}}</td>
+
+                            <td class="action">
+                                <edit-button ng-click="detail(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="5" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

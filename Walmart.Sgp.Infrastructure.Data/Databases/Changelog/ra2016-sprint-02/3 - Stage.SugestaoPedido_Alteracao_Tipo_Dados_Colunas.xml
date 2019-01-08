@@ -1,0 +1,37 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-SugestaoPedido_Alteracao_Tipo_Dados_Colunas" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[  
+				ALTER TABLE SugestaoPedido ALTER COLUMN vlSaldoOO DECIMAL(11,3)
+				~
+				
+				ALTER TABLE SugestaoPedido ALTER COLUMN vlSaldoIW DECIMAL(11,3)
+				~
+				
+				ALTER TABLE SugestaoPedido ALTER COLUMN vlSaldoIT DECIMAL(11,3)
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+					ALTER TABLE SugestaoPedido ALTER COLUMN vlSaldoOO INT
+					~
+				
+					ALTER TABLE SugestaoPedido ALTER COLUMN vlSaldoIW INT
+					~
+				
+					ALTER TABLE SugestaoPedido ALTER COLUMN vlSaldoIT INT
+					~
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

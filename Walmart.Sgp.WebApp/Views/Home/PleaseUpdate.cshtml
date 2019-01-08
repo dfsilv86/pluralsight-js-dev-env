@@ -1,0 +1,51 @@
+﻿@using Walmart.Sgp.Infrastructure.Framework.Globalization
+@using Walmart.Sgp.Infrastructure.Web.Extensions
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Texts.AppTitle</title>
+    <base href="~/" />
+    <meta name="description" content="SGP" />
+</head>
+<body style="font:normal 14px sans-serif;">
+    <table align="center" style="margin-top:100px;">
+        <tr>
+            <td colspan="4" style="font-size:20px;text-align:center;padding-bottom:50px;">
+                @Texts.PleaseUpdateBrowserTitle
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" style="padding-bottom: 50px;">
+                @Texts.PleaseUpdateBrowser1
+            </td>
+        </tr>
+        <tr>
+            <td style="width:295px;">
+                O acesso deve ser feito pelo Google Chrome,
+            </td>
+            <td style="width:100px;">
+                <img src="~/Content/images/google-chrome.png" title="Ícone do Google Chrome na área de trabalho." />
+            </td>
+            <td>
+                utilizando o link abaixo:
+            </td>
+            <td></td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align:left;padding-bottom:50px;padding-top:20px;">
+                Copie o link a seguir ( http://sgp.br.wal-mart.com/ ) e cole no Google Chrome.
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" style="text-align:center;">
+                <img src="~/Content/images/chrome-address-bar.png" title="Barra de endereços do navegador Google Chrome com o endereço do SGP." />
+            </td>
+        </tr>
+    </table>
+    <!--[CDATA[
+@ViewBag.Browser        
+    ]]-->
+</body>
+</html>

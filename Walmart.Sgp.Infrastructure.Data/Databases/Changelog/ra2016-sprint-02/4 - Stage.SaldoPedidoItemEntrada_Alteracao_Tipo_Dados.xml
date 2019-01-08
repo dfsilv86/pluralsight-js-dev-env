@@ -1,0 +1,87 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-SaldoPedidoItemEntrada_Alteracao_Tipo_Dados" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[  
+				DROP INDEX IX_SaldoPedidoItemEntrada ON SaldoPedidoItemEntrada;
+				~
+				
+				ALTER TABLE SaldoPedidoItemEntrada ALTER COLUMN vlSaldoOO DECIMAL(11,3)
+				~
+				
+				ALTER TABLE SaldoPedidoItemEntrada ALTER COLUMN vlSaldoIW DECIMAL(11,3)
+				~
+				
+				ALTER TABLE SaldoPedidoItemEntrada ALTER COLUMN vlSaldoIT DECIMAL(11,3)
+				~
+				
+				CREATE NONCLUSTERED INDEX [IX_SaldoPedidoItemEntrada] ON [dbo].[SaldoPedidoItemEntrada]
+					(
+						[cdItemSaida] ASC,
+						[cdFormato] ASC
+					)
+					INCLUDE ( 	[cdLoja],
+						[cdItemEntrada],
+						[vlTipoReabastecimento],
+						[vlModulo],
+						[qtVendorPackage],
+						[vlFatorConversao],
+						[tpRegiao],
+						[tpOrigem],
+						[qtSaldoPedido],
+						[qtSaldoRecebido],
+						[qtSaldoAntigo],
+						[blExisteNF],
+						[vlSaldoOO],
+						[vlSaldoIW],
+						[vlSaldoIT]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+					DROP INDEX IX_SaldoPedidoItemEntrada ON SaldoPedidoItemEntrada;
+					~
+					
+					ALTER TABLE SaldoPedidoItemEntrada ALTER COLUMN vlSaldoOO INT
+					~
+				
+					ALTER TABLE SaldoPedidoItemEntrada ALTER COLUMN vlSaldoIW INT
+					~
+				
+					ALTER TABLE SaldoPedidoItemEntrada ALTER COLUMN vlSaldoIT INT
+					~
+					
+					CREATE NONCLUSTERED INDEX [IX_SaldoPedidoItemEntrada] ON [dbo].[SaldoPedidoItemEntrada]
+					(
+						[cdItemSaida] ASC,
+						[cdFormato] ASC
+					)
+					INCLUDE ( 	[cdLoja],
+						[cdItemEntrada],
+						[vlTipoReabastecimento],
+						[vlModulo],
+						[qtVendorPackage],
+						[vlFatorConversao],
+						[tpRegiao],
+						[tpOrigem],
+						[qtSaldoPedido],
+						[qtSaldoRecebido],
+						[qtSaldoAntigo],
+						[blExisteNF],
+						[vlSaldoOO],
+						[vlSaldoIW],
+						[vlSaldoIT]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)
+					~
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

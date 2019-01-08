@@ -1,0 +1,117 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::(isManutencaoItemRelacionamento?'stateManutencaoItemRelacionamentoName':'stateCadastroRelacionamentoTransferenciaName')|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="cadastroRelacionamentoTransferencia">
+                <div class="form-group actions">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary"
+                                mwl-confirm
+                                title="{{::'transferRelationship'|translate|capitalize}}"
+                                message="{{::'confirmTransferRelationship'|translate|capitalize}}"
+                                on-confirm="criarRelacionamento()"
+                                ng-disabled="!data.lojas.any('marcado', true)"
+                                security-action="RelacionamentoTransferencia.CriarTransferencia">
+                            <i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}
+                        </button>
+                        <button class="btn btn-danger"
+                                mwl-confirm
+                                title="{{::'confirmRemoveTitle'|translate }}"
+                                message="{{::'transferRelationshipConfirmRemove'|translate|capitalize}}"
+                                on-confirm="removerRelacionamento()"
+                                ng-disabled="!data.itens.any('marcado', true)"
+                                security-action="RelacionamentoTransferencia.RemoverTransferencia">
+                            <i class="glyphicon glyphicon-remove" /> &nbsp; {{::'remove'|translate}}
+                        </button>
+                    </div>
+                    <div class="col-md-4 align-right">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required disabled></dropdown-sistema>
+                    </form-field>
+                    <form-field-placeholder></form-field-placeholder>
+                    <form-field title="{{::'destItem'|translate|capitalize}}" line-width="12" grid-width="12">
+                        <lookup-item ng-model="filters.cdItemDestino" sistema="filters.cdSistema" item-out="filters.itemDestino" description-width="large" required disabled></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'sourceItem'|translate|capitalize}}" line-width="12" grid-width="12">
+                        <lookup-item ng-model="filters.cdItemOrigem" sistema="filters.cdSistema" item-out="filters.itemOrigem" description-width="large" required></lookup-item>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <!-- Lojas Trait -->
+        <widget title="{{::'informationTraitStore'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="loja">
+                <div class="form-group" style="margin-top: -15px; padding-bottom: 5px;">
+                    <div class="form-group">
+                        <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                            <lookup-loja ng-model="filters.cdLoja" sistema="filters.cdSistema" item-out="filters.loja" bandeira="filters.idBandeira" description-width="large"></lookup-loja>
+                        </form-field>
+                    </div>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="action"><input type="checkbox" ng-model="data.lojas.marcado" ng-click="marcarTodasLojas()" ng-checked="data.lojas.all('marcado', true)" /></th>
+                                <th class="identifier">{{::'storeCode'|translate|capitalize}}</th>
+                                <th>{{::'storeName'|translate|capitalize}}</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="data.lojas && data.lojas.length > 0">
+                            <tr ng-repeat="loja in data.lojas">
+                                <td class="action"><input type="checkbox" ng-model="loja.marcado" /></td>
+                                <td class="identifier">{{loja.cdLoja}}</td>
+                                <td>{{loja.nmLoja}}</td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!data.lojas || data.lojas.length === 0">
+                            <tr>
+                                <td colspan="3" class="domain">{{::'noData'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </widget>
+        <!-- Itens Relacionados -->
+        <widget title="{{::'informationRelatedItems'|translate|capitalize}}" has-box="no-padding">
+            <div class="form-inline" style="padding-right: 1px">
+                <table class="table table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="action"><input type="checkbox" ng-model="data.itens.marcado" ng-click="marcarTodos()" ng-checked="data.itens.all('marcado', true)" /></th>
+                            <th class="identifier">{{::'sourceItemCode'|translate}}</th>
+                            <th>{{::'description'|translate}}</th>
+                            <th class="identifier">{{::'storeCode'|translate|capitalize}}</th>
+                            <th>{{::'storeName'|translate|capitalize}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.itens && data.itens.length > 0">
+                        <tr ng-repeat="item in data.itens">
+                            <td class="action"><input type="checkbox" ng-model="item.marcado" /></td>
+                            <td class="identifier">{{item.itemDetalheOrigem.cdItem}}</td>
+                            <td>{{item.itemDetalheOrigem.dsItem}}</td>
+                            <td class="identifier">{{item.loja.cdLoja}}</td>
+                            <td>{{item.loja.nmLoja}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.itens || data.itens.length === 0">
+                        <tr>
+                            <td colspan="5" class="domain">{{::'noData'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.itens" page-method="pageItens" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

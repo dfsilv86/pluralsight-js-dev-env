@@ -1,0 +1,144 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateManutencaoItemName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalhesCusto">
+                <div class="form-group actions">
+                    <div class="col-md-6">
+                        <button class="btn btn-primary" ng-click="save()" security-action="ItemDetalhe.AlterarInformacoesCadastrais"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <!--<button class="btn btn-default" ng-click="relacionamentos()"><i class="glyphicon glyphicon-link" /> &nbsp; {{::'relationshipItem'|translate}}</button>-->
+                    </div>
+                    <div class="col-md-6 align-right">
+                        <button class="btn btn-default" ng-if="!!back" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.cdItem}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'format'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.bandeira.formato.dsFormato}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.dsItem}}" class="form-control input-width-xxlarge look-alive" readonly="readonly"/>
+                    </form-field>
+                    <form-field title="{{::'division'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.departamento.divisao|divisionProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'description2'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.dsHostItem}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.departamento|departmentProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'plu'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.cdplu|plu}}" class="form-control look-alive" readonly="readonly"/>
+                    </form-field>
+                    <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.categoria|categoryProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'upc'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.cdupc|upc}}" class="form-control look-alive" readonly="readonly"/>
+                    </form-field>
+                    <form-field title="{{::'subcategory'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.subcategoria|subcategoryProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'itemStatus'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.tpStatus|enum:'tipoStatusItem'|translate}}" ng-if="!data.itemDetalhe.dhAtualizacaoStatus" class="form-control look-alive" readonly="readonly"/>
+                        <input type="text" value="{{data.itemDetalhe.tpStatus|enum:'tipoStatusItem'|translate}} - {{data.itemDetalhe.dhAtualizacaoStatus|amDateFormat:'DD/MM/YYYY'}}" ng-if="!!data.itemDetalhe.dhAtualizacaoStatus" class="form-control look-alive" readonly="readonly"/>
+                    </form-field>
+                    <form-field title="{{::'fineLine'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.itemDetalhe.fineLine|fineLineProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'conversionFactor'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.vlFatorConversao" class="form-control look-alive" number ui-number-mask="3" maxlength="9" min="0" />
+                    </form-field>
+                    <form-field title="{{::'measurementUnit'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-unidade-medida ng-model="data.itemDetalhe.tpUnidadeMedida" show-select="true"></dropdown-unidade-medida>
+                    </form-field>
+
+                    <form-field title="{{::'transferItem'|translate|capitalize}}" line-width="6">
+                        <boolean-radio ng-model="data.itemDetalhe.blItemTransferencia"></boolean-radio>                        
+                    </form-field>
+
+                    <form-field title="{{::'catchWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.tpIndPesoReal" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'vendorPackFormat'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{::data.itemDetalhe.tpCaixaFornecedor|fixedValue:'tipoCaixaFornecedorFixoVariavel'|translate|capitalize}}" readonly="readonly" class="form-control look-alive" />
+                    </form-field>
+
+                    <form-field title="{{::'vendorPackNetWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-if="data.itemDetalhe.vlPesoLiquido != null" value="{{data.itemDetalhe.vlPesoLiquido|number:2}}" class="form-control look-alive" readonly="readonly" />
+                        <input type="text" ng-if="data.itemDetalhe.vlPesoLiquido == null" value="{{data.itemDetalhe.vlPesoLiquido}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'warehouseAlignment'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.tpAlinhamentoCD" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'warehouseArea'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.areaCD.dsAreaCD" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'purchaseArea'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.regiaoCompra.dsRegiaoCompra" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'minimumWarehouseLife'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.itemDetalhe.tempoMinimoCD}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                </div>                
+            </form>
+        </widget>
+        <widget title="{{::'stockInformationByStore'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="loja">
+                <div class="form-group" style="margin-top: -11px">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" sistema="filters.cdSistema" item-out="filters.loja" bandeira="filters.cdBandeira"></lookup-loja>
+                    </form-field>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th ng-click="sortBy('cdLoja')">{{::'store'|translate}} <sort-indicator ng-model="data.values" name="cdLoja"></sort-indicator></th>
+                                <th class="domain" ng-click="sortBy('tpUnidadeMedida')">{{::'measurementUnit'|translate}} <sort-indicator ng-model="data.values" name="tpUnidadeMedida"></sort-indicator></th>
+                                <th class="currency" ng-click="sortBy('vlCustoCompra')">{{::'unitValue'|translate}} <sort-indicator ng-model="data.values" name="vlCustoCompra"></sort-indicator></th>
+                                <th class="number" ng-click="sortBy('qtEstoqueFisico')">{{::'physicalStock'|translate}} <sort-indicator ng-model="data.values" name="qtEstoqueFisico"></sort-indicator></th>
+                                <th class="currency" ng-click="sortBy('qtEstoqueFinanceiro')">{{::'financialStock'|translate}} <sort-indicator ng-model="data.values" name="qtEstoqueFinanceiro"></sort-indicator></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="data.values && data.values.length > 0">
+                            <tr ng-repeat="item in data.values">
+                                <td>{{item.loja}}</td>
+                                <td class="domain">{{item.tpUnidadeMedida}} </td>
+                                <td class="currency">{{item.vlCustoCompra|money:'BRL':2}} </td>
+                                <td class="number">{{item.qtEstoqueFisico|number:3}} </td>
+                                <td class="currency">{{item.qtEstoqueFinanceiro|money:'BRL':2}} </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!data.values || data.values.length === 0">
+                            <tr>
+                                <td colspan="5" class="domain">{{::'noData'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="table-footer">
+                            <div class="col-md-12">
+                                <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

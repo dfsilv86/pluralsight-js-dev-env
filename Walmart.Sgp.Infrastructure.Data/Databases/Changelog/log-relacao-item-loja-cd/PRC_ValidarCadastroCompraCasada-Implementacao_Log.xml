@@ -1,0 +1,842 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-PRC_ValidarCadastroCompraCasada-Implementacao_Log" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				/*
+					=======================================================================================================================
+					Procedure..............: PRC_ValidarCadastroCompraCasada
+					Autor..................: Evandro Henrique Dapper (CWI)
+					Data de criação........: 05/07/2016 (Projeto PESS)
+					Objetivo...............: Validar cadastro de compra casada e excluir logicamente cadastros inválidos
+					Parâmetros.............: 
+					Exemplo de uso.........: 
+					=======================================================================================================================
+					HISTÓRICO DE ALTERAÇÃO
+
+					Alterado por...........: Rafael de Souza Bueno
+					Data Alteração.........: 26/09/2016
+					Descrição da alteração.: Inclusão de log na tabela RelacaoItemLojaCD
+
+					=======================================================================================================================
+					*/
+				ALTER PROCEDURE [dbo].[PRC_ValidarCadastroCompraCasada]
+				AS
+				BEGIN
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+					DECLARE @idItemSaida INT
+						,@idRelItemPrincipalSaida INT
+						,@idItemPai INT
+						,@blAtivoPai INT
+						,@tpVinculadoPai CHAR(1)
+						,@vlTipoReabastecimentoPai INT
+						,@qtVendorPackagePai INT
+						,@cdSequenciaVendorPai INT
+						,@cdTipoCanalPai CHAR(1)
+						,@blAtivoFornecedorPai INT
+						,@stFornecedorPai CHAR(1)
+						,@TraitPai VARCHAR(MAX)
+						,@idRelItemPrincipalPai INT
+						,@idItemFilho INT
+						,@blAtivoFilho INT
+						,@tpVinculadoFilho CHAR(1)
+						,@vlTipoReabastecimentoFilho INT
+						,@qtVendorPackageFilho INT
+						,@cdSequenciaVendorFilho INT
+						,@vlCustoUnitarioFilho FLOAT
+						,@cdTipoCanalFilho CHAR(1)
+						,@blAtivoFornecedorFilho INT
+						,@stFornecedorfilho CHAR(1)
+						,@TraitFilho VARCHAR(MAX)
+						,@idRelItemPrincipalFilho INT
+						,@vlCustoUnitario FLOAT
+						,@qtVendorPackage INT
+						,@idFornecedorParametroCompraCasadaPai INT
+						,@idFornecedorParametroItemDetalhePai INT
+						,@idFornecedorParametroCompraCasadaFilho INT
+						,@idFornecedorParametroItemDetalheFilho INT
+						,@Observacao VARCHAR(200)
+						,@idCompraCasadaPai INT
+						,@idCompraCasadaFilho INT
+						,@cdItemPai INT
+						,@cdItemFilho INT
+						,@tpStatusPai CHAR(1)
+						,@tpStatusFilho CHAR(1)
+						,@IDCD INT
+						,@IDLoja INT
+						,@IDItemDetalheEntradaAnterior BIGINT
+						,@cdCrossRefAnterior VARCHAR(50)
+						,@IdAuditUser INT = 3 -- root
+						,@IDLogTipoProcesso INT = 22 -- Rotina Diária de Reabastecimento Item/Loja
+
+					DECLARE CompraCasadaPais CURSOR LOCAL
+					FOR
+					SELECT CSP.idCompraCasada
+						,CSP.idItemDetalheSaida idItemSaida
+						,CSP.idFornecedorParametro idFornecedorParametroCompraCasadaPai
+						,ITP.idFornecedorParametro idFornecedorParametroItemDetalhePai
+						,RIP.IDRelacionamentoItemPrincipal idRelItemPrincipalSaida
+						,CSP.idItemDetalheEntrada idItemPai
+						,ITP.cdItem
+						,ITP.blAtivo blAtivoPai
+						,ITP.tpStatus tpStatusPai
+						,ITP.tpVinculado tpVinculadoPai
+						,ITP.vlTipoReabastecimento vlTipoReabastecimentoPai
+						,ITP.qtVendorPackage qtVendorPackagePai
+						,ITP.cdSequenciaVendor cdSequenciaVendorPai
+						,FPP.cdTipo cdTipoCanalPai
+						,FP.blAtivo blAtivoFornecedorPai
+						,FP.stFornecedor stFornecedorPai
+						,STUFF((
+								SELECT DISTINCT '|' + CONVERT(VARCHAR, idloja)
+								FROM Trait T WITH (NOLOCK)
+								WHERE T.IdItemDetalhe = ITP.IDItemDetalhe
+									AND T.blAtivo = 1
+								FOR XML PATH('')
+								), 1, 1, '') TraitPai
+						,RISP.IDRelacionamentoItemPrincipal idRelItemPrincipalPai
+					FROM CompraCasada CSP WITH (NOLOCK)
+					JOIN ItemDetalhe ITP WITH (NOLOCK) ON ITP.IDItemDetalhe = CSP.idItemDetalheEntrada
+					JOIN Fornecedor FP WITH (NOLOCK) ON FP.IDFornecedor = ITP.IDFornecedor
+					LEFT JOIN FornecedorParametro FPP WITH (NOLOCK) ON FPP.IDFornecedorParametro = ITP.idFornecedorParametro
+					LEFT JOIN RelacionamentoItemPrincipal RIP WITH (NOLOCK) ON RIP.IDItemDetalhe = CSP.idItemDetalheSaida
+						AND RIP.cdSistema = 1
+						AND RIP.IDTipoRelacionamento = 1
+					LEFT JOIN RelacionamentoItemSecundario RISP WITH (NOLOCK) ON RISP.IDItemDetalhe = CSP.idItemDetalheEntrada
+					WHERE CSP.blAtivo = 1
+						AND CSP.blItemPai = 1
+
+					OPEN CompraCasadaPais
+
+					FETCH NEXT
+					FROM CompraCasadaPais
+					INTO @idCompraCasadaPai
+						,@idItemSaida
+						,@idFornecedorParametroCompraCasadaPai
+						,@idFornecedorParametroItemDetalhePai
+						,@idRelItemPrincipalSaida
+						,@idItemPai
+						,@cdItemPai
+						,@blAtivoPai
+						,@tpStatusPai
+						,@tpVinculadoPai
+						,@vlTipoReabastecimentoPai
+						,@qtVendorPackagePai
+						,@cdSequenciaVendorPai
+						,@cdTipoCanalPai
+						,@blAtivoFornecedorPai
+						,@stFornecedorPai
+						,@TraitPai
+						,@idRelItemPrincipalPai
+
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+						SET @Observacao = NULL
+						SET @qtVendorPackage = 0
+						--print 'Observacao pai 1: ' + ISNULL( @Observacao, '')
+						--print 'idRelItemPrincipalSaida: ' + convert(char,@idRelItemPrincipalSaida)
+						--print 'idRelItemPrincipalPai: ' + convert(char,@idRelItemPrincipalPai)
+						SET @Observacao = CASE 
+								-- Verificar se todos os itens ainda possuem o relacionamento vinculado SGP (entrada-saída) válido
+								WHEN ISNULL(@idRelItemPrincipalSaida, 0) <> ISNULL(@idRelItemPrincipalPai, - 1)
+									THEN 'Relacionamento vinculado SGP desfeito. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+										-- Verificar se todos os itens continuam ativos
+								WHEN @blAtivoPai = 0
+									OR @tpStatusPai <> 'A'
+									THEN 'Item inativo ou deletado no OIF. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+										-- Verificar se algum dos itens deixou de ser um vinculado de entrada
+								WHEN @tpVinculadoPai <> 'E'
+									THEN 'Item deixou de ser vinculado de Entrada. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+										-- Verificar se o fornecedor está ativo 
+								WHEN @blAtivoFornecedorPai = 0
+									OR @stFornecedorPai = 'I'
+									OR @stFornecedorPai = 'D'
+									THEN 'Fornecedor Inativo ou Deletado. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+										-- Verifica se o vendor está nulo ou foi alterado comparando item e compra casada
+								WHEN ISNULL(@idFornecedorParametroCompraCasadaPai, 0) <> ISNULL(@idFornecedorParametroItemDetalhePai, - 1)
+									THEN 'Item sofreu alteração no vendor. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+								END
+
+						--print 'Observacao pai 2: ' + ISNULL( @Observacao, '')
+						IF @Observacao IS NULL
+						BEGIN
+							DECLARE CompraCasadaFilhos CURSOR LOCAL
+							FOR
+							SELECT CSF.idCompraCasada
+								,CSF.idItemDetalheEntrada idItemFilho
+								,ITF.cdItem
+								,ITF.blAtivo blAtivoFilho
+								,ITF.tpStatus tpStatusFilho
+								,ITF.tpVinculado tpVinculadoFilho
+								,ITF.vlTipoReabastecimento vlTipoReabastecimentoFilho
+								,ITF.qtVendorPackage qtVendorPackageFilho
+								,ITF.cdSequenciaVendor cdSequenciaVendorFilho
+								,ITF.vlCustoUnitario vlCustoUnitarioFilho
+								,CSF.idFornecedorParametro idFornecedorParametroCompraCasada
+								,ITF.idFornecedorParametro idFornecedorParametroItemDetalhe
+								,FPF.cdTipo cdTipoCanalFilho
+								,FF.blAtivo blAtivoFornecedorFilho
+								,FF.stFornecedor stFornecedorFilho
+								,STUFF((
+										SELECT DISTINCT '|' + CONVERT(VARCHAR, idloja)
+										FROM Trait T
+										WHERE T.IdItemDetalhe = ITF.IDItemDetalhe
+											AND T.blAtivo = 1
+										FOR XML PATH('')
+										), 1, 1, '') TraitFilho
+								,RISF.IDRelacionamentoItemPrincipal idRelItemPrincipalFilho
+							FROM CompraCasada CSF WITH (NOLOCK)
+							JOIN ItemDetalhe ITF WITH (NOLOCK) ON ITF.IDItemDetalhe = CSF.idItemDetalheEntrada
+							JOIN Fornecedor FF ON FF.IDFornecedor = ITF.IDFornecedor
+							LEFT JOIN FornecedorParametro FPF ON FPF.IDFornecedorParametro = ITF.idFornecedorParametro
+							JOIN RelacionamentoItemSecundario RISF ON RISF.IDItemDetalhe = CSF.idItemDetalheEntrada
+							WHERE CSF.idItemDetalheSaida = @idItemSaida
+								AND CSF.blAtivo = 1
+								AND CSF.blItemPai = 0
+
+							OPEN CompraCasadaFilhos
+
+							FETCH NEXT
+							FROM CompraCasadaFilhos
+							INTO @idCompraCasadaFilho
+								,@idItemFilho
+								,@cdItemFilho
+								,@blAtivoFilho
+								,@tpStatusFilho
+								,@tpVinculadoFilho
+								,@vlTipoReabastecimentoFilho
+								,@qtVendorPackageFilho
+								,@cdSequenciaVendorFilho
+								,@vlCustoUnitarioFilho
+								,@idFornecedorParametroCompraCasadaFilho
+								,@idFornecedorParametroItemDetalheFilho
+								,@cdTipoCanalFilho
+								,@blAtivoFornecedorFilho
+								,@stFornecedorfilho
+								,@TraitFilho
+								,@idRelItemPrincipalFilho
+
+							SET @vlCustoUnitario = @vlCustoUnitarioFilho
+
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								SET @Observacao = CASE 
+										-- Verificar se todos os itens ainda possuem o relacionamento vinculado SGP (entrada-saída) válido
+										WHEN ISNULL(@idRelItemPrincipalSaida, 0) <> ISNULL(@idRelItemPrincipalFilho, - 1)
+											THEN 'Relacionamento vinculado SGP desfeito. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se todos os itens continuam ativos
+										WHEN @blAtivoFilho = 0
+											OR @tpStatusFilho <> 'A'
+											THEN 'Item inativo ou deletado no OIF. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se o fornecedor está ativo 
+										WHEN @blAtivoFornecedorFilho = 0
+											OR @stFornecedorFilho = 'I'
+											OR @stFornecedorFilho = 'D'
+											THEN 'Fornecedor Inativo ou Deletado. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se os itens estão todos com o mesmo tipo de reabastecimento
+										WHEN @vlTipoReabastecimentoPai <> @vlTipoReabastecimentoFilho
+											THEN 'Item sofreu alteração no Tipo de Reabastecimento. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se todos os itens filhos estão com o mesmo custo unitário
+										WHEN @vlCustoUnitario <> @vlCustoUnitarioFilho
+											THEN 'Item sofreu alteração do custo unitário. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se algum dos itens deixou de ser um vinculado de entrada
+										WHEN @tpVinculadoFilho <> 'E'
+											THEN 'Item deixou de ser vinculado de Entrada. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se todos os itens filhos estão com a mesma trait do item pai
+										WHEN @TraitPai <> @TraitFilho
+											THEN 'Itens de compra casada com divergência de traits. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se os itens PAI e FILHOS estão no mesmo sequencial 
+										WHEN @cdSequenciaVendorPai <> @cdSequenciaVendorFilho
+											THEN 'Itens em sequencias de vendor diferentes. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verifica se o vendor está nulo ou foi alterado comparando item e compra casada
+										WHEN ISNULL(@idFornecedorParametroCompraCasadaFilho, 0) <> ISNULL(@idFornecedorParametroItemDetalheFilho, - 1)
+											THEN 'Item sofreu alteração no vendor. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verifica se o canal do vendor do PAI ou dos FILHOS está nulo
+										WHEN @cdTipoCanalPai IS NULL
+											OR @cdTipoCanalFilho IS NULL
+											THEN 'Itens sem informação do tipo de canal de vendor. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+												-- Verificar se os itens PAI e FILHOS estão no mesmo canal
+										WHEN @cdTipoCanalPai <> @cdTipoCanalFilho
+											THEN 'Itens em canal de vendor diferentes. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+										END
+
+								--print 'Observacao filho: ' + ISNULL( @Observacao, '')
+								IF @Observacao IS NOT NULL
+									BREAK
+
+								SET @qtVendorPackage = @qtVendorPackage + @qtVendorPackageFilho
+
+								FETCH NEXT
+								FROM CompraCasadaFilhos
+								INTO @idCompraCasadaFilho
+									,@idItemFilho
+									,@cdItemFilho
+									,@blAtivoFilho
+									,@tpStatusFilho
+									,@tpVinculadoFilho
+									,@vlTipoReabastecimentoFilho
+									,@qtVendorPackageFilho
+									,@cdSequenciaVendorFilho
+									,@vlCustoUnitarioFilho
+									,@idFornecedorParametroCompraCasadaFilho
+									,@idFornecedorParametroItemDetalheFilho
+									,@cdTipoCanalFilho
+									,@blAtivoFornecedorFilho
+									,@stFornecedorfilho
+									,@TraitFilho
+									,@idRelItemPrincipalFilho
+							END
+
+							CLOSE CompraCasadaFilhos
+
+							DEALLOCATE CompraCasadaFilhos
+						END
+
+						--print '@qtVendorPackagePai: ' + convert(char,@qtVendorPackagePai)
+						--print '@qtVendorPackage: ' + convert(char,@qtVendorPackage)
+						IF @Observacao IS NULL
+							-- Verificar se a soma do vendor pack dos itens filhos são iguais ao vendor pack do item pai
+							IF ISNULL(@qtVendorPackagePai, 0) <> ISNULL(@qtVendorPackage, 0)
+								SET @Observacao = 'Item sofreu alteração no vendor pack'
+
+						IF @Observacao IS NOT NULL
+						BEGIN
+							INSERT INTO LogCompraCasada (
+								idCompraCasada
+								,idItemDetalheSaida
+								,idFornecedorParametro
+								,idItemDetalheEntrada
+								,blItemPai
+								,blAtivo
+								,dtDataOperacao
+								,idUsuario
+								,Observacao
+								)
+							VALUES (
+								@idCompraCasadaPai
+								,@idItemSaida
+								,@idFornecedorParametroCompraCasadaPai
+								,@idItemPai
+								,1
+								,0
+								,GETDATE()
+								,@IdAuditUser
+								,@Observacao
+								)
+
+							INSERT INTO LogCompraCasada (
+								idCompraCasada
+								,idItemDetalheSaida
+								,idFornecedorParametro
+								,idItemDetalheEntrada
+								,blItemPai
+								,blAtivo
+								,dtDataOperacao
+								,idUsuario
+								,Observacao
+								)
+							SELECT idCompraCasada
+								,idItemDetalheSaida
+								,idFornecedorParametro
+								,idItemDetalheEntrada
+								,blItemPai
+								,0
+								,GETDATE()
+								,@IdAuditUser
+								,@Observacao
+							FROM CompraCasada
+							WHERE idItemDetalheSaida = @idItemSaida
+								AND blItemPai = 0
+								AND blAtivo = 1
+						END
+
+						FETCH NEXT
+						FROM CompraCasadaPais
+						INTO @idCompraCasadaPai
+							,@idItemSaida
+							,@idFornecedorParametroCompraCasadaPai
+							,@idFornecedorParametroItemDetalhePai
+							,@idRelItemPrincipalSaida
+							,@idItemPai
+							,@cdItemPai
+							,@blAtivoPai
+							,@tpStatusPai
+							,@tpVinculadoPai
+							,@vlTipoReabastecimentoPai
+							,@qtVendorPackagePai
+							,@cdSequenciaVendorPai
+							,@cdTipoCanalPai
+							,@blAtivoFornecedorPai
+							,@stFornecedorPai
+							,@TraitPai
+							,@idRelItemPrincipalPai
+					END
+
+					CLOSE CompraCasadaPais
+
+					DEALLOCATE CompraCasadaPais
+
+					-- Invalida cadastro de compra casada				
+					UPDATE CompraCasada
+					SET blAtivo = 0
+					WHERE idCompraCasada IN (
+							SELECT idCompraCasada
+							FROM LogCompraCasada
+							WHERE idUsuario = @IdAuditUser
+								AND CONVERT(DATE, dtDataOperacao) = CONVERT(DATE, GETDATE())
+							)
+
+					-- Início: Insere log da RelacaoItemLojaCD
+					DECLARE LogCompraCasadaCursor CURSOR LOCAL
+					FOR
+					SELECT LCP.IDCD
+						,LCP.IDLoja
+						,RIL.IDItem
+						,RIL.idItemEntrada
+						,RIL.cdCrossRef
+					FROM RelacaoItemLojaCD RIL
+					JOIN LojaCDParametro LCP ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+					WHERE RIL.IDItem IN (
+							SELECT DISTINCT LCC.idItemDetalheSaida
+							FROM LogCompraCasada LCC
+							WHERE LCC.idUsuario = @IdAuditUser
+								AND CONVERT(DATE, LCC.dtDataOperacao) = CONVERT(DATE, GETDATE())
+							)
+						AND RIL.idItemEntrada IS NOT NULL
+
+					OPEN LogCompraCasadaCursor
+
+					FETCH NEXT
+					FROM LogCompraCasadaCursor
+					INTO @IDCD
+						,@IDLoja
+						,@idItemSaida
+						,@IDItemDetalheEntradaAnterior
+						,@cdCrossRefAnterior
+
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+						EXEC PR_RegistraLogRelacaoItemLojaCD @IDCD
+							,@IDLoja
+							,@idItemSaida
+							,@IDItemDetalheEntradaAnterior
+							,NULL
+							,@IdAuditUser
+							,@IDLogTipoProcesso
+							,@cdCrossRefAnterior
+							,NULL
+							,NULL
+							,NULL
+
+						FETCH NEXT
+						FROM LogCompraCasadaCursor
+						INTO @IDCD
+							,@IDLoja
+							,@idItemSaida
+							,@IDItemDetalheEntradaAnterior
+							,@cdCrossRefAnterior
+					END
+
+					CLOSE LogCompraCasadaCursor
+
+					DEALLOCATE LogCompraCasadaCursor
+
+					-- Fim: Insere log da RelacaoItemLojaCD
+					-- Atualiza relação item loja CD
+					UPDATE RIL
+					SET RIL.idItemEntrada = NULL
+						,RIL.vlTipoReabastecimento = NULL
+						,RIL.cdCrossRef = NULL
+					FROM RelacaoItemLojaCD RIL
+					WHERE EXISTS (
+							SELECT 1
+							FROM LogCompraCasada LCC
+							WHERE LCC.idUsuario = @IdAuditUser
+								AND CONVERT(DATE, LCC.dtDataOperacao) = CONVERT(DATE, GETDATE())
+								AND LCC.idItemDetalheSaida = RIL.idItem
+								AND LCC.idItemDetalheEntrada = RIL.idItemEntrada
+							)
+				END
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+					/*
+					=======================================================================================================================
+					Procedure..............: PRC_ValidarCadastroCompraCasada
+					Autor..................: Evandro Henrique Dapper (CWI)
+					Data de criação........: 05/07/2016 (Projeto PESS)
+					Objetivo...............: Validar cadastro de compra casada e excluir logicamente cadastros inválidos
+					Parâmetros.............: 
+					Exemplo de uso.........: 
+					=======================================================================================================================
+					HISTÓRICO DE ALTERAÇÃO
+
+					Alterado por...........: 
+					Data Alteração.........: 
+					Descrição da alteração.: 
+
+					=======================================================================================================================
+					*/
+					ALTER PROCEDURE [dbo].[PRC_ValidarCadastroCompraCasada]
+					AS
+					BEGIN
+						SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+						DECLARE @idItemSaida INT
+							,@idRelItemPrincipalSaida INT
+							,@idItemPai INT
+							,@blAtivoPai INT
+							,@tpVinculadoPai CHAR(1)
+							,@vlTipoReabastecimentoPai INT
+							,@qtVendorPackagePai INT
+							,@cdSequenciaVendorPai INT
+							,@cdTipoCanalPai CHAR(1)
+							,@blAtivoFornecedorPai INT
+							,@stFornecedorPai CHAR(1)
+							,@TraitPai VARCHAR(MAX)
+							,@idRelItemPrincipalPai INT
+							,@idItemFilho INT
+							,@blAtivoFilho INT
+							,@tpVinculadoFilho CHAR(1)
+							,@vlTipoReabastecimentoFilho INT
+							,@qtVendorPackageFilho INT
+							,@cdSequenciaVendorFilho INT
+							,@vlCustoUnitarioFilho FLOAT
+							,@cdTipoCanalFilho CHAR(1)
+							,@blAtivoFornecedorFilho INT
+							,@stFornecedorfilho CHAR(1)
+							,@TraitFilho VARCHAR(MAX)
+							,@idRelItemPrincipalFilho INT
+							,@vlCustoUnitario FLOAT
+							,@qtVendorPackage INT
+							,@idFornecedorParametro INT
+							,@Observacao VARCHAR(200)
+							,@idCompraCasadaPai INT
+							,@idCompraCasadaFilho INT
+							,@cdItemPai INT
+							,@cdItemFilho INT
+
+						DECLARE CompraCasadaPais CURSOR LOCAL
+						FOR
+						SELECT CSP.idCompraCasada
+							,CSP.idItemDetalheSaida idItemSaida
+							,CSP.idFornecedorParametro
+							,RIP.IDRelacionamentoItemPrincipal idRelItemPrincipalSaida
+							,CSP.idItemDetalheEntrada idItemPai
+							,ITP.cdItem
+							,ITP.blAtivo blAtivoPai
+							,ITP.tpVinculado tpVinculadoPai
+							,ITP.vlTipoReabastecimento vlTipoReabastecimentoPai
+							,ITP.qtVendorPackage qtVendorPackagePai
+							,ITP.cdSequenciaVendor cdSequenciaVendorPai
+							,FPP.cdTipo cdTipoCanalPai
+							,FP.blAtivo blAtivoFornecedorPai
+							,FP.stFornecedor stFornecedorPai
+							,STUFF((
+									SELECT DISTINCT '|' + CONVERT(VARCHAR, idloja)
+									FROM Trait T WITH (NOLOCK)
+									WHERE T.IdItemDetalhe = ITP.IDItemDetalhe
+										AND T.blAtivo = 1
+									FOR XML PATH('')
+									), 1, 1, '') TraitPai
+							,RISP.IDRelacionamentoItemPrincipal idRelItemPrincipalPai
+						FROM CompraCasada CSP WITH (NOLOCK)
+						JOIN ItemDetalhe ITP WITH (NOLOCK)
+							ON ITP.IDItemDetalhe = CSP.idItemDetalheEntrada
+						JOIN Fornecedor FP WITH (NOLOCK)
+							ON FP.IDFornecedor = ITP.IDFornecedor
+						JOIN FornecedorParametro FPP WITH (NOLOCK)
+							ON FPP.IDFornecedorParametro = ITP.idFornecedorParametro
+						LEFT JOIN RelacionamentoItemPrincipal RIP WITH (NOLOCK)
+							ON RIP.IDItemDetalhe = CSP.idItemDetalheSaida
+								AND RIP.cdSistema = 1
+								AND RIP.IDTipoRelacionamento = 1
+						LEFT JOIN RelacionamentoItemSecundario RISP WITH (NOLOCK)
+							ON RISP.IDItemDetalhe = CSP.idItemDetalheEntrada
+						WHERE CSP.blAtivo = 1
+							AND CSP.blItemPai = 1
+
+						OPEN CompraCasadaPais
+
+						FETCH NEXT
+						FROM CompraCasadaPais
+						INTO @idCompraCasadaPai
+							,@idItemSaida
+							,@idFornecedorParametro
+							,@idRelItemPrincipalSaida
+							,@idItemPai
+							,@cdItemPai
+							,@blAtivoPai
+							,@tpVinculadoPai
+							,@vlTipoReabastecimentoPai
+							,@qtVendorPackagePai
+							,@cdSequenciaVendorPai
+							,@cdTipoCanalPai
+							,@blAtivoFornecedorPai
+							,@stFornecedorPai
+							,@TraitPai
+							,@idRelItemPrincipalPai
+
+						WHILE @@FETCH_STATUS = 0
+						BEGIN
+							SET @Observacao = NULL
+							SET @qtVendorPackage = 0
+							--print 'Observacao pai 1: ' + ISNULL( @Observacao, '')
+							--print 'idRelItemPrincipalSaida: ' + convert(char,@idRelItemPrincipalSaida)
+							--print 'idRelItemPrincipalPai: ' + convert(char,@idRelItemPrincipalPai)
+							SET @Observacao = CASE 
+									-- Verificar se todos os itens ainda possuem o relacionamento vinculado SGP (entrada-saída) válido
+									WHEN ISNULL(@idRelItemPrincipalSaida, 0) <> ISNULL(@idRelItemPrincipalPai, - 1)
+										THEN 'Relacionamento vinculado SGP desfeito. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+											-- Verificar se todos os itens continuam ativos
+									WHEN @blAtivoPai = 0
+										THEN 'Item inativo ou deletado no OIF. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+											-- •	Verificar se algum dos itens deixou de ser um vinculado de entrada
+									WHEN @tpVinculadoPai <> 'E'
+										THEN 'Item deixou de ser vinculado de Entrada. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+											-- Verificar se o vendor está ativo 
+									WHEN @blAtivoFornecedorPai = 0
+										OR @stFornecedorPai = 'I'
+										THEN 'Fornecedor Inativo ou Deletado. Item pai: ' + CONVERT(CHAR, @cdItemPai)
+									END
+
+							--print 'Observacao pai 2: ' + ISNULL( @Observacao, '')
+							IF @Observacao IS NULL
+							BEGIN
+								DECLARE CompraCasadaFilhos CURSOR LOCAL
+								FOR
+								SELECT CSF.idCompraCasada
+									,CSF.idItemDetalheEntrada idItemFilho
+									,ITF.cdItem
+									,ITF.blAtivo blAtivoFilho
+									,ITF.tpVinculado tpVinculadoFilho
+									,ITF.vlTipoReabastecimento vlTipoReabastecimentoFilho
+									,ITF.qtVendorPackage qtVendorPackageFilho
+									,ITF.cdSequenciaVendor cdSequenciaVendorFilho
+									,ITF.vlCustoUnitario vlCustoUnitarioFilho
+									,FPF.cdTipo cdTipoCanalFilho
+									,FF.blAtivo blAtivoFornecedorFilho
+									,FF.stFornecedor stFornecedorFilho
+									,STUFF((
+											SELECT DISTINCT '|' + CONVERT(VARCHAR, idloja)
+											FROM Trait T
+											WHERE T.IdItemDetalhe = ITF.IDItemDetalhe
+												AND T.blAtivo = 1
+											FOR XML PATH('')
+											), 1, 1, '') TraitFilho
+									,RISF.IDRelacionamentoItemPrincipal idRelItemPrincipalFilho
+								FROM CompraCasada CSF WITH (NOLOCK)
+								JOIN ItemDetalhe ITF WITH (NOLOCK)
+									ON ITF.IDItemDetalhe = CSF.idItemDetalheEntrada
+								JOIN Fornecedor FF
+									ON FF.IDFornecedor = ITF.IDFornecedor
+								JOIN FornecedorParametro FPF
+									ON FPF.IDFornecedorParametro = ITF.idFornecedorParametro
+								JOIN RelacionamentoItemSecundario RISF
+									ON RISF.IDItemDetalhe = CSF.idItemDetalheEntrada
+								WHERE CSF.idItemDetalheSaida = @idItemSaida
+									AND CSF.blAtivo = 1
+									AND CSF.blItemPai = 0
+
+								OPEN CompraCasadaFilhos
+
+								FETCH NEXT
+								FROM CompraCasadaFilhos
+								INTO @idCompraCasadaFilho
+									,@idItemFilho
+									,@cdItemFilho
+									,@blAtivoFilho
+									,@tpVinculadoFilho
+									,@vlTipoReabastecimentoFilho
+									,@qtVendorPackageFilho
+									,@cdSequenciaVendorFilho
+									,@vlCustoUnitarioFilho
+									,@cdTipoCanalFilho
+									,@blAtivoFornecedorFilho
+									,@stFornecedorfilho
+									,@TraitFilho
+									,@idRelItemPrincipalFilho
+
+								SET @vlCustoUnitario = @vlCustoUnitarioFilho
+
+								WHILE @@FETCH_STATUS = 0
+								BEGIN
+									SET @Observacao = CASE 
+											-- Verificar se todos os itens ainda possuem o relacionamento vinculado SGP (entrada-saída) válido
+											WHEN ISNULL(@idRelItemPrincipalSaida, 0) <> ISNULL(@idRelItemPrincipalFilho, - 1)
+												THEN 'Relacionamento vinculado SGP desfeito. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se todos os itens continuam ativos
+											WHEN @blAtivoFilho = 0
+												THEN 'Item inativo ou deletado no OIF. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se o vendor está ativo 
+											WHEN @blAtivoFornecedorFilho = 0
+												OR @stFornecedorFilho = 'I'
+												THEN 'Fornecedor Inativo ou Deletado. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se os itens estão todos com o mesmo tipo de reabastecimento
+											WHEN @vlTipoReabastecimentoPai <> @vlTipoReabastecimentoFilho
+												THEN 'Item sofreu alteração no Tipo de Reabastecimento. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se todos os itens filhos estão com o mesmo custo unitário
+											WHEN @vlCustoUnitario <> @vlCustoUnitarioFilho
+												THEN 'Item sofreu alteração do custo unitário. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se algum dos itens deixou de ser um vinculado de entrada
+											WHEN @tpVinculadoFilho <> 'E'
+												THEN 'Item deixou de ser vinculado de Entrada. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se todos os itens filhos estão com a mesma trait do item pai
+											WHEN @TraitPai <> @TraitFilho
+												THEN 'Itens de compra casada com divergência de traits. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se os itens PAI e FILHOS estão no mesmo sequencial 
+											WHEN @cdSequenciaVendorPai <> @cdSequenciaVendorFilho
+												THEN 'Itens em sequencias de vendor diferentes. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+													-- Verificar se os itens PAI e FILHOS estão no mesmo canal
+											WHEN @cdTipoCanalPai <> @cdTipoCanalFilho
+												THEN 'Itens em canal de vendor diferentes. Item pai: ' + CONVERT(CHAR, @cdItemPai) + ',  Item filho: ' + CONVERT(CHAR, @cdItemFilho)
+											END
+
+									--print 'Observacao filho: ' + ISNULL( @Observacao, '')
+									IF @Observacao IS NOT NULL
+										BREAK
+
+									SET @qtVendorPackage = @qtVendorPackage + @qtVendorPackageFilho
+
+									FETCH NEXT
+									FROM CompraCasadaFilhos
+									INTO @idCompraCasadaFilho
+										,@idItemFilho
+										,@cdItemFilho
+										,@blAtivoFilho
+										,@tpVinculadoFilho
+										,@vlTipoReabastecimentoFilho
+										,@qtVendorPackageFilho
+										,@cdSequenciaVendorFilho
+										,@vlCustoUnitarioFilho
+										,@cdTipoCanalFilho
+										,@blAtivoFornecedorFilho
+										,@stFornecedorfilho
+										,@TraitFilho
+										,@idRelItemPrincipalFilho
+								END
+
+								CLOSE CompraCasadaFilhos
+
+								DEALLOCATE CompraCasadaFilhos
+							END
+
+							--print '@qtVendorPackagePai: ' + convert(char,@qtVendorPackagePai)
+							--print '@qtVendorPackage: ' + convert(char,@qtVendorPackage)
+							IF @Observacao IS NULL
+								-- Verificar se a soma do vendor pack dos itens filhos são iguais ao vendor pack do item pai
+								IF ISNULL(@qtVendorPackagePai, 0) <> ISNULL(@qtVendorPackage, 0)
+									SET @Observacao = 'Item sofreu alteração no vendor pack'
+
+							IF @Observacao IS NOT NULL
+							BEGIN
+								INSERT INTO LogCompraCasada (
+									idCompraCasada
+									,idItemDetalheSaida
+									,idFornecedorParametro
+									,idItemDetalheEntrada
+									,blItemPai
+									,blAtivo
+									,dtDataOperacao
+									,idUsuario
+									,Observacao
+									)
+								VALUES (
+									@idCompraCasadaPai
+									,@idItemSaida
+									,@idFornecedorParametro
+									,@idItemPai
+									,1
+									,0
+									,GETDATE()
+									,3
+									,@Observacao
+									)
+
+								INSERT INTO LogCompraCasada (
+									idCompraCasada
+									,idItemDetalheSaida
+									,idFornecedorParametro
+									,idItemDetalheEntrada
+									,blItemPai
+									,blAtivo
+									,dtDataOperacao
+									,idUsuario
+									,Observacao
+									)
+								SELECT idCompraCasada
+									,idItemDetalheSaida
+									,idFornecedorParametro
+									,idItemDetalheEntrada
+									,blItemPai
+									,blAtivo
+									,GETDATE()
+									,3
+									,@Observacao
+								FROM CompraCasada
+								WHERE idItemDetalheSaida = @idItemSaida
+									AND blItemPai = 0
+									AND blAtivo = 1
+							END
+
+							FETCH NEXT
+							FROM CompraCasadaPais
+							INTO @idCompraCasadaPai
+								,@idItemSaida
+								,@idFornecedorParametro
+								,@idRelItemPrincipalSaida
+								,@idItemPai
+								,@cdItemPai
+								,@blAtivoPai
+								,@tpVinculadoPai
+								,@vlTipoReabastecimentoPai
+								,@qtVendorPackagePai
+								,@cdSequenciaVendorPai
+								,@cdTipoCanalPai
+								,@blAtivoFornecedorPai
+								,@stFornecedorPai
+								,@TraitPai
+								,@idRelItemPrincipalPai
+						END
+
+						CLOSE CompraCasadaPais
+
+						DEALLOCATE CompraCasadaPais
+
+						-- Invalida cadastro de compra casada				
+						UPDATE CompraCasada
+						SET blAtivo = 0
+						WHERE idCompraCasada IN (
+								SELECT idCompraCasada
+								FROM LogCompraCasada
+								WHERE idUsuario = 3
+									AND CONVERT(DATE, dtDataOperacao) = CONVERT(DATE, GETDATE())
+								)
+
+						-- Atualiza relação item loja CD
+						UPDATE RelacaoItemLojaCD
+						SET idItemEntrada = NULL
+							,vlTipoReabastecimento = NULL
+							,cdCrossRef = NULL
+						WHERE idItem IN (
+								SELECT DISTINCT idItemDetalheSaida
+								FROM LogCompraCasada
+								WHERE idUsuario = 3
+									AND CONVERT(DATE, dtDataOperacao) = CONVERT(DATE, GETDATE())
+								)
+					END
+				~
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

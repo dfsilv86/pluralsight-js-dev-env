@@ -1,0 +1,34 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-AlcadaDetalheLog" author="edapper">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				IF  NOT EXISTS (SELECT * FROM sys.objects 
+					WHERE object_id = OBJECT_ID(N'[dbo].[AlcadaDetalheLog]') AND type in (N'U'))
+
+					BEGIN
+						CREATE TABLE AlcadaDetalheLog (IDAuditRecord INT NOT NULL IDENTITY(1,1), IDAuditUser INT NOT NULL, dhAuditStamp DATE NOT NULL, 
+						cdAuditKind INT NOT NULL, IDAlcadaDetalhe INT NOT NULL, vlPercentualAlterado DECIMAL(9,2) NOT NULL
+						PRIMARY KEY (IDAuditRecord));
+					END
+
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					IF EXISTS (SELECT * FROM sys.objects 
+						WHERE object_id = OBJECT_ID(N'[dbo].[AlcadaDetalheLog]') AND type in (N'U'))
+					
+						DROP TABLE [dbo].[AlcadaDetalheLog]
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

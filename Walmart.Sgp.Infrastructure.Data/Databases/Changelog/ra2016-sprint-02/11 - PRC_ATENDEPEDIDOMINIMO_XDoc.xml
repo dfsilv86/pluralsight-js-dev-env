@@ -1,0 +1,280 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-PRC_ATENDEPEDIDOMINIMO_XDoc" author="edapper">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+
+				ALTER PROCEDURE [dbo].[PRC_ATENDEPEDIDOMINIMO_XDoc] @DataPedido DATE, @idCD INT, @IDFornecedorParametro INT
+				AS
+				BEGIN
+
+					--INICIO PEDIDO MINIMO DO ITEM
+					DECLARE @idSugestaoPedido INT, @qtdPackCompra INT, @qtdPackCompraOri INT, @blAtendePedidoMinimoItem BIT, @vlMinimo DECIMAL(9,2), @vlEstoque DECIMAL(11,3), @qtVendorPackage INT, @vlFatorConversao FLOAT, @vlForecastMedio DECIMAL(11,3), @vlShelfLife NUMERIC(5,0);
+
+					DECLARE Pedidos CURSOR STATIC FORWARD_ONLY READ_ONLY
+						FOR
+							SELECT SP.IDSugestaoPedido, SP.qtdPackCompra, SP.blAtendePedidoMinimoItem, ID.vlMinimo, SP.vlEstoque, SP.qtVendorPackage, SP.vlFatorConversao, SP.vlForecastMedio, SP.vlShelfLife
+								FROM SugestaoPedido AS SP WITH (NOLOCK)
+								INNER JOIN ItemDetalhe AS ID WITH (NOLOCK)
+									ON SP.IDItemDetalhePedido = ID.IDItemDetalhe
+							WHERE SP.dtPedido = @DataPedido
+							AND SP.idCD = ISNULL( @idCD, SP.idCD)
+							AND SP.IDFornecedorParametro = ISNULL( @IDFornecedorParametro, SP.IDFornecedorParametro )
+							
+					OPEN Pedidos   
+					FETCH NEXT FROM Pedidos INTO @idSugestaoPedido, @qtdPackCompra, @blAtendePedidoMinimoItem, @vlMinimo, @vlEstoque, @qtVendorPackage, @vlFatorConversao, @vlForecastMedio, @vlShelfLife
+							
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+						
+						--PRIMEIRAMENTE VERIFICAMOS SE O PEDIDO ATENDE O MINIMO DO ITEM
+						IF @qtdpackcompra >= @vlMinimo 
+							--SE JÁ ATENDE O MINIMO NAO TEM MUITO O QUE FAZER, MARCA COMO ATENDIDO E DEU
+							UPDATE SugestaoPedido SET SugestaoPedido.blAtendePedidoMinimoItem = 1 WHERE IDSugestaoPedido = @idSugestaoPedido
+						ELSE
+							--NAO ATENDEU O MINIMO, VAMOS TRABALHAR NESTE CARINHA
+							BEGIN		
+								--COPIANDO O QTDPACKCOMPRA PARA CASO DE NAO CONSEGUIR ATENDER O MINIMO TER COMO VOLTAR
+								SET @qtdPackCompraOri = @qtdPackCompra
+									
+								--AQUI NO WHILE VAMOS VALIDAR DUAS COISAS: ATENDER O MINIMO E RESPEITAR O SHELFLIFE, QUANDO UM DOS DOIS BATER, CAI FORA DO WHILE
+								IF @vlForecastMedio > 0
+									BEGIN
+										WHILE (@qtdpackcompra < @vlMinimo) AND (((@vlEstoque + ((@qtdPackCompra + 1) * @qtVendorPackage * @vlFatorConversao)) / @vlForecastMedio) < @vlShelfLife)
+											--ADD PACK EM MEMORIA
+											SET @qtdPackCompra = @qtdPackCompra + 1
+									END
+							
+								IF (@qtdpackcompra < @vlMinimo)
+									BEGIN
+										--NÃO ATENDEU O MINIMO, DESFAZ A QTDPACKCOMPRA SE FOR MAIOR QUE ZERO O ORIGINAL E SETA O BLATENDEPEDIDOMINIMOITEM = 0
+										IF (@qtdPackCompraOri > 0)
+											UPDATE SugestaoPedido SET SugestaoPedido.qtdPackCompra = @qtdPackCompraOri WHERE IDSugestaoPedido = @idSugestaoPedido
+										
+										UPDATE SugestaoPedido SET SugestaoPedido.blAtendePedidoMinimoItem = 0 WHERE IDSugestaoPedido = @idSugestaoPedido
+										UPDATE SugestaoPedido SET SugestaoPedido.blAtendePedidoMinimo = 0 WHERE IDSugestaoPedido = @idSugestaoPedido
+									END
+								ELSE
+									BEGIN
+										--ATENDEU, ENTÃO APLICA A NOVA QTDPACKCOMPRA SE FOR MAIOR QUE ZERO O ORIGINAL E SETA O BLATENDEPEDIDOMINIMOITEM = 1
+										IF (@qtdPackCompraOri > 0)
+											BEGIN
+												UPDATE SugestaoPedido SET SugestaoPedido.qtdPackCompra = @qtdPackCompra WHERE IDSugestaoPedido = @idSugestaoPedido
+												UPDATE SugestaoPedido SET SugestaoPedido.blAtendePedidoMinimoItem = 1 WHERE IDSugestaoPedido = @idSugestaoPedido
+											END
+										ELSE
+											UPDATE SugestaoPedido SET SugestaoPedido.blAtendePedidoMinimoItem = 0 WHERE IDSugestaoPedido = @idSugestaoPedido
+									END
+							END			
+							
+						FETCH NEXT FROM Pedidos INTO @idSugestaoPedido, @qtdPackCompra, @blAtendePedidoMinimoItem, @vlMinimo, @vlEstoque, @qtVendorPackage, @vlFatorConversao, @vlForecastMedio, @vlShelfLife
+					END   
+
+					CLOSE Pedidos   
+					DEALLOCATE Pedidos
+					--FIM PEDIDO MINIMO DO ITEM
+
+					DECLARE @blAtendePedidoMinimo INT
+
+					DECLARE Pedidos CURSOR STATIC FORWARD_ONLY READ_ONLY
+					FOR
+					SELECT SP.idCD
+						,SP.IDFornecedorParametro
+						,CASE 
+							WHEN sum(CASE 
+										WHEN FP.tpPedidoMinimo = '$'
+											THEN SP.qtdPackCompra * SP.vlFatorConversao * SP.qtVendorPackage * CASE ISNULL(ES.vlCustoContabilAtual, 0)
+													WHEN 0
+														THEN ISNULL(ES.vlCustoCadastroAtual, 0)
+													ELSE ISNULL(ES.vlCustoContabilAtual, 0)
+													END
+										ELSE SP.qtdPackCompra
+										END) >= FP.vlValorMinimo
+								THEN 1
+							ELSE 0
+							END blAtendePedidoMinimo
+					FROM SugestaoPedido SP WITH (NOLOCK)
+					JOIN FornecedorParametro FP WITH (NOLOCK)
+						ON FP.IDFornecedorParametro = SP.IDFornecedorParametro
+					LEFT JOIN Estoque ES WITH (NOLOCK)
+						ON ES.IDLoja = SP.IdLoja
+							AND ES.IDItemDetalhe = SP.IDItemDetalheSugestao
+							AND ES.dtRecebimento = (
+								SELECT MAX(E.dtRecebimento)
+								FROM Estoque E WITH (NOLOCK)
+								WHERE E.IDItemDetalhe = ES.IDItemDetalhe
+									AND E.IDLoja = ES.IDLoja
+								)
+					JOIN CD WITH (NOLOCK)
+						ON CD.idCD = SP.idCD
+					WHERE SP.dtPedido = @DataPedido
+						AND (
+							SP.vlTipoReabastecimento = 33
+							OR (
+								CD.blConvertido = 1
+								AND SP.vlTipoReabastecimento IN (3, 94)
+								)
+							)
+						AND SP.qtdPackCompra > 0
+						AND SP.blAtendePedidoMinimoItem = 1
+						AND SP.idCD = ISNULL( @idCD, SP.idCD)
+						AND SP.IDFornecedorParametro = ISNULL( @IDFornecedorParametro, SP.IDFornecedorParametro )
+					GROUP BY SP.idCD
+						,SP.IDFornecedorParametro
+						,FP.vlValorMinimo
+						,FP.tpPedidoMinimo
+
+					OPEN Pedidos
+
+					FETCH NEXT
+					FROM Pedidos
+					INTO @idCD
+						,@idFornecedorParametro
+						,@blAtendePedidoMinimo
+
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+					
+						UPDATE SP
+						SET blAtendePedidoMinimo = @blAtendePedidoMinimo
+						FROM SugestaoPedido SP
+						JOIN CD WITH (NOLOCK)
+							ON CD.idCD = SP.idCD
+						WHERE SP.dtPedido = @DataPedido
+						AND (
+							SP.vlTipoReabastecimento = 33
+							OR (
+								CD.blConvertido = 1
+								AND SP.vlTipoReabastecimento IN (3, 94)
+								)
+							)
+							AND SP.qtdPackCompra > 0
+							AND SP.blAtendePedidoMinimoItem = 1
+							AND SP.idCD = @idCD
+							AND SP.idFornecedorParametro = @idFornecedorParametro
+					
+						FETCH NEXT
+						FROM Pedidos
+						INTO @idCD
+							,@idFornecedorParametro
+							,@blAtendePedidoMinimo
+					END
+
+					CLOSE Pedidos
+
+					DEALLOCATE Pedidos
+						
+				END
+
+
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+
+				ALTER PROCEDURE [dbo].[PRC_ATENDEPEDIDOMINIMO_XDoc] @DataPedido DATE, @idCD INT, @IDFornecedorParametro INT
+				AS
+				BEGIN
+					DECLARE @blAtendePedidoMinimo INT
+
+					DECLARE Pedidos CURSOR STATIC FORWARD_ONLY READ_ONLY
+					FOR
+					SELECT SP.idCD
+						,SP.IDFornecedorParametro
+						,CASE 
+							WHEN sum(CASE 
+										WHEN FP.tpPedidoMinimo = '$'
+											THEN SP.qtdPackCompra * SP.vlFatorConversao * SP.qtVendorPackage * CASE ISNULL(ES.vlCustoContabilAtual, 0)
+													WHEN 0
+														THEN ISNULL(ES.vlCustoCadastroAtual, 0)
+													ELSE ISNULL(ES.vlCustoContabilAtual, 0)
+													END
+										ELSE SP.qtdPackCompra
+										END) >= FP.vlValorMinimo
+								THEN 1
+							ELSE 0
+							END blAtendePedidoMinimo
+					FROM SugestaoPedido SP WITH (NOLOCK)
+					JOIN FornecedorParametro FP WITH (NOLOCK)
+						ON FP.IDFornecedorParametro = SP.IDFornecedorParametro
+					LEFT JOIN Estoque ES WITH (NOLOCK)
+						ON ES.IDLoja = SP.IdLoja
+							AND ES.IDItemDetalhe = SP.IDItemDetalheSugestao
+							AND ES.dtRecebimento = (
+								SELECT MAX(E.dtRecebimento)
+								FROM Estoque E WITH (NOLOCK)
+								WHERE E.IDItemDetalhe = ES.IDItemDetalhe
+									AND E.IDLoja = ES.IDLoja
+								)
+					JOIN CD WITH (NOLOCK)
+						ON CD.idCD = SP.idCD
+					WHERE SP.dtPedido = @DataPedido
+						AND (
+							SP.vlTipoReabastecimento = 33
+							OR (
+								CD.blConvertido = 1
+								AND SP.vlTipoReabastecimento IN (3, 94)
+								)
+							)
+						AND SP.qtdPackCompra > 0
+						AND SP.idCD = ISNULL( @idCD, SP.idCD)
+						AND SP.IDFornecedorParametro = ISNULL( @IDFornecedorParametro, SP.IDFornecedorParametro )
+					GROUP BY SP.idCD
+						,SP.IDFornecedorParametro
+						,FP.vlValorMinimo
+						,FP.tpPedidoMinimo
+
+					OPEN Pedidos
+
+					FETCH NEXT
+					FROM Pedidos
+					INTO @idCD
+						,@idFornecedorParametro
+						,@blAtendePedidoMinimo
+
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+					
+						UPDATE SP
+						SET blAtendePedidoMinimo = @blAtendePedidoMinimo
+						FROM SugestaoPedido SP
+						JOIN CD WITH (NOLOCK)
+							ON CD.idCD = SP.idCD
+						WHERE SP.dtPedido = @DataPedido
+						AND (
+							SP.vlTipoReabastecimento = 33
+							OR (
+								CD.blConvertido = 1
+								AND SP.vlTipoReabastecimento IN (3, 94)
+								)
+							)
+							AND SP.qtdPackCompra > 0
+							AND SP.idCD = @idCD
+							AND SP.idFornecedorParametro = @idFornecedorParametro
+					
+						FETCH NEXT
+						FROM Pedidos
+						INTO @idCD
+							,@idFornecedorParametro
+							,@blAtendePedidoMinimo
+					END
+
+					CLOSE Pedidos
+
+					DEALLOCATE Pedidos
+						
+				END
+
+				
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

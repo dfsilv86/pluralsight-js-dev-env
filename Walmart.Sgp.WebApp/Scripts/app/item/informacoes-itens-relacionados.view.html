@@ -1,0 +1,87 @@
+﻿<div class="row">
+    <modal-breadcrumb title="{{::'relatedItemInformation'|translate|capitalize}}"></modal-breadcrumb>
+
+    <div class="form-horizontal col-md-12">
+        <div class="form-group" style="margin-top: 5px; margin-bottom:5px;">
+            <label class="col-md-1 control-label">{{::'item'|translate}}:</label>
+            <div class="col-md-4">
+                <div class="form-control" readonly>{{::item|productProfile}}</div>
+            </div>
+
+            <label class="col-md-1 control-label">{{::'store'|translate}}:</label>
+            <div class="col-md-4">
+                <div class="form-control" readonly>{{::loja|storeProfile}}</div>
+            </div>
+        </div>
+        <div class="form-group" ng-if="!data || data.length === 0" style="margin-bottom: 5px;">
+            <div class="col-md-12">
+                <div class="form-control" style="text-align: center;">
+                    <span>{{::'noData'|translate|capitalize}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12" style="padding: 0 24px;" ng-repeat="relacionado in ::data" ng-if="!!relacionado.lista && relacionado.lista.length > 0">
+        <widget has-box="no-padding" title="{{::('relatedInfo' + relacionado.tipoRelacionamento.capitalize())|translate}}">
+            <div class="form-horizontal" ng-if="relacionado.tipoRelacionamento === 'insumo'" style="border-bottom: solid 1px lightgray">
+                <div class="form-group" style="margin-top: 0px; margin-bottom:5px;">
+                    <label class="col-md-1 control-label">{{::'yield'|translate}}:</label>
+                    <div class="col-md-2">
+                        <div class="form-control" style="text-align:right;" readonly>
+                            {{::relacionado.lista[0].pcRendimentoReceita|percentage:2}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier">{{::'item'|translate}}</th>
+                            <th>{{::'description'|translate}}</th>
+                            <th class="currency">{{::'buyCost'|translate}}</th>
+                            <th class="number">{{::'conversionFactor'|translate}}</th>
+                            <th class="currency">{{::'accountingCost'|translate}}</th>
+                            <th class="date">{{::'receiveDateCondensed'|translate}}</th>
+                            <th class="identifier">{{::'invoiceNumber'|translate}}</th>
+                            <th class="date">{{::'emissionDateCondensed'|translate}}</th>
+                            <th class="currency">{{::'registerCost'|translate}}</th>
+                            <th class="number" ng-if="relacionado.tipoRelacionamento === 'derivado'">{{::'yield'|translate}}</th>
+                            <th class="number" ng-if="relacionado.tipoRelacionamento === 'insumo'||relacionado.tipoRelacionamento === 'transformado'">{{::'quantity'|translate}}</th>
+                            <th class="identifier">{{::'plu'|translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="relacionado.lista && relacionado.lista.length > 0">
+                        <tr ng-repeat="item in relacionado.itens">
+                            <td class="identifier">{{::item.cdItem|coalesce:'-'}}</td>
+                            <td>{{::item.dsItem|coalesce:'-'}}</td>
+                            <td class="currency">{{::item.vlCustoCompraAtual|money:'BRL':2|coalesce:'-'}}</td>
+                            <td class="number">{{::item.vlFatorConversao|number:2}}</td>
+                            <td class="currency">{{::item.vlCustoContabilAtual|money:'BRL':2|coalesce:'-'}}</td>
+                            <td class="date">{{::item.dtRecebimento|coalesce:'-'}}</td>
+                            <td class="identifier">{{::item.nrNotaFiscal|coalesce:'-'}}</td>
+                            <td class="date">{{::item.dtEmissao|coalesce:'-'}}</td>
+                            <td class="currency">{{::item.vlCustoCadastroAtual|money:'BRL':2|coalesce:'-'}}</td>
+                            <td class="number" ng-if="relacionado.tipoRelacionamento === 'derivado'">{{::item.pcRendimento}}</td>
+                            <td class="number" ng-if="relacionado.tipoRelacionamento === 'insumo'||relacionado.tipoRelacionamento === 'transformado'">{{::item.psItem|number:3}}</td>
+                            <td class="identifier">{{::item.cdPLU|coalesce:'-'}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!relacionado.lista || relacionado.lista.length === 0">
+                        <tr>
+                            <td colspan="{{::(relacionado.tipoRelacionamento !== 'entrada' && relacionado.tipoRelacionamento !== 'saida') ? '11' : '10'}}" class="domain">{{::'noData'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="relacionado.itens" grid-name="{{::relacionado.tipoRelacionamento}}" page-method="relacionado.paginar" settings="relacionado.itens"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

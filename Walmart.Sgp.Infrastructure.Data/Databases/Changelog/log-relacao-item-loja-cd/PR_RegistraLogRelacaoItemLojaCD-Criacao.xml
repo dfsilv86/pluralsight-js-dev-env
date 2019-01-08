@@ -1,0 +1,108 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-LogTipoProcesso-PR_RegistraLogRelacaoItemLojaCD-Criacao" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				-- =============================================
+				-- Author:		Rafael de Souza Bueno
+				-- Create date: 22/09/2016
+				-- Description:	Inclusão de log do processo de reabastecimento item/loja
+				-- =============================================
+				CREATE PROCEDURE [dbo].[PR_RegistraLogRelacaoItemLojaCD] @IDCD INT
+					,@IDLoja INT
+					,@IDItemDetalheSaida BIGINT
+					,@IDItemDetalheEntradaAnterior BIGINT
+					,@IDItemDetalheEntradaNovo BIGINT
+					,@IdAuditUser INT
+					,@IDLogTipoProcesso INT
+					,@cdCrossRefAnterior VARCHAR(50)
+					,@cdCrossRefNovo VARCHAR(50)
+					,@vlTipoReabastecimento SMALLINT
+					,@Observacao VARCHAR(150)
+				AS
+				BEGIN
+					DECLARE @DhAuditStamp DATETIME = GETDATE()
+						,@CdAuditKind INT;
+
+					IF (
+							@IDItemDetalheEntradaAnterior IS NULL
+							AND @IDItemDetalheEntradaNovo IS NOT NULL
+							)
+					BEGIN
+						SET @CdAuditKind = 1;
+					END
+					ELSE IF (
+							(
+								@IDItemDetalheEntradaAnterior IS NOT NULL
+								AND @IDItemDetalheEntradaNovo IS NOT NULL
+								AND @IDItemDetalheEntradaAnterior <> @IDItemDetalheEntradaNovo
+								)
+							OR (
+								@cdCrossRefAnterior IS NOT NULL
+								AND @cdCrossRefNovo IS NOT NULL
+								AND @cdCrossRefAnterior <> @cdCrossRefNovo
+								)
+							)
+					BEGIN
+						SET @CdAuditKind = 2;
+					END
+					ELSE IF (
+							@IDItemDetalheEntradaAnterior IS NOT NULL
+							AND @IDItemDetalheEntradaNovo IS NULL
+							)
+					BEGIN
+						SET @CdAuditKind = 3;
+					END
+
+					IF (@CdAuditKind IS NOT NULL)
+					BEGIN
+						INSERT INTO RelacaoItemLojaCDLog (
+							IDCD
+							,IDLoja
+							,IDItemDetalheSaida
+							,IDItemDetalheEntradaAnterior
+							,IDItemDetalheEntradaNovo
+							,IdAuditUser
+							,IDLogTipoProcesso
+							,CdAuditKind
+							,cdCrossRefAnterior
+							,cdCrossRefNovo
+							,DhAuditStamp
+							,vlTipoReabastecimento
+							,Observacao
+							)
+						VALUES (
+							@IDCD
+							,@IDLoja
+							,@IDItemDetalheSaida
+							,@IDItemDetalheEntradaAnterior
+							,@IDItemDetalheEntradaNovo
+							,@IdAuditUser
+							,@IDLogTipoProcesso
+							,@CdAuditKind
+							,@cdCrossRefAnterior
+							,@cdCrossRefNovo
+							,@DhAuditStamp
+							,@vlTipoReabastecimento
+							,@Observacao
+							);
+					END
+				END
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+				DROP PROCEDURE PR_RegistraLogRelacaoItemLojaCD;
+				~
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

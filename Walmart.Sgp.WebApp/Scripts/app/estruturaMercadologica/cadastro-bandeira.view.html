@@ -1,0 +1,91 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::(data.isNew ? 'stateCadastroBandeiraNewName' : 'stateCadastroBandeiraEditName')|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="cadastroBAndeira">
+                <div class="form-group actions">
+                    <div class="col-md-8">
+                        <button class="btn btn-primary" ng-click="save()" security-action="Bandeira.Salvar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                    </div>
+                    <div class="col-md-4 align-right">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="description" ng-model="data.dsBandeira" class="form-control input-width-large" required maxlength="20" />
+                    </form-field>
+                    <form-field title="{{::'acronym'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="acronym" ng-model="data.sgBandeira" class="form-control input-width-large" required maxlength="2" />
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'storeFormat'|translate}}" line-width="6" grid-width="8">
+                        <dropdown-formato ng-model="data.idFormato" show-select="true" item-out="data.formato" required></dropdown-formato>
+                    </form-field>
+                    <form-field title="{{::'thereIsNoManagerPerDepartment'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <checkbox name="thereIsNoManagerPerDepartment" ng-model="data.blImportarTodos" label="{{::'thereIsNoManagerPerDepartment'|translate|capitalize}}" show-label="false"></checkbox>
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'requiredInventory'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <div style="max-height: 150px; overflow: auto; border: solid 1px lightgray; padding: 2px 5px; height: auto;" class="form-control">
+                            <div ng-repeat="detalheDisponivel in data.detalhesDisponiveis">
+                                <checkbox ng-model="detalheDisponivel.selecionado" label="{{detalheDisponivel.descricao}}"></checkbox>
+                            </div>
+                        </div>
+                    </form-field>
+                    <form-field title="{{::'active'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <checkbox name="active" ng-model="data.blAtivoBool" label="{{::'active'|translate|capitalize}}" show-label="false"></checkbox>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget title="{{::'regions'|translate|capitalize}}" has-box="true">
+            <form name="regioes" class="form-horizontal" novalidate="novalidate">
+                <div class="form-group">
+                    <form-field class="align-right" title="{{::'name'|translate|capitalize}}" line-width="8">
+                        <div class="input-group">
+                            <input name="name" type="text" ng-model="data.tempRegiao.nmRegiao" class="form-control input-width-large" maxlength="25" />
+                            <span class="input-group-btn">
+                                <add-button class="btn btn-primary"
+                                            ng-click="adicionarRegiao()"
+                                            ng-disabled="data.tempRegiao.nmRegiao == null || data.tempRegiao.nmRegiao.length == 0">
+                                </add-button>
+                            </span>
+                        </div>
+                    </form-field>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th>{{::'nmRegiao'|translate|capitalize}}</th>
+                                <th>{{::'districts'|translate|capitalize}}</th>
+                                <th class="double action"></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="data.regioes.length > 0">
+                            <tr ng-repeat="regiao in data.regioes">
+                                <td>{{regiao.nmRegiao}}</td>
+                                <td>
+                                    <span ng-repeat="distrito in regiao.distritos"><span class="label label-info">{{distrito.nmDistrito}}</span>&nbsp;</span>
+                                </td>
+                                <td class="double action">
+                                    <edit-button class="" ng-click="detalharRegiao(regiao)" title="{{::districts}}"></edit-button>
+                                    <remove-button ng-click="removerRegiao(regiao)"></remove-button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="data.regioes.length === 0">
+                            <tr>
+                                <td colspan="3" class="domain">{{::'noData'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+

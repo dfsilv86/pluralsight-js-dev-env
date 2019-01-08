@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <!-- TABELAS -->
+  <include file="1 - Stage.Loja.xml" relativeToChangelogFile="true"/>
+  <include file="2 - Stage.Item.xml" relativeToChangelogFile="true"/>
+  <include file="3 - Stage.SugestaoPedido_Alteracao_Tipo_Dados_Colunas.xml" relativeToChangelogFile="true"/>
+  <include file="4 - Stage.SaldoPedidoItemEntrada_Alteracao_Tipo_Dados.xml" relativeToChangelogFile="true"/>
+  <include file="5 - Stage.SaldoPedido_Alteracao_Tipo_Dados.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

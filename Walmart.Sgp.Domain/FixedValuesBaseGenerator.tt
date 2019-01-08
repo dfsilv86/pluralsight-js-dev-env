@@ -1,0 +1,92 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+
+<#
+// Gerador para auxiliar na criação de implementações de FixedValuesBase.
+// As classes geradas aqui devem ser copiadas para seus devidos arquivos.
+
+var ns = "EstruturaMercadologia";
+var className = "BandeiraStatus";
+var classDescription = "Os status de uma bandeira.";
+var underlyingType = "string";
+var values = new string[] { "Ativo", "S", "Inativo", "I" };
+
+#>  
+using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using Walmart.Sgp.Infrastructure.Framework.Domain;
+using Walmart.Sgp.Infrastructure.Framework.Globalization;
+
+namespace Walmart.Sgp.Domain.<#=ns#>
+{ 
+    /// <summary>
+    /// Representa os possíveis valores para <#=classDescription.ToLowerInvariant()#>.
+    /// </summary>
+    public class <#=className#> : FixedValuesBase<<#=underlyingType#>>
+    { 
+        #region Fields
+    <#
+        for (int i = 0; i < values.Length; i += 2) { 
+            var fieldName = values[i];
+            var quote = underlyingType == "string" ? "\"" : "";
+            var fieldValue = quote + values[i + 1] + quote;
+    #>
+    /// <summary>
+        /// <#=classDescription#> de <#=fieldName.ToLowerInvariant()#> (<#=fieldValue#>).
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2104:DoNotDeclareReadOnlyMutableReferenceTypes")]
+        public static readonly <#=className#> <#=fieldName#> = new <#=className#>(<#=fieldValue#>);
+
+    <#}        
+#>    /// <summary>
+        /// Todos os <#=classDescription.ToLowerInvariant()#>.
+        /// </summary>
+        [SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
+        public static readonly <#=className#>[] Todos = new <#=className#>[] { <#
+        for (int i = 0; i < values.Length; i += 2) { 
+            var fieldName = values[i];
+            #><#=className#>.<#=fieldName#>, <#}#>};
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Inicia uma nova instância da classe <see cref="<#=className#>"/>.
+        /// </summary>
+        /// <param name="value">O valor.</param>
+        private <#=className#>(<#=underlyingType#> value)
+            : base(value)
+        {
+        }
+        #endregion
+
+        #region Operators
+        /// <summary>
+        /// Performs an implicit conversion from <see cref="<#=underlyingType#>"/> to <see cref="<#=className#>"/>.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>
+        /// The result of the conversion.
+        /// </returns>
+        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
+		public static implicit operator <#=className#>(<#=underlyingType#> value)
+        {
+			try 
+			{
+				return <#=className#>.Todos.Single(t => t.Value == value);
+			}
+			catch (Exception ex)
+			{
+				throw new InvalidCastException(
+                    Texts.InvalidFixedValue.With(value, typeof(<#=className#>).Name, Todos.Select(i => i.Value).JoinWords()), 
+                    ex);
+			}
+        }       
+        #endregion
+    }    
+}

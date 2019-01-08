@@ -1,0 +1,207 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="melhorias-pos-implantacao_PR_GeraSugestaoReturnSheet_AlteracaoIran" author="iran">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+
+				ALTER PROCEDURE [dbo].[PR_GeraSugestaoReturnSheet]
+				AS
+				BEGIN
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+					SET NOCOUNT ON
+
+					UPDATE SP
+					SET blReturnSheet = 1
+					FROM SugestaoPedido SP
+					INNER JOIN ReturnSheetItemLoja RSIL ON RSIL.idLoja = SP.IdLoja
+						AND RSIL.blAtivo = 1
+					INNER JOIN ReturnSheetItemPrincipal RSIP ON RSIP.idReturnSheetItemPrincipal = RSIL.idReturnSheetItemPrincipal
+						AND RSIP.idItemDetalhe = SP.IDItemDetalheSugestao
+						AND RSIP.blAtivo = 1
+					INNER JOIN ReturnSheet RS ON RS.idReturnSheet = RSIP.idReturnSheet
+						AND SP.dtPedido BETWEEN CAST(RS.dhInicioReturn AS DATE)
+							AND CAST(RS.dhFinalReturn AS DATE)
+					WHERE SP.dtPedido = CAST(GETDATE() AS DATE)
+
+					INSERT INTO SugestaoReturnSheet (
+						[IdReturnSheetItemLoja]
+						,[vlCustoContabilItemVenda]
+						,[qtVendorPackageItemCompra]
+						,[PackSugeridoCompra]
+						,[vlPesoLiquidoItemCompra]
+						,[vlTipoAbastetimentoItemCompra]
+						,[vlTipoAbastetimentoItemVenda]
+						,[QtdLoja]
+						,[QtdRA]
+						,[IdUsuarioCriacao]
+						,[DhCriacao]
+						,[BlAutorizado]
+						,[BlExportado]
+						,[BlAtivo]
+						,[idCD]
+						,[PrecoVenda]
+						)
+					SELECT rsi.IdReturnSheetItemLoja
+						,dbo.FN_RetornaUltimoCustoContabil(rsi.IdLoja, idv.IDItemDetalhe) vlCustoContabilItemVenda
+						,idc.qtVendorPackage
+						,ISNULL(sgp.qtdPackCompra, 0) qtdPackCompra
+						,idc.vlPesoLiquido
+						,dbo.fnObterTipoReabastecimento(idc.IDItemDetalhe, lcp.IDCD, lcp.IDLoja) vlTipoAbastetimentoItemCompra
+						,dbo.fnObterTipoReabastecimento(idv.IDItemDetalhe, lcp.IDCD, lcp.IDLoja) vlTipoAbastetimentoItemVenda
+						,NULL
+						,NULL
+						,3
+						,GETDATE()
+						,0
+						,0
+						,1
+						,lcp.IDCD
+						,rsi.PrecoVenda
+					FROM ReturnSheet rs
+					JOIN ReturnSheetItemPrincipal rsp ON rsp.IdReturnSheet = rs.IdReturnSheet
+						AND rsp.blAtivo = 1
+					JOIN ItemDetalhe idv ON idv.IDItemDetalhe = rsp.IDItemDetalhe
+					JOIN ReturnSheetItemLoja rsi ON rsi.IdReturnSheetItemPrincipal = rsp.IdReturnSheetItemPrincipal
+						AND rsi.blAtivo = 1
+					JOIN ItemDetalhe idc ON idc.IDItemDetalhe = rsi.IDItemDetalhe
+					LEFT JOIN SugestaoPedido sgp ON sgp.IdLoja = rsi.IdLoja
+						AND sgp.IDItemDetalhePedido = idc.IDItemDetalhe
+						AND sgp.dtPedido = CONVERT(DATE, rs.DhInicioReturn)
+					JOIN RelacaoItemLojaCD ril ON CASE 
+							WHEN coalesce(idc.tpvinculado, idc.tpmanipulado, idc.tpreceituario) IS NULL
+								THEN ril.IDItem
+							ELSE ril.IDItemEntrada
+							END = idc.IDItemDetalhe
+						AND ril.blAtivo = 1
+						AND ril.cdSistema = 1
+					JOIN LojaCDParametro lcp ON lcp.IDLojaCDParametro = ril.IDLojaCDParametro
+						AND lcp.IDLoja = rsi.IdLoja
+						AND lcp.blAtivo = 1
+						AND lcp.cdSistema = 1
+					WHERE rs.blativo = 1
+						AND rs.blSugestao = 0
+						AND CONVERT(DATE, rs.DhInicioReturn) = convert(DATE, GETDATE())
+
+					UPDATE RS
+					SET RS.blSugestao = 1
+					FROM ReturnSheet RS
+					JOIN ReturnSheetItemPrincipal RSP ON RSP.idReturnSheet = RS.idReturnSheet
+					JOIN ReturnSheetItemLoja RSI ON RSI.idReturnSheetItemPrincipal = RSP.idReturnSheetItemPrincipal
+					JOIN SugestaoReturnSheet SRS ON SRS.idReturnSheetItemLoja = RSI.idReturnSheetItemLoja
+					WHERE CONVERT(DATE, RS.DhInicioReturn) = convert(DATE, GETDATE())
+				END
+
+
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+
+					ALTER PROCEDURE [dbo].[PR_GeraSugestaoReturnSheet]
+					AS
+					BEGIN
+						 SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+						 SET NOCOUNT ON
+
+						 UPDATE SP
+						 SET blReturnSheet = 1
+						 FROM SugestaoPedido SP
+						 INNER JOIN ReturnSheetItemLoja RSIL ON RSIL.idItemDetalhe = SP.IDItemDetalheSugestao
+								AND RSIL.idLoja = SP.IdLoja
+								AND RSIL.blAtivo = 1
+						 INNER JOIN ReturnSheetItemPrincipal RSIP ON RSIP.idReturnSheetItemPrincipal = RSIL.idReturnSheetItemPrincipal
+								AND RSIP.blAtivo = 1
+						 INNER JOIN ReturnSheet RS ON RS.idReturnSheet = RSIP.idReturnSheet
+								AND CAST(RS.dhInicioReturn as DATE) = SP.dtPedido
+						 WHERE SP.dtPedido = CAST(GETDATE() as DATE)
+
+						 INSERT INTO SugestaoReturnSheet (
+								[IdReturnSheetItemLoja]
+								,[vlCustoContabilItemVenda]
+								,[qtVendorPackageItemCompra]
+								,[PackSugeridoCompra]
+								,[vlPesoLiquidoItemCompra]
+								,[vlTipoAbastetimentoItemCompra]
+								,[vlTipoAbastetimentoItemVenda]
+								,[QtdLoja]
+								,[QtdRA]
+								,[IdUsuarioCriacao]
+								,[DhCriacao]
+								,[BlAutorizado]
+								,[BlExportado]
+								,[BlAtivo]
+								,[idCD]
+								,[PrecoVenda]
+								)
+						 SELECT rsi.IdReturnSheetItemLoja
+								,dbo.FN_RetornaUltimoCustoContabil(rsi.IdLoja, idv.IDItemDetalhe) vlCustoContabilItemVenda
+								,idc.qtVendorPackage
+								,ISNULL(sgp.qtdPackCompra, 0) qtdPackCompra
+								,idc.vlPesoLiquido
+								,dbo.fnObterTipoReabastecimento(idc.IDItemDetalhe, lcp.IDCD, lcp.IDLoja) vlTipoAbastetimentoItemCompra
+								,dbo.fnObterTipoReabastecimento(idv.IDItemDetalhe, lcp.IDCD, lcp.IDLoja) vlTipoAbastetimentoItemVenda
+								,NULL
+								,NULL
+								,3
+								,GETDATE()
+								,0
+								,0
+								,1
+								,lcp.IDCD
+								,rsi.PrecoVenda
+						 FROM ReturnSheet rs
+						 JOIN ReturnSheetItemPrincipal rsp
+								ON rsp.IdReturnSheet = rs.IdReturnSheet
+									   AND rsp.blAtivo = 1
+						 JOIN ItemDetalhe idv
+								ON idv.IDItemDetalhe = rsp.IDItemDetalhe
+						 JOIN ReturnSheetItemLoja rsi
+								ON rsi.IdReturnSheetItemPrincipal = rsp.IdReturnSheetItemPrincipal
+									   AND rsi.blAtivo = 1
+						 JOIN ItemDetalhe idc
+								ON idc.IDItemDetalhe = rsi.IDItemDetalhe
+						 LEFT JOIN SugestaoPedido sgp
+								ON sgp.IdLoja = rsi.IdLoja
+									   AND sgp.IDItemDetalhePedido = idc.IDItemDetalhe
+									   AND sgp.dtPedido = CONVERT(DATE, rs.DhInicioReturn)
+						 JOIN RelacaoItemLojaCD ril
+								ON CASE 
+											  WHEN coalesce(idc.tpvinculado, idc.tpmanipulado, idc.tpreceituario) IS NULL
+													THEN ril.IDItem
+											  ELSE ril.IDItemEntrada
+											  END = idc.IDItemDetalhe
+									   AND ril.blAtivo = 1
+									   AND ril.cdSistema = 1
+						 JOIN LojaCDParametro lcp
+								ON lcp.IDLojaCDParametro = ril.IDLojaCDParametro
+									   AND lcp.IDLoja = rsi.IdLoja
+									   AND lcp.blAtivo = 1
+									   AND lcp.cdSistema = 1
+						 WHERE rs.blativo = 1
+								AND rs.blSugestao = 0
+								AND CONVERT(DATE, rs.DhInicioReturn) = convert(DATE, GETDATE())
+
+						 UPDATE RS
+						 SET RS.blSugestao = 1
+						 FROM ReturnSheet RS
+						 JOIN ReturnSheetItemPrincipal RSP
+								ON RSP.idReturnSheet = RS.idReturnSheet
+						 JOIN ReturnSheetItemLoja RSI
+								ON RSI.idReturnSheetItemPrincipal = RSP.idReturnSheetItemPrincipal
+						 JOIN SugestaoReturnSheet SRS
+								ON SRS.idReturnSheetItemLoja = RSI.idReturnSheetItemLoja
+						 WHERE CONVERT(DATE, RS.DhInicioReturn) = convert(DATE, GETDATE())
+					END
+
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

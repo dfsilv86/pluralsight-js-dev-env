@@ -1,0 +1,150 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateDetalheInventarioName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="inventaryItemView">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="relatorioComparacaoEstoque()" ng-disabled="!permissoes.exportarComparacaoEstoque" security-action="Inventario.ExportarRelatorioComparacaoEstoque"><i class="glyphicon glyphicon-save-file"></i> &nbsp; {{::'stockDiff'|translate}}</button>
+                        <button class="btn btn-default" ng-disabled="!permissoes.alterarItem.satisfied" ng-click="adicionarItem()" security-action="Inventario.ItemAdicionar"><i class="glyphicon glyphicon-plus"></i>&nbsp; {{::'includeItem'|translate}}</button>
+                        <button class="btn btn-default" ng-click="confirmarAprovacao()" ng-disabled="!permissoes.aprovar" security-action="Inventario.Aprovar">{{::'approve'|translate}}</button>
+                        <button class="btn btn-default" ng-click="confirmarFinalizacao()" ng-disabled="!permissoes.finalizar" security-action="Inventario.Finalizar">{{::'finish'|translate}}</button>
+                        <button class="btn btn-default"
+                                ng-disabled="!permissoes.cancelar"
+                                security-action="Inventario.Cancelar"
+                                mwl-confirm
+                                title="{{::'inventoryCancellation'|translate }}"
+                                message="{{ ::'doYouReallyWantToCancelTheFollowingInventory'|translate }} {{ '\n' }} {{data.departamento.dsDepartamento}}"
+                                on-confirm="cancelarInventario()">
+                            {{::'cancel'|translate}}
+                        </button>
+                        <button class="btn btn-default"
+                                ng-if="permissoes.voltarStatus"
+                                mwl-confirm
+                                title="{{::'revertInventoryStatus'|translate }}"
+                                message="{{ ::'doYouReallyWantToRevertInventoryStatus'|translate }}"
+                                on-confirm="voltarStatus()">
+                            {{::'revertStatusTo'|translate}} {{ statusAnterior|enum:'inventarioStatus'|translate}}
+                        </button>
+                        <button class="btn btn-default right" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                        <button class="btn btn-default right" ng-click="relatorioItensModificados()"><i class="glyphicon glyphicon-save-file"></i> &nbsp; {{::'modifiedItems'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.loja|storeProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'inventaryDate'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.dhInventario|amDateFormat:'DD/MM/YYYY'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'format'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.bandeira.dsBandeira}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12" ng-if="!data.bandeira || data.bandeira.cdSistema == sistemas.supercenter">
+                        <input type="text" value="{{data.departamento|departmentProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12" ng-if="data.bandeira && data.bandeira.cdSistema == sistemas.samsClub">
+                        <input type="text" value="{{data.categoria|categoryProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'opening'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{(!!data.usuarioAberturaLoja ? data.dhAberturaLoj : null)|amDateFormat:'DD/MM/YYYY HH:mm:ss'}} - {{ (!!data.dhAberturaLoj ? data.usuarioAberturaLoja.userName : null) }}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'importing'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{(!!data.usuarioImportacao ? data.dhImportacao : null)|amDateFormat:'DD/MM/YYYY HH:mm:ss'}} - {{ (!!data.dhImportacao ? data.usuarioImportacao.userName : null) }}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'approvalGD'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{(!!data.usuarioAprovacaoLoja ? data.dhAprovacaoLoj : null)|amDateFormat:'DD/MM/YYYY HH:mm:ss'}} - {{ (!!data.dhAprovacaoLoj ? data.usuarioAprovacaoLoja.userName : null) }}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'finishGA'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{(!!data.usuarioFinalizacaoLoja ? data.dhFinalizacaoLoj : null)|amDateFormat:'DD/MM/YYYY HH:mm:ss'}} - {{ (!!data.dhFinalizacaoLoj ? data.usuarioFinalizacaoLoja.userName : null) }}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'situation'|translate|capitalize}}" line-width="12" grid-width="6">
+                        <input type="text" value="{{data.stInventario|enum:'inventarioStatus'|translate}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'inventoriedItemAmount'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.totalItens|number:0}}" class="form-control look-alive number" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'totalCostValueInventoried'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.totalCusto|money:2}}" class="form-control look-alive number" readonly="readonly" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget title="{{::'searchItems'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalhesCusto">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="buscarItens()"><i class="glyphicon glyphicon-search"></i> &nbsp; {{::'search'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="filtroItem.cdOldNumber" ui-number-mask="0" ui-hide-group-sep maxlength="9" class="form-control number" />
+                    </form-field>
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" ng-model="filtroItem.dsItem" class="form-control" maxlength="200" />
+                    </form-field>
+                    <form-field title="{{::'plu'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="filtroItem.cdPlu" class=" form-control number" ui-number-mask="0" ui-hide-group-sep maxlength="9" />
+                    </form-field>
+                    <form-field title="{{::'filter'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-filtro-item-inventario ng-model="filtroItem.filtro"></dropdown-tipo-filtro-item-inventario>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier">{{::'item'|translate|capitalize}}</th>
+                            <th class="detalhe-inventario-descricao">{{::'description'|translate|capitalize}}</th>
+                            <th class="identifier">{{::'plu'|translate|capitalize}}</th>
+                            <th class="currency">{{::'unitValueCost'|translate|capitalize}}</th>
+                            <th class="double number">{{::'amountAbbreviated'|translate|capitalize}}</th>
+                            <th class="double number">{{::'amountPreviousInventoryAbbreviated'|translate|capitalize}}</th>
+                            <th class="currency">{{::'totalCostValue'|translate|capitalize}}</th>
+                            <th class="domain">{{::'registerCostAbbreviated'|translate|capitalize}}</th>
+                            <th class="date">{{::'countDate'|translate|capitalize}}</th>
+                            <th class="date">{{::'calculationDate'|translate|capitalize}}</th>
+                            <th class="date">{{::'fixDate'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'status'|translate|capitalize}}</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="inventarioItem.values && inventarioItem.values.length > 0">
+                        <tr ng-repeat="item in inventarioItem.values">
+                            <td class="identifier">{{item.itemDetalhe.cdOldNumber}}</td>
+                            <td class="detalhe-inventario-descricao">{{item.itemDetalhe.dsItem}}</td>
+                            <td class="identifier">{{item.itemDetalhe.cdplu}}</td>
+                            <td class="currency">{{(item.estoque.vlCustoContabilAtual || 0 )|money:2}}</td>
+                            <td class="double number">{{(item.qtItem || 0)|number:3}}</td>
+                            <td class="double number">{{(item.qtItemInventarioAnterior || 0)|number:3}}</td>
+                            <td class="currency">{{(item.vlCustoTotal || 0)|money:2}}</td>
+                            <td class="domain">{{(item.estoque.vlCustoCadastroAtual > 0)|yesNo}}</td>
+                            <td class="date">{{item.dhUltimaContagem|amDateFormat:'DD/MM/YYYY'}}</td>
+                            <td class="date">{{item.dhRecalculo|amDateFormat:'DD/MM/YYYY'}}</td>
+                            <td class="date">{{item.dhAlteracao|amDateFormat:'DD/MM/YYYY'}}</td>
+                            <td class="domain symbol">{{item.itemDetalhe.tpStatus}}</td>
+                            <td class="action">
+                                <edit-button ng-click="detalharItem(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!inventarioItem.values || inventarioItem.values.length === 0">
+                        <tr>
+                            <td colspan="13" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="inventarioItem.values" page-method="buscarItens" settings="inventarioItem.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

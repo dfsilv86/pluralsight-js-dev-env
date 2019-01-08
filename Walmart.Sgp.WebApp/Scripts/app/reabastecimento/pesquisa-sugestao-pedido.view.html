@@ -1,0 +1,139 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaSugestaoPedidoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="discardChanges();search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                        <button class="btn btn-default" style="margin-left:10px" ng-click="save()" ng-disabled="!hasChanges() || !canSave()" security-action="SugestaoPedido.AlterarSugestoes"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-default" ng-click="discardChanges()" ng-disabled="!hasChanges()"><span class="icon-undo"></span> &nbsp; {{::'discardChanges'|translate}}</button>
+                        <button class="btn btn-default btn-autorizar-pedido"
+                                ng-if="podeAutorizarPedidoVisivel()"
+                                ng-disabled="!data.podeAutorizarPedido"
+                                mwl-confirm
+                                title="{{::'confirmAuthorizeOrderTitle'|translate }}"
+                                message="{{'confirmAuthorizeOrderMessage'|translate|html|formatter:data.pesquisado.loja.cdLoja:data.pesquisado.departamento.cdDepartamento:(data.pesquisado.dtPedido|amDateFormat:'DD/MM/YYYY')}}"
+                                on-confirm="autorizarPedido()"
+                                security-action="SugestaoPedido.AutorizarPedido">
+                            <i class="glyphicon" ng-class="{'glyphicon-ok':data.pedidoAutorizado,'glyphicon-pencil':!data.pedidoAutorizado}" /> &nbsp; {{(data.pedidoAutorizado ? 'orderAuthorized' : 'authorizeOrder')|translate}}
+                        </button>
+                        <span ng-if="data.disponibilidade.manualDisponivel" class="pull-right label label-danger">{{::'manualOrderSuggestions'|translate|capitalize}}</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'orderDate'|translate|capitalize}}" line-width="6">
+                        <datepicker name="orderDate" ng-model="filters.dtPedido" required></datepicker>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" required sistema="filters.cdSistema" description-width="large" item-out="temp.loja" ignore-bandeira="true"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'vendor'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-vendor-nove-digitos name="vendor" ng-model="filters.cdVendor" sistema="filters.cdSistema" description-width="large"></lookup-vendor-nove-digitos>
+                    </form-field>
+                    <form-field title="{{::'division'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-divisao ng-model="filters.cdDivisao" sistema="filters.cdSistema" description-width="large"></lookup-divisao>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" divisao="filters.cdDivisao" modo-pereciveis="restrito" excluir-padaria="true" description-width="large" required item-out="temp.departamento"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-categoria ng-model="filters.cdCategoria" sistema="filters.cdSistema" departamento="filters.cdDepartamento" divisao="filters.cdDivisao" description-width="large"></lookup-categoria>
+                    </form-field>
+                    <form-field title="{{::'subcategory'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-subcategoria ng-model="filters.cdSubcategoria" sistema="filters.cdSistema" departamento="filters.cdDepartamento" categoria="filters.cdCategoria" divisao="filters.cdDivisao" description-width="large"></lookup-subcategoria>
+                    </form-field>
+                    <form-field title="{{::'fineLine'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-fine-line ng-model="filters.cdFineLine" sistema="filters.cdSistema" departamento="filters.cdDepartamento" categoria="filters.cdCategoria" subcategoria="filters.cdSubcategoria" divisao="filters.cdDivisao" description-width="large"></lookup-fine-line>
+                    </form-field>
+                    <form-field title="{{::'item'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="filters.cdItem" sistema="filters.cdSistema" fine-line="filters.cdFineLine" subcategoria="filters.cdSubcategoria" categoria="filters.cdCategoria" departamento="filters.cdDepartamento" divisao="filters.cdDivisao" description-width="large"></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'suggestionSource'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-origem-sugestao ng-model="filters.cdOrigemCalculo" required />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <div class="sugestao-pedido">
+                    <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="identifier" ng-click="orderBy('cdV9D')">{{::'cdV9D'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdV9D"></sort-indicator></th>
+                                <th style="width:145px;" ng-click="orderBy('nmFornecedor')">{{::'vendorDescription'|translate|capitalize}} <sort-indicator ng-model="data.values" name="nmFornecedor"></th>
+                                <th class="identifier" ng-click="orderBy('cdItem')">{{::'itemCode'|translate|capitalize}}<sort-indicator ng-model="data.values" name="cdItem"></th>
+                                <th style="width:150px;" ng-click="orderBy('dsItem')">{{::'itemDescription'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsItem"></th>
+                                <th class="domain">{{::'suggestionSource'|translate|capitalize}}</th>
+                                <th class="number">{{::'forecastValue'|translate|capitalize}}</th>
+                                <th class="date">{{::'salesForecastInterval'|translate|capitalize}}</th>
+                                <th class="number">{{::'pack'|translate|capitalize}}</th>
+                                <th class="number">{{::'weight'|translate|capitalize}}</th>
+                                <th class="number">{{::'suggestedPackOrWeight'|translate|capitalize:true}}</th>
+                                <th class="number">{{::'originalStock'|translate|capitalize}}</th>
+                                <th class="number">{{::'onOrder'|translate|capitalize}}</th>
+                                <th class="number">{{::'inTransit'|translate|capitalize}}</th>
+                                <th class="number">{{::'knownStock'|translate|capitalize}}</th>
+                                <th class="number" ng-click="orderBy('qtdPackCompra')">{{::'requestedPackOrWeight'|translate|capitalize}} <sort-indicator ng-model="data.values" name="qtdPackCompra"></th>
+                                <th class="domain" ng-click="orderBy('qtVendorPackage')">{{::'buyUnit'|translate|capitalize}} <sort-indicator ng-model="data.values" name="qtVendorPackage"></th>
+                                <th class="action"></th>
+                            </tr>
+                        </thead>
+                        <!-- Atenção: Uso de one-time binding nas informações que não mudam para evitar que a tela fique muito lenta quando a grid está configurada com vários registros por página. -->
+                        <!--          Pode ser que algum desses campos não deva mais ser one-time binding no futuro (casos onde o valor pode mudar entre cliques no botão Pesquisar por ex.) -->
+                        <!--          Neste caso, remover o :: do binding -->
+                        <tbody ng-if="data.values && data.values.length > 0">
+                            <tr ng-repeat="item in data.values track by item.idSugestaoPedido"
+                                ng-class="{'sugestao-pedido-grade-sugestao-fechada':(!item.gradeSugestoesAberta),'sugestao-pedido-manual':(item.cdOrigemCalculo==='M'),'sugestao-pedido-estoque-zero':(!item.blReturnSheet && item.cdOrigemCalculo!=='M' && item.vlEstoqueOriginal <= 0),'sugestao-pedido-sem-vendas-ultima-semana':(!item.blReturnSheet && item.cdOrigemCalculo!=='M' && !item.blPossuiVendasUltimaSemana),'sugestao-pedido-return-sheet':!!item.blReturnSheet}">
+                                <td class="identifier">{{::item.fornecedorParametro.cdV9D}}</td>
+                                <td style="width:145px;padding-right:0"><div class="unbreakable" style="width:145px;" title="{{::item.fornecedorParametro.fornecedor.nmFornecedor}}">{{::item.fornecedorParametro.fornecedor.nmFornecedor}}</div></td>
+                                <td class="identifier">{{::item.itemDetalheSugestao.cdItem}}</td>
+                                <td style="width:150px;padding-right: 0"><div class="unbreakable" style="width:150px;" title="{{::item.itemDetalheSugestao.dsItem}}">{{::item.itemDetalheSugestao.dsItem}}</div></td>
+                                <td class="domain">{{::item.cdOrigemCalculo|enum:'tipoOrigemSugestao'|translate}}</td>
+                                <td class="number esconde-quando-manual">{{::(item.cdOrigemCalculo != 'M' ? item.vlForecast : null)|coalesce:'-'|number:3}}</td>
+                                <td class="double date" style="width:100px;">
+                                    <div style="width:100px;" class="unbreakable" ng-if="::item.cdOrigemCalculo != 'M' && !item.dtInicioForecast.isEmptyDate()" title="{{::item.dtInicioForecast|amDateFormat:'DD/MM/YYYY'}} - {{::item.dtFimForecast|amDateFormat:'DD/MM/YYYY'}}">{{::item.dtInicioForecast|amDateFormat:'DD/MM/YY'}} - {{::item.dtFimForecast|amDateFormat:'DD/MM/YY'}}</div>
+                                    <span ng-if="::item.cdOrigemCalculo == 'M' || item.dtInicioForecast.isEmptyDate()">-</span>
+                                </td>
+                                <td class="number">{{::item.qtVendorPackage|number:0}}</td>
+                                <td class="number">{{item.pesoLiquidoOuBruto|number:3}}</td>
+                                <td class="number esconde-quando-manual">{{::(item.cdOrigemCalculo != 'M' ? item.qtdPackCompraOriginal : null)|coalesce:'-'|number:0}}</td>
+                                <td class="number esconde-quando-manual">{{::(item.cdOrigemCalculo != 'M' ? item.vlEstoqueOriginal : null)|coalesce:'-'|number:3}}</td>
+                                <td class="number esconde-quando-manual">{{::(item.cdOrigemCalculo != 'M' ? item.vlSaldoOO : null)|coalesce:'-'|number:3}}</td>
+                                <td class="number esconde-quando-manual">{{::(item.cdOrigemCalculo != 'M' ? (item.vlSaldoIW + item.vlSaldoIT) : null)|coalesce:'-'|number:3}}</td>
+                                <td class="number">
+                                    <input ng-if="!item.gradeSugestoesAberta" ng-disabled="true" ng-model="item.vlEstoque" class="form-control input-width-mini" type="text" readonly="readonly" number ui-number-mask="3" ui-hide-group-sep min="0" max="99999" decimal ui-negative-number />
+                                    <input ng-if="item.gradeSugestoesAberta" sugestao="{{item.idSugestaoPedido}}" ng-disabled="!podeAlterarEstoque(item)" ng-model="item.vlEstoque" ng-model-options="{updateOn:'default blur',debounce:{'default':1000,'blur':0}}" ng-change="validarAlteracaoEstoque(item)" select-text-on-focus name="vlEstoque[{{$index}}]" class="form-control input-width-mini" type="text" number ui-number-mask="3" ui-hide-group-sep max="99999" required decimal ui-negative-number />
+                                </td>
+                                <td class="number">
+                                    <input ng-if="!item.gradeSugestoesAberta" ng-disabled="true" ng-model="item.qtdPackCompra" class="form-control input-width-mini" type="text" readonly="readonly" number ui-number-mask="0" ui-hide-group-sep min="0" max="9999999" maxlength="7" integer />
+                                    <input ng-if="item.gradeSugestoesAberta" sugestao="{{item.idSugestaoPedido}}" ng-disabled="!podeAlterarQtdPackCompra(item)" ng-model="item.qtdPackCompra" ng-model-options="{updateOn:'default blur',debounce:{'default':1000,'blur':0}}" ng-change="validarAlteracaoQtd(item)" select-text-on-focus name="qtdPackCompra[{{$index}}]" class="form-control input-width-mini" type="text" number ui-number-mask="0" ui-hide-group-sep min="0" max="9999" required maxlength="4" integer />
+                                </td>
+                                <td class="domain" title="{{item.unidadeCompra|fixedValue:'tipoCaixaFornecedorShort'|translate}}" style="width:60px"><div style="width:60px" class="unbreakable">{{item.unidadeCompra|fixedValue:'tipoCaixaFornecedorShort'|translate}}</div></td>
+                                <td class="action">
+                                    <edit-button ng-click="detail(item)"></edit-button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!data.values || data.values.length === 0">
+                            <tr>
+                                <td colspan="17" class="domain">{{::'noData'|translate|capitalize}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

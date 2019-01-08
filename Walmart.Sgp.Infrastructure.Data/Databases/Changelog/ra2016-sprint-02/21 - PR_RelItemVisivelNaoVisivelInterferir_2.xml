@@ -1,0 +1,1339 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-PR_RelItemVisivelNaoVisivelInterferir_2" author="ananell">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+
+				ALTER PROCEDURE [dbo].[PR_RelItemVisivelNaoVisivelInterferir] @Data DATE
+					,@IDLoja VARCHAR(MAX)
+					,@IDDivisao INT
+					,@IDDepartamento INT
+					,@IDCategoria INT
+					,@IDSubcategoria INT
+					,@IDFineline INT
+					,@CdItem VARCHAR(10)
+					,@CdV9D BIGINT
+					,@PossuiTrait INT
+					,@Regiao INT
+				AS
+				BEGIN
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+					SET NOCOUNT ON
+
+					/*
+								DECLARE @Data DATE,
+										@IDLoja NVARCHAR(MAX),
+										@IDDivisao INT,
+										@IDDepartamento INT,
+										@IDCategoria INT,
+										@IDSubcategoria INT,
+										@IDFineline INT,
+										@CdItem VARCHAR(10),
+										@CdV9D NVARCHAR(MAX),
+										@PossuiTrait BIT,
+										@Regiao INT
+										
+								SET @PossuiTrait = null;
+
+								SET @Regiao = 1;
+										
+								SET @Data = '2016-07-21'; -- GETDATE();
+
+								SET @IDDepartamento = 5;	 -- cddepartamento 80	
+
+								-- todas lojas
+								SET @IDLoja = N'63,64,72,83,112,141,240,242,243,244,245,246,247,252,253,254,255,258,259,260,262,265,268,271,1120,286,289,308,330,331,342,343,398,1063,1080,1087,1095,1113,1116,356,364,365,371,372,373,375,376,377,378,379,381,388,390';
+
+								-- todos cdv9d das lojas
+								SET @CdV9D = NULL;
+
+								EXEC PR_RelItemVisivelNaoVisivelInterferir @Data, @IDLoja,null,@IDDepartamento,null,null,null,null,@CdV9D
+
+								--*/
+					DECLARE @Lojas TABLE (IDLoja INT NULL);
+
+					INSERT INTO @Lojas (IDLoja)
+					SELECT CONVERT(INT, FS.splitdata)
+					FROM fnSplitString(@IDLoja, ',') FS
+
+					--DECLARE @CdsV9D TABLE ( CdV9D BIGINT NULL );
+					--INSERT INTO @CdsV9D (CdV9D)
+					--SELECT CONVERT(BIGINT, FS.splitdata)
+					--  FROM fnSplitString(@CdV9D, ',') FS
+					IF OBJECT_ID('tempdb.dbo.#ItensFiltrados', 'U') IS NOT NULL
+						DROP TABLE #ItensFiltrados;
+
+					IF OBJECT_ID('tempdb.dbo.#ItensRelacionados', 'U') IS NOT NULL
+						DROP TABLE #ItensRelacionados;
+
+					IF OBJECT_ID('tempdb.dbo.#Fornecedores', 'U') IS NOT NULL
+						DROP TABLE #Fornecedores;
+
+					IF OBJECT_ID('tempdb.dbo.#ItensSugestao', 'U') IS NOT NULL
+						DROP TABLE #ItensSugestao;
+
+					CREATE TABLE #ItensSugestao (
+						IdItemDetalheEntrada BIGINT
+						,IdItemDetalheSaida BIGINT
+						,IdLoja INT
+						,IdFornecedorParametro INT
+						);
+
+					SELECT IDFornecedorParametro
+						,IDFornecedor
+						,cdV9D
+						,Tipo
+					INTO #Fornecedores
+					FROM (
+						SELECT FP.IDFornecedorParametro
+							,FP.IDFornecedor
+							,FP.cdV9D
+							,FP.cdTipo
+							,'D' Tipo
+							,RANK() OVER (
+								PARTITION BY FP.cdV9D ORDER BY FP.cdTipo
+								) X
+						FROM FornecedorParametro FP
+						--INNER JOIN @CdsV9D CDS
+						--        ON CDS.CdV9D = FP.cdV9D
+						WHERE cdStatusVendor = 'A'
+							AND cdTipo IN (
+								'D'
+								,'L'
+								)
+							AND (
+								@CdV9D IS NULL
+								OR FP.cdV9D = @CdV9D
+								)
+							AND SUBSTRING(CONVERT(VARCHAR, FP.cdV9D), LEN(FP.cdV9D) - 2, 2) = (
+								SELECT TOP 1 cdDepartamento
+								FROM Departamento
+								WHERE IdDepartamento = @IdDepartamento
+								)
+						
+						UNION
+						
+						SELECT FP.IDFornecedorParametro
+							,FP.IDFornecedor
+							,FP.cdV9D
+							,FP.cdTipo
+							,'W' Tipo
+							,RANK() OVER (
+								PARTITION BY FP.cdV9D ORDER BY FP.cdTipo DESC
+								) X
+						FROM FornecedorParametro FP
+						--INNER JOIN @CdsV9D CDS
+						--        ON CDS.CdV9D = FP.cdV9D
+						WHERE cdStatusVendor = 'A'
+							AND cdTipo IN (
+								'W'
+								,'L'
+								)
+							AND (
+								@CdV9D IS NULL
+								OR FP.cdV9D = @CdV9D
+								)
+							AND SUBSTRING(CONVERT(VARCHAR, FP.cdV9D), LEN(FP.cdV9D) - 2, 2) = (
+								SELECT TOP 1 cdDepartamento
+								FROM Departamento
+								WHERE IdDepartamento = @IdDepartamento
+								)
+						) tmp
+					WHERE tmp.X = 1;
+
+					WITH Divisoes
+					AS (
+						SELECT IdDivisao
+						FROM Divisao WITH (NOLOCK)
+						WHERE IdDivisao = ISNULL(@IDDivisao, IdDivisao)
+						)
+						,Categorias
+					AS (
+						SELECT IdCategoria
+						FROM Categoria WITH (NOLOCK)
+						WHERE IdCategoria = ISNULL(@IDCategoria, IdCategoria)
+						)
+						,SubCategorias
+					AS (
+						SELECT IdSubCategoria
+						FROM Subcategoria WITH (NOLOCK)
+						WHERE IdSubcategoria = ISNULL(@IDSubcategoria, IdSubcategoria)
+						)
+						,Finelines
+					AS (
+						SELECT IdFineline
+						FROM Fineline WITH (NOLOCK)
+						WHERE IdFineline = ISNULL(@IDFineline, IdFineline)
+						)
+						,
+						--Lojas
+						--AS
+						--(
+						--	SELECT L.IdLoja
+						--	  FROM Loja L WITH (NOLOCK)
+						--	       INNER JOIN @Lojas LL
+						--	               ON LL.IDLoja = L.IDLoja
+						--		 WHERE cdSistema = 1
+						--),
+						--Seleciona itens controle de estoque
+					ItensPereciveisSaida
+					AS (
+						SELECT IdItemDetalhe
+							,ID.vlTipoReabastecimento
+							,ID.tpVinculado
+							,ID.tpManipulado
+							,ID.tpReceituario
+							,ID.IdFornecedor
+							,ID.cdDepartamentoVendor
+							,ID.cdSequenciaVendor
+							,ID.blItemTransferencia
+							,ID.idFornecedorParametro
+							,ID.tpStatus
+						FROM ItemDetalhe ID WITH (NOLOCK)
+						INNER JOIN Departamento D WITH (NOLOCK) ON ID.IdDepartamento = D.IdDepartamento
+							AND D.blPerecivel = 'S'
+							AND D.blAtivo = 1
+							AND D.cdSistema = 1
+							AND D.IDDepartamento = @IDDepartamento
+						WHERE (
+								tpVinculado = 'S'
+								OR tpVinculado IS NULL
+								)
+							AND (
+								tpManipulado = 'P'
+								OR tpManipulado IS NULL
+								)
+							AND (
+								tpReceituario = 'I'
+								OR tpReceituario IS NULL
+								)
+							--AND ID.blItemTransferencia = 0
+							AND ID.tpStatus = 'A'
+							AND ID.cdSistema = 1
+							AND ID.blAtivo = 1
+							--AND ID.vlTipoReabastecimento IS NOT NULL -- regra removida no RA 2016 cfe. Vivian
+							AND ID.cdItem = ISNULL(@CdItem, ID.cdItem)
+						)
+					--Filtra itens controle de estoque conforme filtros com ou sem trait
+					SELECT DISTINCT I.IdItemDetalhe IdItemDetalheSaida
+						,I.tpVinculado
+						,I.tpManipulado
+						,I.tpReceituario
+						,DEP.IdDepartamento
+						,I.vlTipoReabastecimento
+						,
+						--l.IdLoja,
+						I.idFornecedorParametro
+						,I.blItemTransferencia
+						,I.tpStatus
+						,I.IdFornecedor
+						,I.cdDepartamentoVendor
+						,I.cdSequenciaVendor
+					INTO #ItensFiltrados
+					FROM ItensPereciveisSaida I
+					INNER JOIN ItemDetalhe IDE WITH (NOLOCK) ON I.IdItemDetalhe = IDE.IdItemDetalhe
+					INNER JOIN Departamento DEP WITH (NOLOCK) ON DEP.IDDepartamento = IDE.IDDepartamento
+					INNER JOIN Divisao DIV WITH (NOLOCK) ON DIV.IDDivisao = DEP.IDDivisao
+					INNER JOIN Categorias C WITH (NOLOCK) ON C.IdCategoria = IDE.IdCategoria
+					INNER JOIN Subcategorias SC WITH (NOLOCK) ON SC.IdSubcategoria = IDE.IdSubcategoria
+					INNER JOIN Finelines F WITH (NOLOCK) ON F.IdFineline = IDE.IdFineline;
+
+					WITH Lojas
+					AS (
+						SELECT L.IdLoja
+						FROM Loja L WITH (NOLOCK)
+						JOIN @Lojas LL ON L.IDLoja = LL.IDLoja
+						)
+						,
+						--Filtra itens de entrada dos itens de saída do conjunto de controle de estoque com vendor primário e com ou sem trait (inconsistência)
+					ItensRelacionados
+					AS (
+						SELECT RIS.IdItemDetalhe IdItemDetalheEntrada
+							,RIP.IdItemDetalhe IdItemDetalheSaida
+							,LCP.IdLoja
+							,ID.IdFornecedorParametro IdFornecedorParametro
+							,ID.vlTipoReabastecimento vlTipoReabastecimento
+						FROM RelacionamentoItemPrincipal RIP WITH (NOLOCK)
+						INNER JOIN RelacionamentoItemSecundario RIS WITH (NOLOCK) ON RIP.IdRelacionamentoItemPrincipal = RIS.IdRelacionamentoItemPrincipal
+							AND RIP.IdTipoRelacionamento = 1
+						INNER JOIN ItemDetalhe ID ON ID.IdItemDetalhe = RIS.IdItemDetalhe
+							--AND ID.blItemTransferencia = 0
+							--AND ID.tpStatus = 'A' -- regra removida no RA 2016 cfe. Vivian
+							AND ID.cdSistema = 1
+						--AND ID.vlTipoReabastecimento IS NOT NULL -- regra removida no RA 2016 cfe. Vivian
+						INNER JOIN #Fornecedores FO ON FO.IDFornecedorParametro = ID.idFornecedorParametro
+						INNER JOIN #ItensFiltrados ICS ON ICS.IdItemDetalheSaida = RIP.IDItemDetalhe
+							AND ICS.tpVinculado = 'S'
+						INNER JOIN RelacaoItemLojaCD RIL WITH (NOLOCK) ON RIL.idItemEntrada = ID.IdItemDetalhe
+						INNER JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+						INNER JOIN Lojas L WITH (NOLOCK) ON L.IDLoja = LCP.IDLoja
+						)
+					SELECT *
+					INTO #ItensRelacionados
+					FROM (
+						SELECT IR.IdItemDetalheEntrada
+							,ITF.IdItemDetalheSaida
+							,LL.IdLoja
+							,IR.IdFornecedorParametro IdFornecedorParametro
+							,--Item de Entrada
+							IR.vlTipoReabastecimento vlTipoReabastecimento --Item de Entrada
+						FROM #ItensFiltrados ITF WITH (NOLOCK)
+						LEFT JOIN ItensRelacionados IR WITH (NOLOCK) ON ITF.IdItemDetalheSaida = IR.IdItemDetalheSaida
+						CROSS APPLY Lojas LL
+						WHERE ITF.tpVinculado = 'S'
+						
+						UNION
+						
+						SELECT ITF.IdItemDetalheSaida IdItemDetalheEntrada
+							,ITF.IdItemDetalheSaida
+							,LL.idLoja
+							,CASE 
+								WHEN COALESCE(ITF.tpVinculado, ITF.tpReceituario, ITF.tpManipulado) IS NULL
+									THEN ITF.IdFornecedorParametro -- Se for item DIRETO
+								ELSE NULL
+								END IdFornecedorParametro
+							,CASE 
+								WHEN COALESCE(ITF.tpVinculado, ITF.tpReceituario, ITF.tpManipulado) IS NULL
+									THEN ITF.vlTipoReabastecimento -- Se for item DIRETO
+								ELSE NULL
+								END vlTipoReabastecimento
+						FROM #ItensFiltrados ITF WITH (NOLOCK)
+						LEFT JOIN #Fornecedores F ON F.IDFornecedorParametro = ITF.idFornecedorParametro
+							OR ITF.idFornecedorParametro IS NULL
+						CROSS APPLY LOJAS LL
+						WHERE ITF.tpVinculado IS NULL
+						) AS Consulta;
+
+					IF (@Data <= GETDATE())
+					BEGIN
+						INSERT INTO #ItensSugestao
+						SELECT SP.IDItemDetalhePedido
+							,SP.IDItemDetalheSugestao
+							,SP.IdLoja
+							,SP.IdFornecedorParametro
+						FROM SugestaoPedido SP WITH (NOLOCK)
+						INNER JOIN ItemDetalhe ID WITH (NOLOCK) ON SP.IdItemDetalheSugestao = ID.IdItemDetalhe
+							AND ID.IdDepartamento = @IdDepartamento
+						INNER JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IDFornecedorParametro = SP.IDFornecedorParametro
+							AND FP.tpStoreApprovalRequired IN (
+								'Y'
+								,'R'
+								) --Solicitado por Vivian 02/08/16							  
+						WHERE SP.dtPedido = @Data
+					END
+					ELSE
+					BEGIN
+						INSERT INTO #ItensSugestao
+						SELECT DISTINCT ID_ITEM_ENTRADA IDItemDetalhePedido
+							,ID_ITEM_SAIDA IDItemDetalheSugestao
+							,IdLoja
+							,X.IdFornecedorParametro
+						FROM fnReabSugestaoPedidoItensCross(@Data) X
+						INNER JOIN ItemDetalhe ID WITH (NOLOCK) ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe
+							AND ID.IdDepartamento = @IdDepartamento
+						
+						UNION ALL
+						
+						SELECT DISTINCT ID_ITEM_ENTRADA IDItemDetalhePedido
+							,ID_ITEM_SAIDA IDItemDetalheSugestao
+							,IdLoja
+							,X.IdFornecedorParametro
+						FROM fnReabSugestaoPedidoItensDSD(@Data) X
+						INNER JOIN ItemDetalhe ID WITH (NOLOCK) ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe
+							AND ID.IdDepartamento = @IdDepartamento
+						
+						UNION ALL
+						
+						SELECT DISTINCT ID_ITEM_ENTRADA IDItemDetalhePedido
+							,ID_ITEM_SAIDA IDItemDetalheSugestao
+							,IdLoja
+							,X.IdFornecedorParametro
+						FROM fnReabSugestaoPedidoItensStaple(@Data) X
+						INNER JOIN ItemDetalhe ID WITH (NOLOCK) ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe
+							AND ID.IdDepartamento = @IdDepartamento
+						
+						UNION ALL
+						
+						SELECT DISTINCT ID_ITEM_ENTRADA IDItemDetalhePedido
+							,ID_ITEM_SAIDA IDItemDetalheSugestao
+							,IdLoja
+							,X.IdFornecedorParametro
+						FROM fnReabSugestaoPedidoItensDiretoSaida(@Data) X
+						INNER JOIN ItemDetalhe ID WITH (NOLOCK) ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe
+							AND ID.IdDepartamento = @IdDepartamento
+							/* -- regra removida no RA 2016 cfe. Vivian
+											UNION ALL
+											SELECT DISTINCT SP.IdItemDetalhePedido,
+															SP.IdItemDetalhePedido,
+															SP.IdLoja,
+															SP.IdFornecedorParametro
+											  FROM SugestaoPedido SP WITH (NOLOCK)
+											 WHERE SP.dtPedido = DATEADD(D, -7, CONVERT(DATE, GETDATE(), 103))
+											   AND SP.cdOrigemCalculo IN ('I', 'G')
+											   */
+					END;
+
+					--Review date do item de entrada
+					WITH RelacaoItensLojasCd
+					AS (
+						SELECT ID.IdItemDetalhe
+							,LCP.IDLoja
+							,cdReviewDate
+							,LCP.IDCD
+						FROM ItemDetalhe ID WITH (NOLOCK)
+						INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK) ON (
+								(
+									RILC.IdItemEntrada = ID.IdItemDetalhe
+									AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NOT NULL
+									)
+								OR (
+									RILC.IdItem = ID.IdItemDetalhe
+									AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NULL
+									)
+								)
+							AND ID.IdDepartamento = @IdDepartamento
+							AND ID.vlTipoReabastecimento IN (
+								20
+								,40
+								,22
+								,42
+								,43
+								)
+						INNER JOIN LojaCDParametro LCP WITH (NOLOCK) ON RILC.IDLojaCDParametro = LCP.IDLojaCDParametro
+							AND LCP.cdSistema = 1
+							AND LCP.blAtivo = 1
+						INNER JOIN CD C WITH (NOLOCK) ON LCP.IDCD = C.IDCD
+						INNER JOIN ReviewDateCD RDC WITH (NOLOCK) ON RDC.IDLojaCDParametro = LCP.IDLojaCDParametro
+							AND RDC.IdDepartamento = @IdDepartamento
+							AND ID.IDDepartamento = RDC.IDDepartamento
+							AND RDC.tpReabastecimento = 'S'
+						
+						UNION
+						
+						SELECT ID.IdItemDetalhe
+							,LCP.IDLoja
+							,NULL cdReviewDate
+							,LCP.IDCD
+						FROM ItemDetalhe ID WITH (NOLOCK)
+						INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK) ON (
+								(
+									RILC.IdItemEntrada = ID.IdItemDetalhe
+									AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NOT NULL
+									)
+								OR (
+									RILC.IdItem = ID.IdItemDetalhe
+									AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NULL
+									)
+								)
+							AND ID.IdDepartamento = @IdDepartamento
+							AND ID.vlTipoReabastecimento = 33
+						INNER JOIN LojaCDParametro LCP WITH (NOLOCK) ON RILC.IDLojaCDParametro = LCP.IDLojaCDParametro
+							AND LCP.cdSistema = 1
+							AND LCP.blAtivo = 1
+						INNER JOIN CD C WITH (NOLOCK) ON LCP.IDCD = C.IDCD
+						
+						UNION
+						
+						SELECT ID.IdItemDetalhe
+							,LCP.IDLoja
+							,
+							--cdReviewDate, 
+							CASE 
+								WHEN C.blConvertido = 1
+									THEN CAST(COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate) AS VARCHAR)
+								ELSE CAST(RDC.CDREVIEWDATE AS VARCHAR)
+								END AS cdReviewDate
+							,LCP.IDCD
+						FROM ItemDetalhe ID WITH (NOLOCK)
+						INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK) ON (
+								(
+									RILC.IdItemEntrada = ID.IdItemDetalhe
+									AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NOT NULL
+									)
+								OR (
+									RILC.IdItem = ID.IdItemDetalhe
+									AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NULL
+									)
+								)
+							AND ID.IdDepartamento = @IdDepartamento
+							AND ID.vlTipoReabastecimento = 3
+						INNER JOIN LojaCDParametro LCP WITH (NOLOCK) ON RILC.IDLojaCDParametro = LCP.IDLojaCDParametro
+							AND LCP.cdSistema = 1
+							AND LCP.blAtivo = 1
+						INNER JOIN CD C WITH (NOLOCK) ON LCP.IDCD = C.IDCD
+						INNER JOIN ReviewDateCD RDC WITH (NOLOCK) ON RDC.IDLojaCDParametro = LCP.IDLojaCDParametro
+							AND RDC.IdDepartamento = @IdDepartamento
+							AND ID.IDDepartamento = RDC.IDDepartamento
+							AND RDC.tpReabastecimento = 'C'
+							AND RDC.cdSistema = 1
+							AND RDC.blAtivo = 1
+							AND C.blConvertido = 0
+						INNER JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IDFornecedorParametro = ID.idFornecedorParametro
+							AND FP.cdStatusVendor = 'A'
+							AND FP.tpStoreApprovalRequired IN (
+								'Y'
+								,'R'
+								)
+						LEFT JOIN FornecedorCDParametro FCP WITH (NOLOCK) ON FCP.IDFornecedorParametro = FP.IDFornecedorParametro
+							AND FCP.IDCD = C.IDCD
+						LEFT JOIN FornecedorLojaParametro FLP WITH (NOLOCK) ON FLP.IDFornecedorParametro = FP.IDFornecedorParametro
+							AND FLP.IDLoja = LCP.IDLoja
+						)
+						,Itens
+					AS (
+						SELECT ITR.IdItemDetalheSaida
+							,ITR.IdItemDetalheEntrada
+							,ITR.IdFornecedorParametro
+							,ITR.IdLoja
+							,CASE 
+								WHEN ITS.IdFornecedorParametro IS NULL
+									THEN 'NÃO'
+								ELSE 'SIM'
+								END Visivel
+							,NULL cdReviewDate
+							,NULL IDCD
+						FROM #ItensRelacionados ITR
+						LEFT JOIN #ItensSugestao ITS ON ITR.IdItemDetalheSaida = ITS.IdItemDetalheSaida
+							--AND  ITR.IdItemDetalheEntrada = ITS.IdItemDetalheEntrada
+							AND ITR.IdLoja = ITS.IdLoja
+							AND (
+								ITR.vlTipoReabastecimento IN (
+									7
+									,37
+									)
+								OR ITR.vlTipoReabastecimento IS NULL
+								)
+						WHERE (
+								ITR.vlTipoReabastecimento IN (
+									7
+									,37
+									)
+								OR ITR.IdItemDetalheEntrada IS NULL
+								OR ITR.vlTipoReabastecimento IS NULL
+								)
+						
+						UNION
+						
+						SELECT ITR.IdItemDetalheSaida
+							,ITR.IdItemDetalheEntrada
+							,ITR.IdFornecedorParametro
+							,ITR.IdLoja
+							,CASE 
+								WHEN ITS.IdFornecedorParametro IS NULL
+									THEN 'NÃO'
+								ELSE 'SIM'
+								END Visivel
+							,RILC.cdReviewDate
+							,RILC.IDCD
+						FROM #ItensRelacionados ITR
+						LEFT JOIN #ItensSugestao ITS ON ITR.IdItemDetalheEntrada = ITS.IdItemDetalheEntrada
+							AND ITR.IdItemDetalheSaida = ITS.IdItemDetalheSaida
+							AND ITR.IdLoja = ITS.IdLoja
+						LEFT JOIN RelacaoItensLojasCd RILC ON RILC.IdItemDetalhe = ITR.IdItemDetalheEntrada
+							AND RILC.IdLoja = ITR.IdLoja
+						WHERE ITR.vlTipoReabastecimento IN (
+								20
+								,22
+								,40
+								,42
+								,43
+								,3
+								,33
+								)
+						)
+					SELECT DISTINCT IT.IDItemDetalheSaida
+						,CASE 
+							WHEN RILS.IDItem IS NULL
+								AND ide.vltiporeabastecimento NOT IN (
+									7
+									,37
+									)
+								THEN 'N'
+							ELSE 'S'
+							END AS ItemSaida_Possui_RelacaoItemLojaCD
+						,IT.IDItemDetalheEntrada
+						,IT.IDLoja
+						,IT.IDFornecedorParametro
+						,L.cdLoja
+						,ISNULL(FP.cdV9D, '') cdV9D
+						,ISNULL(FP.cdTipo, '') cdTipo
+						,F.cdFineline
+						,IDS.cdItem AS cdItemSaida
+						,IDS.dsItem AS dsItemSaida
+						,IT.Visivel
+						,CASE 
+							WHEN L.blCalculaSugestao = 1
+								THEN 'SIM'
+							ELSE 'NÃO'
+							END AS CalculoSugestao
+						,ISNULL(IDE.cdItem, '') cdItemEntrada
+						,-- estes dois, cdItemEntrada e dsItemEntrada, quando vazios, devem reportar
+						ISNULL(IDE.dsItem, '') dsItemEntrada
+						,-- "Sem Vínculo" no relatório
+						ISNULL(IDE.tpStatus, '') tpStatusEntrada
+						,ISNULL(DOV.dsText, '') vlTipoReabastecimentoEntrada
+						,CASE 
+							WHEN RIL.IDItem IS NULL
+								THEN 'Inativo'
+							ELSE 'Ativo'
+							END AS itemAbertoAbastecimentoCdLoja
+						,IDS.blItemTransferencia
+						,ISNULL(FO.stFornecedor, '') stFornecedor
+						,ISNULL(FP.cdStatusVendor, '') cdStatusVendor
+						,FO.nmFornecedor
+						,ISNULL(FP.tpStoreApprovalRequired, '') tpStoreApprovalRequired
+						,CASE 
+							WHEN IDE.tpManipulado IS NULL
+								AND IDE.tpReceituario IS NULL
+								AND IDE.tpVinculado IS NULL
+								AND COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate) <> 1234567
+								-- Fixo: Soma 1 nos dias de reviewdate
+								THEN ISNULL((
+											SELECT CONVERT(INT, (
+														SELECT cdReviewDate AS [text()]
+														FROM (
+															SELECT TOP 100 PERCENT cdReviewDate
+															FROM (
+																SELECT CASE 
+																		WHEN Token > 7
+																			THEN Token - 7
+																		ELSE Token
+																		END AS cdReviewDate
+																FROM (
+																	SELECT CONVERT(INT, SUBSTRING(T.Src, V.Number + 1, 1)) + 1 AS Token
+																	FROM (
+																		SELECT CONVERT(VARCHAR, COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate)) Src
+																		) T
+																	JOIN [master]..[spt_values] V ON V.[number] < LEN(T.Src)
+																	WHERE V.[type] = 'P'
+																	) AS T2
+																) AS T3
+															GROUP BY cdReviewDate
+															) AS Adjusted
+														FOR XML PATH('')
+														))
+											), 0)
+									-- Variavel: retorna o reviewdate
+							ELSE CASE 
+									WHEN IDE.vlTipoReabastecimento = 33
+										THEN ISNULL(CAST(ISNULL(FCP.cdReviewDate, FP.CDREVIEWDATE) AS VARCHAR), 0)
+									ELSE CASE 
+											WHEN IDE.vlTipoReabastecimento = 3
+												THEN ISNULL(CAST(ISNULL(FCP.cdReviewDate, RDC.CDREVIEWDATE) AS NVARCHAR), 0)
+											ELSE CASE 
+													WHEN IDE.vlTipoReabastecimento IN (
+															20
+															,40
+															,22
+															,42
+															,43
+															)
+														THEN ISNULL(CAST(RDCS.CDREVIEWDATE AS NVARCHAR), 0)
+													ELSE COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate, 0)
+													END
+											END
+									END
+							END AS CdReviewDate
+						,COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate) AS cdReviewDateOriginal
+						,L.nmLoja
+						,-- Nome da Loja
+						IDS.tpStatus
+						,-- Status do item de controle de estoque
+						CASE 
+							WHEN EXISTS (
+									SELECT TOP 1 1
+									FROM Trait TIDS
+									WHERE TIDS.IdItemDetalhe = IDS.IdItemDetalhe
+										AND TIDS.IdLoja = IT.IdLoja
+									)
+								THEN 1
+							ELSE 0
+							END AS ItemPossuiTrait
+						,-- se o item de controle de estoque possui trait
+						CASE 
+							WHEN EXISTS (
+									SELECT TOP 1 1
+									FROM Trait TIDE
+									WHERE TIDE.IdItemDetalhe = IDE.IdItemDetalhe
+										AND TIDE.IdLoja = IT.IdLoja
+									)
+								THEN 1
+							ELSE 0
+							END AS ItemEntradaPossuiTrait
+						,-- se o item de controle de estoque possui trait
+						ISNULL(IDE.blItemTransferencia, 0) AS FlagEntradaItemTransferencia
+						,-- se o item de entrada está marcado como transferencia
+						CASE 
+							WHEN IDE.tpAlinhamentoCD IS NULL
+								THEN 0
+							ELSE 1
+							END AS EntradaPossuiAlinhamentoCD
+						,-- se o item de entrada possui alinhamento item / cd
+						CASE 
+							WHEN IDE.tpManipulado IS NULL
+								AND IDE.tpReceituario IS NULL
+								AND IDE.tpVinculado IS NULL
+								THEN 0
+							ELSE 1
+							END AS PossuiRelacionamento -- se o item possui relacionamento (Sim (Variável)) ou nao (Não (Fixo)
+					FROM Itens IT
+					INNER JOIN Loja L ON L.IDLoja = IT.IDLoja
+					INNER JOIN ItemDetalhe IDS ON IDS.IDItemDetalhe = IT.IDItemDetalheSaida
+					LEFT JOIN Fineline F ON F.IDFineline = IDS.IDFineline
+					LEFT JOIN ItemDetalhe IDE ON IDE.IDItemDetalhe = IT.IDItemDetalheEntrada
+					LEFT JOIN FornecedorParametro FP ON FP.IDFornecedorParametro = ISNULL(IDE.IDFornecedorParametro, IDS.IDFornecedorParametro)
+					LEFT JOIN FornecedorLojaParametro FLP ON FLP.IDFornecedorParametro = ISNULL(IDE.IDFornecedorParametro, IDS.IDFornecedorParametro)
+						AND FLP.IDLoja = IT.IDLoja
+					LEFT JOIN FornecedorCDParametro FCP ON FCP.IDFornecedorParametro = ISNULL(IDE.IDFornecedorParametro, IDS.IDFornecedorParametro)
+						AND FCP.IDCD = IT.IDCD
+					LEFT JOIN LojaCDParametro LCP ON LCP.IDCD = IT.IDCD
+						AND LCP.IDLoja = IT.IDLoja
+						AND LCP.blAtivo = 1
+						AND LCP.cdSistema = 1
+					LEFT JOIN RelacaoItemLojaCD RIL ON RIL.IDItemEntrada = IDE.IDItemDetalhe --ItemEntrada (ANACECILIA)
+						AND RIL.IDLojaCDParametro = LCP.IDLojaCDParametro
+					LEFT JOIN RelacaoItemLojaCD RILS ON RILS.IDLojaCDParametro = LCP.IDLojaCDParametro
+						AND RILS.IDItem = IT.IdItemDetalheSaida
+						AND RILS.blAtivo = 1
+						AND RILS.cdSistema = 1
+					LEFT JOIN Fornecedor FO ON FO.IDFornecedor = FP.IDFornecedor
+					LEFT JOIN ReviewDateCD RDC ON RDC.IDLojaCDParametro = LCP.IDLojaCDParametro
+						AND RDC.IDDepartamento = IDE.IDDepartamento
+						AND RDC.cdSistema = 1
+						AND RDC.blAtivo = 1
+						AND RDC.tpReabastecimento = 'C'
+						AND IDE.vlTipoReabastecimento = 3
+					LEFT JOIN ReviewDateCD RDCS ON RDCS.IDLojaCDParametro = LCP.IDLojaCDParametro
+						AND RDCS.IDDepartamento = IDE.IDDepartamento
+						AND RDCS.cdSistema = 1
+						AND RDCS.blAtivo = 1
+						AND RDCS.tpReabastecimento = 'S'
+						AND IDE.vlTipoReabastecimento IN (
+							20
+							,40
+							,22
+							,42
+							,43
+							)
+					INNER JOIN CWIDomain DO ON DO.nmDomain = 'dmTipoReabastecimento'
+					LEFT JOIN CWIDomainValue DOV ON DOV.IDDomain = DO.IDDomain
+						AND DOV.dsValue = CONVERT(VARCHAR, IDE.vlTipoReabastecimento)
+					WHERE FP.cdV9D = @CdV9D
+						OR @CdV9D IS NULL
+						AND (
+							@PossuiTrait IS NULL
+							OR (
+								@PossuiTrait = 1
+								AND EXISTS (
+									SELECT TOP 1 1
+									FROM Trait TIDS
+									WHERE TIDS.IdItemDetalhe = IDS.IdItemDetalhe
+										AND TIDS.IdLoja = IT.IdLoja
+									)
+								)
+							OR (
+								@PossuiTrait = 0
+								AND IDS.idRegiaoCompra = @Regiao /* AND NOT EXISTS(SELECT TOP 1 1 FROM Trait TIDS WHERE TIDS.IdItemDetalhe = IDS.IdItemDetalhe AND TIDS.IdLoja = IT.IdLoja) */
+								)
+							)
+					ORDER BY L.cdLoja
+						,ids.dsItem
+
+					DROP TABLE #ItensFiltrados;
+
+					DROP TABLE #ItensRelacionados;
+
+					DROP TABLE #Fornecedores;
+
+					DROP TABLE #ItensSugestao;
+				END
+
+
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+
+				ALTER PROCEDURE [dbo].[PR_RelItemVisivelNaoVisivelInterferir]
+					@Data DATE,
+					@IDLoja VARCHAR(MAX),
+					@IDDivisao INT,
+					@IDDepartamento INT,
+					@IDCategoria INT,
+					@IDSubcategoria INT,
+					@IDFineline INT,
+					@CdItem VARCHAR(10),
+					@CdV9D BIGINT,
+					@PossuiTrait INT,
+					@Regiao INT
+				AS
+				BEGIN
+					
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+					SET NOCOUNT ON 
+
+				/*
+				DECLARE @Data DATE,
+						@IDLoja NVARCHAR(MAX),
+						@IDDivisao INT,
+						@IDDepartamento INT,
+						@IDCategoria INT,
+						@IDSubcategoria INT,
+						@IDFineline INT,
+						@CdItem VARCHAR(10),
+						@CdV9D NVARCHAR(MAX),
+						@PossuiTrait BIT,
+						@Regiao INT
+						
+				SET @PossuiTrait = null;
+
+				SET @Regiao = 1;
+						
+				SET @Data = '2016-07-21'; -- GETDATE();
+
+				SET @IDDepartamento = 5;	 -- cddepartamento 80	
+
+				-- todas lojas
+				SET @IDLoja = N'63,64,72,83,112,141,240,242,243,244,245,246,247,252,253,254,255,258,259,260,262,265,268,271,1120,286,289,308,330,331,342,343,398,1063,1080,1087,1095,1113,1116,356,364,365,371,372,373,375,376,377,378,379,381,388,390';
+
+				-- todos cdv9d das lojas
+				SET @CdV9D = NULL;
+
+				EXEC PR_RelItemVisivelNaoVisivelInterferir @Data, @IDLoja,null,@IDDepartamento,null,null,null,null,@CdV9D
+
+				--*/
+
+					DECLARE @Lojas TABLE ( IDLoja INT NULL );
+					INSERT INTO @Lojas (IDLoja)
+					SELECT CONVERT(INT, FS.splitdata)
+					  FROM fnSplitString(@IDLoja, ',') FS
+
+					--DECLARE @CdsV9D TABLE ( CdV9D BIGINT NULL );
+					--INSERT INTO @CdsV9D (CdV9D)
+					--SELECT CONVERT(BIGINT, FS.splitdata)
+					--  FROM fnSplitString(@CdV9D, ',') FS
+
+					IF OBJECT_ID('tempdb.dbo.#ItensFiltrados', 'U') IS NOT NULL
+						DROP TABLE #ItensFiltrados; 
+
+					IF OBJECT_ID('tempdb.dbo.#ItensRelacionados', 'U') IS NOT NULL
+						DROP TABLE #ItensRelacionados; 
+						
+					IF OBJECT_ID('tempdb.dbo.#Fornecedores', 'U') IS NOT NULL
+						DROP TABLE #Fornecedores;
+
+					IF OBJECT_ID('tempdb.dbo.#ItensSugestao', 'U') IS NOT NULL
+						DROP TABLE #ItensSugestao;
+						
+					CREATE TABLE #ItensSugestao 
+					(
+						IdItemDetalheEntrada BIGINT, 
+						IdItemDetalheSaida BIGINT, 		
+						IdLoja INT,
+						IdFornecedorParametro INT
+					);
+
+					SELECT IDFornecedorParametro, IDFornecedor, cdV9D, Tipo
+						  INTO #Fornecedores
+						  FROM (SELECT FP.IDFornecedorParametro, FP.IDFornecedor, FP.cdV9D, FP.cdTipo, 'D' Tipo, RANK() OVER (PARTITION BY FP.cdV9D ORDER BY FP.cdTipo) X
+								  FROM FornecedorParametro FP
+									   --INNER JOIN @CdsV9D CDS
+									   --        ON CDS.CdV9D = FP.cdV9D
+								 WHERE cdStatusVendor = 'A'
+								   AND cdTipo IN ('D', 'L')
+								   AND (@CdV9D IS NULL OR FP.cdV9D = @CdV9D)
+								   AND SUBSTRING(CONVERT(VARCHAR, FP.cdV9D), LEN(FP.cdV9D) - 2 ,2) = (SELECT TOP 1 cdDepartamento FROM Departamento WHERE IdDepartamento = @IdDepartamento)
+								UNION
+								SELECT FP.IDFornecedorParametro, FP.IDFornecedor, FP.cdV9D, FP.cdTipo, 'W' Tipo, RANK() OVER (PARTITION BY FP.cdV9D ORDER BY  FP.cdTipo DESC) X
+								  FROM FornecedorParametro FP
+									   --INNER JOIN @CdsV9D CDS
+									   --        ON CDS.CdV9D = FP.cdV9D
+								 WHERE cdStatusVendor = 'A'
+								   AND cdTipo IN ('W', 'L')
+								   AND (@CdV9D IS NULL OR FP.cdV9D = @CdV9D)
+								   AND SUBSTRING(CONVERT(VARCHAR, FP.cdV9D), LEN(FP.cdV9D) - 2 ,2) = (SELECT TOP 1 cdDepartamento FROM Departamento WHERE IdDepartamento = @IdDepartamento)
+							  ) tmp
+						 WHERE tmp.X = 1;
+
+					WITH Divisoes
+						AS
+						(
+							SELECT IdDivisao
+							  FROM Divisao WITH (NOLOCK) WHERE IdDivisao = ISNULL(@IDDivisao, IdDivisao)
+						),
+						Categorias
+						AS
+						(
+							SELECT IdCategoria
+							  FROM Categoria WITH (NOLOCK) WHERE IdCategoria = ISNULL(@IDCategoria, IdCategoria)		
+						),
+						SubCategorias
+						AS
+						(
+							SELECT IdSubCategoria
+							  FROM Subcategoria WITH (NOLOCK)
+							 WHERE IdSubcategoria = ISNULL(@IDSubcategoria, IdSubcategoria)				
+						),
+						Finelines
+						AS
+						(
+							SELECT IdFineline
+							  FROM Fineline WITH (NOLOCK)
+							 WHERE IdFineline = ISNULL(@IDFineline, IdFineline)				
+						),		
+						--Lojas
+						--AS
+						--(
+						--	SELECT L.IdLoja
+						--	  FROM Loja L WITH (NOLOCK)
+						--	       INNER JOIN @Lojas LL
+						--	               ON LL.IDLoja = L.IDLoja
+					--		 WHERE cdSistema = 1
+						--),
+						--Seleciona itens controle de estoque
+						ItensPereciveisSaida
+						AS
+						(	
+							SELECT IdItemDetalhe, 
+								   ID.vlTipoReabastecimento, 
+								   ID.tpVinculado, 
+								   ID.tpManipulado,
+								   ID.tpReceituario,
+								   ID.IdFornecedor, 
+								   ID.cdDepartamentoVendor, 
+								   ID.cdSequenciaVendor,
+								   ID.blItemTransferencia,
+								   ID.idFornecedorParametro,
+								   ID.tpStatus
+							  FROM ItemDetalhe ID WITH (NOLOCK) INNER JOIN Departamento D WITH (NOLOCK)
+																		ON ID.IdDepartamento = D.IdDepartamento
+																	   AND D.blPerecivel = 'S'							 
+																	   AND D.blAtivo = 1
+																	   AND D.cdSistema = 1
+																	   AND D.IDDepartamento = @IDDepartamento
+							 WHERE (tpVinculado = 'S' OR tpVinculado IS NULL)
+							   AND (tpManipulado = 'P' OR tpManipulado IS NULL)
+							   AND (tpReceituario = 'I' OR tpReceituario IS NULL)
+							   --AND ID.blItemTransferencia = 0
+							   AND ID.tpStatus = 'A'
+							   AND ID.cdSistema = 1
+							   AND ID.blAtivo = 1
+							   --AND ID.vlTipoReabastecimento IS NOT NULL -- regra removida no RA 2016 cfe. Vivian
+							   AND ID.cdItem = ISNULL(@CdItem, ID.cdItem)
+						)
+						--Filtra itens controle de estoque conforme filtros com ou sem trait
+						SELECT DISTINCT I.IdItemDetalhe IdItemDetalheSaida, 
+										I.tpVinculado,
+										I.tpManipulado,
+										I.tpReceituario,
+										DEP.IdDepartamento,
+										I.vlTipoReabastecimento,
+										--l.IdLoja,
+										I.idFornecedorParametro, 
+										I.blItemTransferencia, 
+										I.tpStatus, 
+										I.IdFornecedor,
+										I.cdDepartamentoVendor,
+										I.cdSequenciaVendor
+						   INTO #ItensFiltrados
+						   FROM ItensPereciveisSaida I INNER JOIN ItemDetalhe IDE WITH (NOLOCK)
+															   ON I.IdItemDetalhe = IDE.IdItemDetalhe		 	 						 				 	      
+													   INNER JOIN Departamento DEP WITH (NOLOCK)
+															   ON DEP.IDDepartamento = IDE.IDDepartamento									 		  
+													   INNER JOIN Divisao DIV WITH (NOLOCK)
+															   ON DIV.IDDivisao = DEP.IDDivisao								  
+													   INNER JOIN Categorias C WITH (NOLOCK)
+															   ON C.IdCategoria = IDE.IdCategoria
+													   INNER JOIN Subcategorias SC WITH (NOLOCK)
+															   ON SC.IdSubcategoria = IDE.IdSubcategoria
+													   INNER JOIN Finelines F WITH (NOLOCK)
+															   ON F.IdFineline = IDE.IdFineline;
+															  
+													 
+					WITH 
+					Lojas
+						AS
+						(
+							SELECT L.IdLoja
+							  FROM Loja L WITH (NOLOCK)
+							  JOIN @Lojas LL 
+								ON L.IDLoja = LL.IDLoja
+						 ),
+					 --Filtra itens de entrada dos itens de saída do conjunto de controle de estoque com vendor primário e com ou sem trait (inconsistência)
+					 ItensRelacionados AS
+					   (
+						SELECT RIS.IdItemDetalhe IdItemDetalheEntrada,
+							   RIP.	IdItemDetalhe IdItemDetalheSaida,
+							   LCP.IdLoja,
+							   ID.IdFornecedorParametro IdFornecedorParametro,
+							   ID.vlTipoReabastecimento vlTipoReabastecimento
+						  FROM 
+							  RelacionamentoItemPrincipal RIP WITH (NOLOCK) INNER JOIN RelacionamentoItemSecundario RIS WITH (NOLOCK) 
+																					 ON RIP.IdRelacionamentoItemPrincipal = RIS.IdRelacionamentoItemPrincipal
+																					AND RIP.IdTipoRelacionamento = 1															 
+																			 INNER JOIN ItemDetalhe ID
+																					 ON ID.IdItemDetalhe = RIS.IdItemDetalhe
+																					--AND ID.blItemTransferencia = 0
+																					--AND ID.tpStatus = 'A' -- regra removida no RA 2016 cfe. Vivian
+																					AND ID.cdSistema = 1
+																					--AND ID.vlTipoReabastecimento IS NOT NULL -- regra removida no RA 2016 cfe. Vivian
+																			 INNER JOIN #Fornecedores FO
+																					 ON FO.IDFornecedorParametro = ID.idFornecedorParametro
+																			 INNER JOIN #ItensFiltrados ICS 
+																					 ON ICS.IdItemDetalheSaida = RIP.IDItemDetalhe 
+																					AND ICS.tpVinculado = 'S'
+																			 INNER JOIN RelacaoItemLojaCD RIL WITH (NOLOCK)
+																				   ON RIL.idItemEntrada = ID.IdItemDetalhe
+																			  INNER JOIN LojaCDParametro LCP WITH (NOLOCK)
+																					 ON LCP.IDLojaCDParametro = RIL.IDLojaCDParametro
+																			 INNER JOIN Lojas L WITH (NOLOCK)
+																					 ON L.IDLoja = LCP.IDLoja)
+						
+					SELECT * 
+					  INTO #ItensRelacionados
+					  FROM (
+							SELECT IR.IdItemDetalheEntrada,
+								   ITF.IdItemDetalheSaida,
+								   LL.IdLoja,
+								   IR.IdFornecedorParametro IdFornecedorParametro, --Item de Entrada
+								   IR.vlTipoReabastecimento vlTipoReabastecimento --Item de Entrada
+							  FROM #ItensFiltrados ITF WITH (NOLOCK) 
+							  LEFT JOIN ItensRelacionados  IR WITH (NOLOCK) 
+								ON ITF.IdItemDetalheSaida = IR.IdItemDetalheSaida
+							  CROSS APPLY Lojas LL 
+							 WHERE ITF.tpVinculado = 'S'
+							 UNION 
+							SELECT ITF.IdItemDetalheSaida IdItemDetalheEntrada,
+								   ITF.IdItemDetalheSaida,
+								   LL.idLoja,
+								   CASE 
+									WHEN COALESCE(ITF.tpVinculado, ITF.tpReceituario, ITF.tpManipulado) IS NULL
+										THEN ITF.IdFornecedorParametro -- Se for item DIRETO
+									ELSE NULL 
+									END IdFornecedorParametro,
+								   CASE 
+									WHEN COALESCE(ITF.tpVinculado, ITF.tpReceituario, ITF.tpManipulado) IS NULL
+										THEN ITF.vlTipoReabastecimento -- Se for item DIRETO
+									ELSE NULL 
+									END vlTipoReabastecimento
+							  FROM #ItensFiltrados ITF WITH (NOLOCK) 
+							  LEFT JOIN #Fornecedores F
+									ON F.IDFornecedorParametro = ITF.idFornecedorParametro or ITF.idFornecedorParametro is null
+							  CROSS APPLY LOJAS LL
+							WHERE ITF.tpVinculado IS NULL) AS Consulta;
+
+					 IF (@Data <= GETDATE())
+					 BEGIN
+								
+						INSERT INTO #ItensSugestao 
+						SELECT SP.IDItemDetalhePedido,
+							   SP.IDItemDetalheSugestao,
+							   SP.IdLoja,
+							   SP.IdFornecedorParametro
+						  FROM SugestaoPedido SP WITH (NOLOCK) INNER JOIN ItemDetalhe ID WITH (NOLOCK) 
+																	   ON SP.IdItemDetalheSugestao = ID.IdItemDetalhe 
+																	  AND ID.IdDepartamento = @IdDepartamento	
+															   INNER JOIN FornecedorParametro FP WITH (NOLOCK) 
+																	   ON FP.IDFornecedorParametro = SP.IDFornecedorParametro
+																	  AND FP.tpStoreApprovalRequired IN ('Y', 'R') --Solicitado por Vivian 02/08/16							  
+																  
+						 WHERE SP.dtPedido = @Data
+						   
+								 
+					 END
+					 ELSE
+					 BEGIN 
+
+							INSERT INTO #ItensSugestao 
+							
+							SELECT DISTINCT 
+								   ID_ITEM_ENTRADA IDItemDetalhePedido, 
+								   ID_ITEM_SAIDA IDItemDetalheSugestao, 				   
+								   IdLoja,
+								   X.IdFornecedorParametro
+							  FROM fnReabSugestaoPedidoItensCross (@Data) X INNER JOIN ItemDetalhe ID WITH (NOLOCK) 
+																					ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe 
+																				   AND ID.IdDepartamento = @IdDepartamento
+
+							UNION ALL 	
+							SELECT DISTINCT 
+								   ID_ITEM_ENTRADA IDItemDetalhePedido, 
+								   ID_ITEM_SAIDA IDItemDetalheSugestao, 				   
+								   IdLoja,
+								   X.IdFornecedorParametro
+							  FROM fnReabSugestaoPedidoItensDSD (@Data) X INNER JOIN ItemDetalhe ID WITH (NOLOCK) 
+																					ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe 
+																				   AND ID.IdDepartamento = @IdDepartamento	
+							UNION ALL 
+							SELECT DISTINCT 
+								   ID_ITEM_ENTRADA IDItemDetalhePedido, 
+								   ID_ITEM_SAIDA IDItemDetalheSugestao, 
+								   IdLoja,
+								   X.IdFornecedorParametro
+							  FROM fnReabSugestaoPedidoItensStaple (@Data) X INNER JOIN ItemDetalhe ID WITH (NOLOCK) 
+																					ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe 
+																				   AND ID.IdDepartamento = @IdDepartamento
+							UNION ALL 
+							SELECT DISTINCT 
+								   ID_ITEM_ENTRADA IDItemDetalhePedido, 
+								   ID_ITEM_SAIDA IDItemDetalheSugestao, 				   
+								   IdLoja,
+								   X.IdFornecedorParametro
+							  FROM fnReabSugestaoPedidoItensDiretoSaida (@Data) X INNER JOIN ItemDetalhe ID WITH (NOLOCK) 
+																					ON X.ID_ITEM_SAIDA = ID.IdItemDetalhe 
+																				   AND ID.IdDepartamento = @IdDepartamento
+
+							/* -- regra removida no RA 2016 cfe. Vivian
+							UNION ALL
+							SELECT DISTINCT SP.IdItemDetalhePedido,
+											SP.IdItemDetalhePedido,
+											SP.IdLoja,
+											SP.IdFornecedorParametro
+							  FROM SugestaoPedido SP WITH (NOLOCK)
+							 WHERE SP.dtPedido = DATEADD(D, -7, CONVERT(DATE, GETDATE(), 103))
+							   AND SP.cdOrigemCalculo IN ('I', 'G')
+							   */
+							  
+					END;
+					
+					--Review date do item de entrada
+					
+					WITH RelacaoItensLojasCd
+					AS
+					(	
+						SELECT ID.IdItemDetalhe, LCP.IDLoja, cdReviewDate, LCP.IDCD
+						  FROM ItemDetalhe ID WITH (NOLOCK) INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK)
+																	ON (( RILC.IdItemEntrada = ID.IdItemDetalhe 
+																   AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NOT NULL )
+																	OR ( RILC.IdItem = ID.IdItemDetalhe 
+																   AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NULL ))
+																   AND ID.IdDepartamento = @IdDepartamento
+																   AND ID.vlTipoReabastecimento IN (20, 40, 22, 42, 43)
+															INNER JOIN LojaCDParametro LCP WITH (NOLOCK)
+																	ON RILC.IDLojaCDParametro = LCP.IDLojaCDParametro
+																   AND LCP.cdSistema = 1
+																   AND LCP.blAtivo = 1
+															INNER JOIN CD C WITH (NOLOCK)
+																	ON  LCP.IDCD = C.IDCD
+															INNER JOIN ReviewDateCD RDC WITH (NOLOCK)
+																	ON RDC.IDLojaCDParametro = LCP.IDLojaCDParametro 
+																   AND RDC.IdDepartamento = @IdDepartamento
+																   AND ID.IDDepartamento = RDC.IDDepartamento
+																   AND RDC.tpReabastecimento = 'S'
+						UNION 
+						SELECT ID.IdItemDetalhe, LCP.IDLoja, Null cdReviewDate, LCP.IDCD
+						  FROM ItemDetalhe ID WITH (NOLOCK) INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK)
+																	ON (( RILC.IdItemEntrada = ID.IdItemDetalhe 
+																   AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NOT NULL )
+																	OR ( RILC.IdItem = ID.IdItemDetalhe 
+																   AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NULL ))
+																   AND ID.IdDepartamento = @IdDepartamento
+																   AND ID.vlTipoReabastecimento = 33
+															INNER JOIN LojaCDParametro LCP WITH (NOLOCK)
+																	ON RILC.IDLojaCDParametro = LCP.IDLojaCDParametro
+																   AND LCP.cdSistema = 1
+																   AND LCP.blAtivo = 1
+															INNER JOIN CD C WITH (NOLOCK)
+																	ON  LCP.IDCD = C.IDCD
+						UNION
+						SELECT ID.IdItemDetalhe, LCP.IDLoja, cdReviewDate, LCP.IDCD
+						  FROM ItemDetalhe ID WITH (NOLOCK) INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK)
+																	ON (( RILC.IdItemEntrada = ID.IdItemDetalhe 
+																   AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NOT NULL )
+																	OR ( RILC.IdItem = ID.IdItemDetalhe 
+																   AND COALESCE(id.tpVinculado, id.tpReceituario, id.tpManipulado) IS NULL ))
+																   AND ID.IdDepartamento = @IdDepartamento
+																   AND ID.vlTipoReabastecimento = 3
+															INNER JOIN LojaCDParametro LCP WITH (NOLOCK)
+																	ON RILC.IDLojaCDParametro = LCP.IDLojaCDParametro
+																   AND LCP.cdSistema = 1
+																   AND LCP.blAtivo = 1
+															INNER JOIN CD C WITH (NOLOCK)
+																	ON  LCP.IDCD = C.IDCD
+															INNER JOIN ReviewDateCD RDC WITH (NOLOCK)
+																	ON RDC.IDLojaCDParametro = LCP.IDLojaCDParametro 
+																   AND RDC.IdDepartamento = @IdDepartamento
+																   AND ID.IDDepartamento = RDC.IDDepartamento
+																   AND RDC.tpReabastecimento = 'C'
+																   AND RDC.cdSistema = 1
+																   AND RDC.blAtivo = 1
+					),
+					Itens
+					AS
+					(
+						 SELECT ITR.IdItemDetalheSaida, 
+							ITR.IdItemDetalheEntrada, 
+							ITR.IdFornecedorParametro,
+							ITR.IdLoja, 
+							CASE WHEN ITS.IdFornecedorParametro IS NULL THEN 'NÃO' ELSE 'SIM' END Visivel,
+							NULL cdReviewDate,
+							NULL IDCD
+					   FROM #ItensRelacionados ITR LEFT JOIN #ItensSugestao ITS
+													   ON ITR.IdItemDetalheSaida = ITS.IdItemDetalheSaida
+													  --AND  ITR.IdItemDetalheEntrada = ITS.IdItemDetalheEntrada
+													  AND ITR.IdLoja = ITS.IdLoja 
+													  AND (ITR.vlTipoReabastecimento IN (7, 37) or  ITR.vlTipoReabastecimento is null)
+					   WHERE ( ITR.vlTipoReabastecimento IN (7, 37) or ITR.IdItemDetalheEntrada is null or  ITR.vlTipoReabastecimento is null) 
+					   UNION 
+					  SELECT ITR.IdItemDetalheSaida, 
+							 ITR.IdItemDetalheEntrada, 
+							 ITR.IdFornecedorParametro,
+							 ITR.IdLoja, 
+							 CASE WHEN ITS.IdFornecedorParametro IS NULL THEN 'NÃO' ELSE 'SIM' END Visivel,
+							 RILC.cdReviewDate,
+							 RILC.IDCD
+						FROM #ItensRelacionados ITR LEFT JOIN #ItensSugestao ITS
+														   ON ITR.IdItemDetalheEntrada = ITS.IdItemDetalheEntrada
+														  AND ITR.IdItemDetalheSaida = ITS.IdItemDetalheSaida
+														  AND ITR.IdLoja = ITS.IdLoja									      
+													LEFT JOIN RelacaoItensLojasCd RILC
+														   ON RILC.IdItemDetalhe = ITR.IdItemDetalheEntrada
+														  AND RILC.IdLoja = ITR.IdLoja
+					   WHERE ITR.vlTipoReabastecimento IN (20, 22, 40, 42, 43, 3, 33)
+					)
+					SELECT DISTINCT
+						IT.IDItemDetalheSaida,
+						CASE WHEN RILS.IDItem Is null and ide.vltiporeabastecimento not in (7,37) THEN 'N' ELSE 'S' END AS ItemSaida_Possui_RelacaoItemLojaCD,
+						IT.IDItemDetalheEntrada,
+						IT.IDLoja,
+						IT.IDFornecedorParametro,
+						L.cdLoja,
+						ISNULL(FP.cdV9D, '') cdV9D,
+						ISNULL(FP.cdTipo, '') cdTipo,
+						F.cdFineline,
+						IDS.cdItem as cdItemSaida,
+						IDS.dsItem as dsItemSaida,
+						IT.Visivel,
+						CASE WHEN 
+							L.blCalculaSugestao = 1 THEN
+								'SIM'
+							ELSE
+								'NÃO'
+						END AS CalculoSugestao,
+						ISNULL(IDE.cdItem, '') cdItemEntrada,    -- estes dois, cdItemEntrada e dsItemEntrada, quando vazios, devem reportar
+						ISNULL(IDE.dsItem, '') dsItemEntrada,    -- "Sem Vínculo" no relatório
+						ISNULL(IDE.tpStatus, '') tpStatusEntrada,
+						ISNULL(DOV.dsText, '') vlTipoReabastecimentoEntrada,
+						CASE
+							WHEN RIL.IDItem IS NULL THEN
+								'Inativo'
+							ELSE
+								'Ativo'
+						END AS itemAbertoAbastecimentoCdLoja,
+						IDS.blItemTransferencia,
+						ISNULL(FO.stFornecedor, '') stFornecedor,
+						ISNULL(FP.cdStatusVendor, '') cdStatusVendor,
+						FO.nmFornecedor,
+						ISNULL(FP.tpStoreApprovalRequired, '') tpStoreApprovalRequired,		
+								CASE 
+							WHEN IDE.tpManipulado IS NULL AND IDE.tpReceituario IS NULL AND IDE.tpVinculado IS NULL AND COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate) <> 1234567
+							-- Fixo: Soma 1 nos dias de reviewdate
+							THEN ISNULL((SELECT CONVERT(INT, (SELECT cdReviewDate AS [text()] 
+										   FROM (SELECT TOP 100 PERCENT cdReviewDate 
+												   FROM (SELECT CASE WHEN Token > 7 THEN Token - 7 ELSE Token END AS cdReviewDate 
+														   FROM (SELECT CONVERT(INT, SUBSTRING(T.Src, V.Number+1, 1)) + 1 AS Token 
+																   FROM (SELECT CONVERT(VARCHAR, COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate)) Src) T 
+																   JOIN [master]..[spt_values] V 
+																	 ON V.[number] < LEN(T.Src) 
+																  WHERE V.[type] = 'P') AS T2) AS T3 GROUP BY cdReviewDate) AS Adjusted FOR XML PATH('')))), 0)
+							-- Variavel: retorna o reviewdate
+							ELSE 
+							  CASE 
+								WHEN IDE.vlTipoReabastecimento = 33
+								THEN ISNULL(CAST(ISNULL(FCP.cdReviewDate,FP.CDREVIEWDATE) as varchar),0)
+								ELSE 
+								  CASE
+									WHEN IDE.vlTipoReabastecimento = 3
+									THEN ISNULL(CAST(ISNULL(FCP.cdReviewDate, RDC.CDREVIEWDATE) AS NVARCHAR),0)
+									ELSE 
+									  CASE 
+										WHEN IDE.vlTipoReabastecimento IN (20, 40, 22, 42, 43) 
+										THEN ISNULL(CAST(RDCS.CDREVIEWDATE AS NVARCHAR),0)
+										ELSE COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate, 0) 
+										END
+									END 
+								END 
+							 END AS CdReviewDate,  
+						COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate) AS cdReviewDateOriginal,
+						L.nmLoja, -- Nome da Loja
+						IDS.tpStatus,  -- Status do item de controle de estoque
+						CASE WHEN EXISTS(SELECT TOP 1 1 FROM Trait TIDS WHERE TIDS.IdItemDetalhe = IDS.IdItemDetalhe AND TIDS.IdLoja = IT.IdLoja) THEN 1 ELSE 0 END AS ItemPossuiTrait,  -- se o item de controle de estoque possui trait
+						CASE WHEN EXISTS(SELECT TOP 1 1 FROM Trait TIDE WHERE TIDE.IdItemDetalhe = IDE.IdItemDetalhe AND TIDE.IdLoja = IT.IdLoja) THEN 1 ELSE 0 END AS ItemEntradaPossuiTrait,  -- se o item de controle de estoque possui trait
+						ISNULL(IDE.blItemTransferencia, 0) AS FlagEntradaItemTransferencia, -- se o item de entrada está marcado como transferencia
+						CASE WHEN IDE.tpAlinhamentoCD IS NULL THEN 0 ELSE 1 END AS EntradaPossuiAlinhamentoCD, -- se o item de entrada possui alinhamento item / cd
+						CASE WHEN IDE.tpManipulado IS NULL AND IDE.tpReceituario IS NULL AND IDE.tpVinculado IS NULL THEN 0 ELSE 1 END AS PossuiRelacionamento -- se o item possui relacionamento (Sim (Variável)) ou nao (Não (Fixo)
+					FROM Itens IT
+						INNER JOIN Loja L 
+							ON L.IDLoja = IT.IDLoja 
+						INNER JOIN ItemDetalhe IDS
+							ON IDS.IDItemDetalhe = IT.IDItemDetalheSaida
+						LEFT JOIN Fineline F
+							ON F.IDFineline = IDS.IDFineline
+						LEFT JOIN ItemDetalhe IDE
+							ON IDE.IDItemDetalhe = IT.IDItemDetalheEntrada
+						LEFT JOIN FornecedorParametro FP
+							ON FP.IDFornecedorParametro = ISNULL(IDE.IDFornecedorParametro,IDS.IDFornecedorParametro)
+						LEFT JOIN FornecedorLojaParametro FLP
+							ON FLP.IDFornecedorParametro = ISNULL(IDE.IDFornecedorParametro,IDS.IDFornecedorParametro)
+						   AND FLP.IDLoja = IT.IDLoja
+						LEFT JOIN FornecedorCDParametro FCP
+							ON FCP.IDFornecedorParametro = ISNULL(IDE.IDFornecedorParametro,IDS.IDFornecedorParametro)
+						   AND FCP.IDCD = IT.IDCD	
+						LEFT JOIN LojaCDParametro LCP
+							ON LCP.IDCD = IT.IDCD
+						   AND LCP.IDLoja = IT.IDLoja
+						   AND LCP.blAtivo = 1
+						   AND LCP.cdSistema = 1
+						LEFT JOIN RelacaoItemLojaCD RIL
+							ON RIL.IDItemEntrada = IDE.IDItemDetalhe --ItemEntrada (ANACECILIA)
+						   AND RIL.IDLojaCDParametro = LCP.IDLojaCDParametro
+						LEFT JOIN RelacaoItemLojaCD RILS
+							ON RILS.IDLojaCDParametro = LCP.IDLojaCDParametro
+						   AND RILS.IDItem = IT.IdItemDetalheSaida
+						   AND RILS.blAtivo = 1
+						   AND RILS.cdSistema = 1
+						LEFT JOIN Fornecedor FO
+							ON FO.IDFornecedor = FP.IDFornecedor
+						LEFT JOIN ReviewDateCD RDC
+							ON RDC.IDLojaCDParametro = LCP.IDLojaCDParametro
+						   AND RDC.IDDepartamento = IDE.IDDepartamento
+						   AND RDC.cdSistema = 1
+						   AND RDC.blAtivo   = 1
+						   AND RDC.tpReabastecimento = 'C'
+						   AND IDE.vlTipoReabastecimento = 3
+						LEFT JOIN ReviewDateCD RDCS
+							ON RDCS.IDLojaCDParametro = LCP.IDLojaCDParametro
+						   AND RDCS.IDDepartamento = IDE.IDDepartamento
+						   AND RDCS.cdSistema = 1
+						   AND RDCS.blAtivo   = 1
+						   AND RDCS.tpReabastecimento = 'S'
+						   AND IDE.vlTipoReabastecimento IN (20, 40, 22, 42, 43)
+						INNER JOIN CWIDomain DO
+							ON DO.nmDomain = 'dmTipoReabastecimento'
+						LEFT JOIN CWIDomainValue DOV
+							ON DOV.IDDomain = DO.IDDomain
+								AND DOV.dsValue = CONVERT(VARCHAR, IDE.vlTipoReabastecimento)
+						where FP.cdV9D = @CdV9D or @CdV9D is null and ( @PossuiTrait IS NULL OR
+						( @PossuiTrait = 1 AND EXISTS(SELECT TOP 1 1 FROM Trait TIDS WHERE TIDS.IdItemDetalhe = IDS.IdItemDetalhe AND TIDS.IdLoja = IT.IdLoja) ) OR
+						( @PossuiTrait = 0 AND IDS.idRegiaoCompra = @Regiao /* AND NOT EXISTS(SELECT TOP 1 1 FROM Trait TIDS WHERE TIDS.IdItemDetalhe = IDS.IdItemDetalhe AND TIDS.IdLoja = IT.IdLoja) */ ))
+						order by L.cdLoja, ids.dsItem
+
+				DROP TABLE #ItensFiltrados;
+				DROP TABLE #ItensRelacionados;
+				DROP TABLE #Fornecedores;
+				DROP TABLE #ItensSugestao;
+
+				END
+				
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <include file="SugestaoReturnSheet_AdicionarColuna.xml" relativeToChangelogFile="true"/>
+  <include file="PR_GeraSugestaoReturnSheet_AdicionarPrecoVenda.xml" relativeToChangelogFile="true"/>
+  <include file="LogMensagemReturnSheetVigente.xml" relativeToChangelogFile="true"/>
+  <include file="CWIRole_Inclusao-Coluna.xml" relativeToChangelogFile="true"/>
+  <include file="PR_AtualizaFornecedorParametroItem_InclusaoSAR-N.xml" relativeToChangelogFile="true"/>
+  <include file="PR_GeraSugestaoReturnSheet_AlteracaoIran.xml" relativeToChangelogFile="true"/>
+  <include file="VW_REAB_SugestaoPedidoItensReviewSheet_AdicionadoCriterio.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

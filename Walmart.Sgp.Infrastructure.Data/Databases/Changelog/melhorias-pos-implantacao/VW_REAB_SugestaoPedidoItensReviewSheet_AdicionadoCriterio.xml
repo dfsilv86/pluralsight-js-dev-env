@@ -1,0 +1,137 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="melhorias-pos-implantacao_VW_REAB_SugestaoPedidoItensReviewSheet_AdicionadoCriterio" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				ALTER VIEW [dbo].[VW_REAB_SugestaoPedidoItensReviewSheet]
+				AS
+				SELECT DISTINCT ID.IDItemDetalhe
+					,L.IDLoja
+					,CAST(GETDATE() AS DATE) AS dtPedido
+					,COALESCE(FLP.tpWeek, FCP.tpWeek, FP.tpWeek, 0) tpWeek
+					,COALESCE(FLP.tpInterval, FCP.tpInterval, FP.tpInterval, 0) tpInterval
+					,COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate, 0) cdReviewDate
+					,COALESCE(FLP.vlLeadTime, FCP.vlLeadTime, FP.vlLeadTime, 0) vlLeadTime
+					,ISNULL(ID.qtVendorPackage, 0) qtVendorPackage
+					,ISNULL(ID.vlShelfLife, 0) vlShelfLife
+					,R.vlReviewSheet
+					,R.tpOrigem AS cdOrigemCalculo
+					,ISNULL(ID.vlModulo, 0) vlModulo
+					,ID.tpCaixaFornecedor
+					,ID.vlPesoLiquido
+					,RILC.vlTipoReabastecimento
+					,LCP.IDCD
+					,CD.blConvertido
+					,ISNULL(SP.qtSaldoPedido, 0) qtSaldoPedido
+					,ISNULL(SP.vlSaldoIT, 0) vlSaldoIT
+					,ISNULL(SP.vlSaldoIW, 0) vlSaldoIW
+					,ISNULL(SP.vlSaldoOO, 0) vlSaldoOO
+					,ID.vlFatorConversao
+					,ID.cdItem
+					,L.cdLoja
+					,FP.IDFornecedorParametro
+				FROM STAGE_Reviewsheet R WITH (NOLOCK)
+				INNER JOIN ItemDetalhe ID WITH (NOLOCK) ON R.cdItem = ID.cdItem
+					AND ID.tpVinculado IS NULL
+					AND ID.tpReceituario IS NULL
+					AND ID.tpManipulado IS NULL
+					AND ID.cdSistema = R.cdFormato
+					AND ID.tpStatus = 'A'
+					AND ID.blAtivo = 1
+				INNER JOIN Departamento D WITH (NOLOCK) ON ID.IdDepartamento = D.IdDepartamento
+					AND D.blPerecivel = 'S'
+				INNER JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IDFornecedorParametro = ID.idFornecedorParametro 
+					AND FP.tpStoreApprovalRequired IN('Y', 'R')
+				INNER JOIN Loja L WITH (NOLOCK) ON L.cdLoja = R.cdLoja
+					AND L.cdSistema = R.cdFormato
+				INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK) ON RILC.IDItem = ID.IDItemDetalhe
+				INNER JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RILC.IDLojaCDParametro
+					AND LCP.IDLoja = L.IDLoja
+				INNER JOIN CD CD ON CD.IDCD = LCP.IDCD
+				LEFT JOIN FornecedorCDParametro FCP WITH (NOLOCK) ON FCP.IDFornecedorParametro = ID.idFornecedorParametro
+					AND FCP.IDCD = CD.IDCD
+				LEFT JOIN FornecedorLojaParametro FLP WITH (NOLOCK) ON FLP.IDFornecedorParametro = Id.idFornecedorParametro
+					AND FLP.IDLoja = L.IDLoja
+				LEFT JOIN STAGE_SaldoPedido SP WITH (NOLOCK) ON SP.cdItem = R.cdItem
+					AND SP.cdLoja = R.cdLoja
+					AND SP.cdFormato = R.cdFormato
+				WHERE EXISTS (
+						SELECT IDTRAIT
+						FROM TRAIT T
+						WHERE T.IdItemDetalhe = ID.IDItemDetalhe
+							AND T.IdLoja = L.IDLoja
+						)
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					ALTER VIEW [dbo].[VW_REAB_SugestaoPedidoItensReviewSheet]
+					AS
+					SELECT DISTINCT  
+							ID.IDItemDetalhe
+						  , L.IDLoja
+						  , CAST(GETDATE() AS DATE) as dtPedido
+						  , COALESCE(FLP.tpWeek, FCP.tpWeek, FP.tpWeek, 0) tpWeek
+						  , COALESCE(FLP.tpInterval, FCP.tpInterval, FP.tpInterval, 0) tpInterval
+						  , COALESCE(FLP.cdReviewDate, FCP.cdReviewDate, FP.cdReviewDate, 0) cdReviewDate
+						  , COALESCE(FLP.vlLeadTime, FCP.vlLeadTime, FP.vlLeadTime, 0) vlLeadTime
+						  , ISNULL(ID.qtVendorPackage, 0) qtVendorPackage
+						  , ISNULL(ID.vlShelfLife, 0) vlShelfLife
+						  , R.vlReviewSheet
+						  , R.tpOrigem as cdOrigemCalculo
+						  , ISNULL(ID.vlModulo, 0) vlModulo
+						  , ID.tpCaixaFornecedor
+						  , ID.vlPesoLiquido
+						  , RILC.vlTipoReabastecimento
+						  , LCP.IDCD
+						  , CD.blConvertido
+						  , ISNULL(SP.qtSaldoPedido, 0)  qtSaldoPedido 
+						  , ISNULL(SP.vlSaldoIT, 0) vlSaldoIT
+						  , ISNULL(SP.vlSaldoIW, 0) vlSaldoIW
+						  , ISNULL(SP.vlSaldoOO, 0) vlSaldoOO
+						  , ID.vlFatorConversao
+						  ,	ID.cdItem
+						  , L.cdLoja
+						  ,	FP.IDFornecedorParametro
+					FROM STAGE_Reviewsheet R WITH (NOLOCK) 
+					INNER JOIN ItemDetalhe ID WITH (NOLOCK) ON R.cdItem = ID.cdItem 
+								AND ID.tpVinculado is null 
+								AND ID.tpReceituario is null 
+								AND ID.tpManipulado is null
+								AND ID.cdSistema = R.cdFormato
+								AND ID.tpStatus = 'A'
+								AND ID.blAtivo = 1
+					INNER JOIN Departamento D WITH (NOLOCK) ON ID.IdDepartamento = D.IdDepartamento 
+								AND D.blPerecivel = 'S'
+					INNER JOIN FornecedorParametro FP WITH (NOLOCK) ON FP.IDFornecedorParametro = ID.idFornecedorParametro   
+					INNER JOIN Loja L WITH (NOLOCK) ON L.cdLoja = R.cdLoja
+								AND L.cdSistema = R.cdFormato
+					INNER JOIN RelacaoItemLojaCD RILC WITH (NOLOCK) ON RILC.IDItem = ID.IDItemDetalhe
+					INNER JOIN LojaCDParametro LCP WITH (NOLOCK) ON LCP.IDLojaCDParametro = RILC.IDLojaCDParametro
+							AND LCP.IDLoja = L.IDLoja
+					INNER JOIN CD CD ON CD.IDCD = LCP.IDCD
+					LEFT JOIN FornecedorCDParametro FCP WITH(NOLOCK) ON FCP.IDFornecedorParametro = ID.idFornecedorParametro
+						AND FCP.IDCD = CD.IDCD
+					LEFT JOIN FornecedorLojaParametro FLP WITH(NOLOCK) ON FLP.IDFornecedorParametro = Id.idFornecedorParametro
+						AND FLP.IDLoja = L.IDLoja
+					LEFT JOIN STAGE_SaldoPedido SP WITH (NOLOCK) ON SP.cdItem = R.cdItem
+							AND SP.cdLoja = R.cdLoja
+							AND SP.cdFormato = R.cdFormato
+					WHERE EXISTS (
+									SELECT IDTRAIT
+									FROM  TRAIT T
+									WHERE T.IdItemDetalhe = ID.IDItemDetalhe
+									AND T.IdLoja = L.IDLoja
+								 )
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

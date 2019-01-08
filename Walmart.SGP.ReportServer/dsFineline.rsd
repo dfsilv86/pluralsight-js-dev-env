@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@IDCategoria">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@IDDepartamento">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@IDSubcategoria">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT NULL as  IDFineline, 'Todas' as dsFineline, 1 as cdSistema
+UNION 
+SELECT IDFineline,
+CONVERT(VARCHAR, cdFineline) + ' - ' + dsFineLine AS dsFineline,
+cdSistema
+FROM Fineline
+WHERE
+    (@IDDepartamento IS NULL OR IDDepartamento = @IDDepartamento)
+AND (@IDCategoria IS NULL OR IDCategoria = @IDCategoria)
+AND (@IDSubcategoria IS NULL OR IDSubcategoria = @IDSubcategoria)
+AND blAtivo = 1
+ORDER BY IDFineline</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IDFineline">
+        <DataField>IDFineline</DataField>
+        <rd:TypeName>System.Int64</rd:TypeName>
+      </Field>
+      <Field Name="dsFineline">
+        <DataField>dsFineline</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="cdSistema">
+        <DataField>cdSistema</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

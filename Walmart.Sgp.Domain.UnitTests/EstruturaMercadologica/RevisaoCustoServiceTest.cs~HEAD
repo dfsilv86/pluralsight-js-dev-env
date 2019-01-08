@@ -1,0 +1,48 @@
+﻿using NUnit.Framework;
+using Rhino.Mocks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Walmart.Sgp.Domain.EstruturaMercadologica;
+
+namespace Walmart.Sgp.Domain.UnitTests.EstruturaMercadologica
+{
+    [TestFixture]
+    [Category("Domain")]
+    public class RevisaoCustoServiceTest
+    {
+        [Test]
+        public void ObterEstruturadoPorIdTest()
+        {
+            var gateway = MockRepository.GenerateMock<IRevisaoCustoGateway>();
+
+            var target = new RevisaoCustoService(gateway);
+
+            gateway.Expect(g => g.ObterEstruturadoPorId(1)).Return(new RevisaoCusto() { Id = 1 });
+
+            var r = target.ObterEstruturadoPorId(1);
+
+            Assert.IsNotNull(r);
+        }
+
+        [Test]
+        public void PesquisarPorFiltrosTest()
+        {
+            var gateway = MockRepository.GenerateMock<IRevisaoCustoGateway>();
+
+            var target = new RevisaoCustoService(gateway);
+
+            var pg = new Infrastructure.Framework.Domain.Paging();
+
+            var filtro = new RevisaoCustoFiltro() { CdItem = 1, DsItem = "s", IdBandeira = 1, IdDepartamento = 1, IdLoja = 1, IdStatus = 1 };
+
+            gateway.Expect(g => g.PesquisarPorFiltros(filtro, pg)).Return(new[] { new RevisaoCusto() { Id = 1 } });
+
+            var r = target.PesquisarPorFiltros(filtro, pg);
+
+            Assert.AreEqual(1, r.Count());
+        }
+    }
+}

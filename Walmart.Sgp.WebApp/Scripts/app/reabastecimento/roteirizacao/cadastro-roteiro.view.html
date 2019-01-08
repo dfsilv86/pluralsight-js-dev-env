@@ -1,0 +1,105 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateCadastroRoteiroNewName'|translate|capitalize}} {{::data.titulo|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="manutencao">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default"
+                                mwl-confirm
+                                title="{{::'confirmBackTitle'|translate }}"
+                                message="{{::'confirmBackMessage'|translate }}"
+                                on-confirm="back()"
+                                is-disabled="!hasSelection() && !hasChanges()"
+                                ng-click="backWithoutChanges()">
+                            <i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}
+                        </button>
+                        <button class="btn btn-primary" ng-click="save()" style="margin-left:10px" ng-disabled="!hasSelection() && !hasChanges()" security-action="Roteiro.Salvar"><i class=" glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-danger"
+                                mwl-confirm
+                                title="{{::'confirmRemoveTitle'|translate }}"
+                                message="{{::'confirmRemoveMessage'|translate }}"
+                                on-confirm="remove()"
+                                ng-disabled="!roteiro.idRoteiro || roteiro.idRoteiro === 0" security-action="Roteiro.Delete">
+                            <i class="glyphicon glyphicon-remove" /> &nbsp; {{::'remove'|translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'vendorNineDigitsCode'|translate|capitalize}}" line-width="12" grid-width="6">
+                        <lookup-vendor-nove-digitos name="CdDV9" ng-model="roteiro.cdV9D" sistema="filters.cdSistema" item-out="filters.vendor" description-width="large" required ng-disabled="roteiro.idRoteiro > 0"></lookup-vendor-nove-digitos>
+                    </form-field>
+
+                    <form-field title="{{::'orderScript'|translate|capitalize}}" line-width="12" grid-width="6">
+                        <input type="text" name="orderScript" ng-model="roteiro.descricao" class="form-control" required maxlength="50" />
+                    </form-field>
+
+                    <form-field title="{{::'totalReferenceLoad'|translate|capitalize}}" line-width="12" grid-width="6">
+                        <input type="text" name="minimalLoad" ng-model="roteiro.vlCargaMinima" number maxlength="9" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" required />
+                    </form-field>
+
+                    <form-field title="{{::'typeOfReference'|translate|capitalize}}" line-width="12" grid-width="3">
+                        <dropdown-tipo-carga name="loadType" ng-model="roteiro.blKgCxStr" required></dropdown-tipo-carga>
+                    </form-field>
+
+                    <form-field title="{{::'uF'|translate|capitalize}}" line-width="12" grid-width="3">
+                        <dropdown-uf name="uF" ng-model="filters.dsEstado"></dropdown-uf>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <!-- TODO: componente de grid -->
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="double domain symbol"><!-- TODO: deveria ser action... tirar esse span com mensagem daqui -->
+                                <input type="checkbox" ng-model="data.todosMarcado" ng-click="marcarTodos(event)" ng-checked="data.todosMarcado" />
+                                <span>{{::'selectAll'|translate|capitalize}}</span>
+                            </th>
+                            <th class="domain">{{::'state'|translate|capitalize}}</th>
+                            <th class="identifier">{{::'store'|translate|capitalize}}</th>
+                            <th>{{::'storeName'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'mondayShort'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'tuesdayShort'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'wednesdayShort'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'thursdayShort'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'fridayShort'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'saturdayShort'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'sundayShort'|translate|capitalize}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="double domain symbol"><input type="checkbox" ng-model="item.blativo" ng-checked="item.blativo" /></td>
+                            <td class="domain">{{item.dsEstado}}</td>
+                            <td class="identifier">{{item.cdLoja}}</td>
+                            <td>{{item.nmLoja}}</td>
+                            <td class="domain symbol"><semaphore ng-model="item.blSegunda"></semaphore></td>
+                            <td class="domain symbol"><semaphore ng-model="item.blTerca"></semaphore></td>
+                            <td class="domain symbol"><semaphore ng-model="item.blQuarta"></semaphore></td>
+                            <td class="domain symbol"><semaphore ng-model="item.blQuinta"></semaphore></td>
+                            <td class="domain symbol"><semaphore ng-model="item.blSexta"></semaphore></td>
+                            <td class="domain symbol"><semaphore ng-model="item.blSabado"></semaphore></td>
+                            <td class="domain symbol"><semaphore ng-model="item.blDomingo"></semaphore></td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0"> 
+                        <tr>
+                            <td colspan="11" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

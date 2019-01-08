@@ -1,0 +1,12 @@
+<Project ToolsVersion="4.0" DefaultTargets="BeforeBuild" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Target Name="AfterBuild">
+    	<ItemGroup>
+	    	<FilesToCopy Include="..\Walmart.Sgp.Tasks\bin\$(Configuration)\*.*" Exclude="..\Walmart.Sgp.Tasks\bin\$(Configuration)\*.xml" />
+	    	<FilesToCopy Include="..\Walmart.Sgp.Tasks\bin\$(Configuration)\Walmart.Sgp.Tasks.xml" />
+		</ItemGroup>
+    	<Copy
+		    SourceFiles="@(FilesToCopy)"
+		    DestinationFolder="..\References\TaskManager\modules\Walmart.Sgp.Tasks"
+    	/>
+	</Target>
+</Project>

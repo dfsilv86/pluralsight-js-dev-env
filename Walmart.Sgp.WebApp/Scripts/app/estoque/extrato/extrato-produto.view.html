@@ -1,0 +1,143 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::(comportamentoRelatorio?'stateRelatorioExtratoProdutoName':'stateExtratoProdutoName')|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-if="!comportamentoRelatorio" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-primary" ng-if="comportamentoRelatorio" ng-click="exportIt()" security-action="Estoque.ExportarRelatorio"><i class="glyphicon glyphicon-save-file" /> &nbsp; {{::'export'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field-placeholder></form-field-placeholder>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" required></dropdown-bandeira>
+                    </form-field>
+                    <form-field-placeholder></form-field-placeholder>
+                    <form-field title="{{::'store'|translate|capitalize}}">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.loja" required></lookup-loja>
+                    </form-field>
+                    <label class="col-md-2 control-label" for="lookup-item">{{::'itemCode'|translate|capitalize}}:</label>
+                    <div class="col-md-10">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <lookup-item ng-model="filters.cdItem" sistema="filters.cdSistema" item-out="data.item" required></lookup-item>
+                            </div>
+                            <div ng-if="!comportamentoRelatorio">
+                                <label class="col-md-1 control-label">{{::'attached'|translate|capitalize}}:</label>
+                                <div class="col-md-1">
+                                    <div class="readonly-fix">{{data.item.tpVinculado|enum:'enTpVinculado'|translate|capitalize}}</div>
+                                </div>
+                                <label class="col-md-1 control-label">{{::'recipes'|translate|capitalize}}:</label>
+                                <div class="col-md-1">
+                                    <div class="readonly-fix">{{data.item.tpReceituario|enum:'enTpReceituario'|translate|capitalize}}</div>
+                                </div>
+                                <label class="col-md-1 control-label">{{::'manipulated'|translate|capitalize}}:</label>
+                                <div class="col-md-1">
+                                    <div class="readonly-fix">{{data.item.tpManipulado|enum:'enTpManipulado'|translate|capitalize}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form-field title="{{::'monthYear'|translate|capitalize}}" grid-width="2">
+                        <dropdown-mes-ano-expurgo ng-model="filters.mesAno" required></dropdown-mes-ano-expurgo>
+                    </form-field>
+                    <form-field ng-if="data.extrato && data.extrato.length > 0 && !comportamentoRelatorio" title="{{::'initialStock'|translate|capitalize}}">
+                        <div class="form-control input-width-medium">{{data.estoqueInicial|number:6}}</div>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding" ng-if="!comportamentoRelatorio">
+            <div class="form-inline">
+                <table class="table extrato-produto table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="action"></th>
+                            <th class="date">{{::'date'|translate}}</th>
+                            <th class="domain message" style="width: 260px;">{{::'movement'|translate}}</th>
+                            <th>{{::'item'|translate}}</th>
+                            <th class="domain">{{::'operation'|translate}}</th>
+                            <th class="number">{{::'quantity'|translate}}</th>
+                            <th class="currency">{{::'unitCost'|translate}}</th>
+                            <th class="currency">{{::'totalCost'|translate}}</th>
+                            <th class="number">{{::'piStock'|translate}}</th>
+                            <th class="currency">{{::'financialStock'|translate}}</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.extrato && data.extrato.length > 0">
+                        <tr ng-repeat-start="item in data.extrato" ng-class="{'is-expanded root':isExpanded(item),'is-inventario':isInventario(item)}">
+                            <td class="action">
+                                <button ng-click="collapse(item)" ng-if="canExpand(item) && isExpanded(item)"><span class="glyphicon glyphicon-minus"></span></button>
+                                <button ng-click="expand(item)" ng-if="canExpand(item) && !isExpanded(item)"><span class="glyphicon glyphicon-plus"></span></button>
+                                <!--expand-button ng-model="item" expand="expand" collapse="collapse" can-expand="canExpand" is-expanded="isExpanded"></expand-button-->
+                            </td>
+                            <td class="date">{{item.dtMovimentado|amDateFormat:'DD/MM/YYYY'}}</td>
+                            <td class="domain message">{{item.dsTipoMovimentacao}}</td>
+                            <td>{{item.cddsItem}}</td>
+                            <td class="domain">{{item.tipo}}</td>
+                            <td class="number">{{item.qtdMovimentacao|number:3}}</td>
+                            <td class="currency">{{item.vlCustoContabilAtual|money:'BRL'}}</td>
+                            <td class="currency">{{item.custoTotal|money:'BRL'}}</td>
+                            <td class="number">{{item.estoqueTeorico|number:3}}</td>
+                            <td class="currency">{{item.estoqueTeoricoFinanceiro|money:'BRL'}}</td>
+                            <td class="action">
+                                <detail-button ng-click="detailNf(item)" ng-if="item.idNotaFiscal != null" title="Detalhe de Nota Fiscal"></detail-button>
+                                <detail-button ng-click="detailMtr(item)" ng-if="item.idNotaFiscal == null && (item.idTipoMovimentacao == 23 || item.idTipoMovimentacao == 46)" title="Detalhe de Mtr"></detail-button>
+                            </td>
+                        </tr>
+                        <tr ng-if="isExpanded(item)" class="is-expanded" ng-repeat-end>
+                            <td></td>
+                            <td colspan="10">
+                                <!-- TODO: componente de grid -->
+                                <table class="table extrato-produto table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                                    <thead>
+                                        <tr>
+                                            <th class="date">{{::'date'|translate}}</th>
+                                            <th class="domain message" style="width: 260px;">{{::'movement'|translate}}</th>
+                                            <th>{{::'item'|translate}}</th>
+                                            <th class="domain">{{::'operation'|translate}}</th>
+                                            <th class="number">{{::'quantity'|translate}}</th>
+                                            <th>{{::'unitCost'|translate}}</th>
+                                            <th>{{::'totalCost'|translate}}</th>
+                                            <th class="number">{{::'piStock'|translate}}</th>
+                                            <th>{{::'financialStock'|translate}}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody ng-if="!!data.detalhe && data.detalhe.length > 0">
+                                        <tr ng-repeat="detalhe in data.detalhe">
+                                            <td class="date">{{detalhe.dtMovimentado|amDateFormat:'DD/MM/YYYY'}}</td>
+                                            <td class="domain message">{{detalhe.dsTipoMovimentacao}}</td>
+                                            <td>{{detalhe.cddsItem}}</td>
+                                            <td class="domain">{{detalhe.tipo}}</td>
+                                            <td class="number">{{detalhe.qtdMovimentacao|number:3}}</td>
+                                            <td class="currency">{{detalhe.vlCustoContabilAtual|money:'BRL'}}</td>
+                                            <td class="currency">{{detalhe.custoTotal|money:'BRL'}}</td>
+                                            <td class="number">{{detalhe.estoqueTeorico|number:3}}</td>
+                                            <td class="currency">{{detalhe.estoqueTeoricoFinanceiro|money:'BRL'}}</td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody ng-if="!data.detalhe || data.detalhe.length < 1">
+                                        <tr>
+                                            <td colspan="9" class="domain">{{::'noData'|translate}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.extrato || data.extrato.length === 0">
+                        <tr>
+                            <td colspan="11" class="domain">{{::'noData'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </widget>
+    </div>
+</div>

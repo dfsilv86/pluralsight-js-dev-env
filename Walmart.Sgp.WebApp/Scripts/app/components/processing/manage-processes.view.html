@@ -1,0 +1,61 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="manageProcesses">
+    <modal-breadcrumb title="{{::'manageProcesses'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+            <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'createdBy'|translate|capitalize}}" l line-width="6" grid-width="12">
+            <lookup-usuario ng-model="temp.userName" usuario="filters.createdUserId" item-out="temp.user" ng-disabled="!temp.isAdmin"></lookup-usuario>
+        </form-field>
+        <form-field title="{{::'processName'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-process-name ng-model="filters.processName"></dropdown-process-name>
+        </form-field>
+        <form-field title="{{::'processState'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-process-order-state ng-model="filters.state"></dropdown-process-order-state>
+        </form-field>
+    </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table complex table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>{{::'createdBy'|translate}}</th>
+                        <th>{{::'processName'|translate}}</th>
+                        <th class="date time">{{::'createdDate'|translate}}</th>
+                        <th class="domain triple">{{::'processState'|translate}}</th>
+                        <th class="domain progress-indicator">{{::'currentProgress'|translate}}</th>
+                        <th class="date time">{{::'statusDate'|translate}}</th>
+                        <th class="action"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values">
+                        <td>{{item.createdUser|userProfile}}</td>
+                        <td>{{'process' + item.processName|translate}}</td>
+                        <td class="date time">{{item.createdDate|amDateFormat:'DD/MM/YYYY HH:mm:ss'|coalesce:'-'}}</td>
+                        <td class="domain triple">{{item.state|enum:'processOrderState'|translate}}</td>
+                        <td class="domain progress-indicator"><process-state-indicator ng-model="item"></process-state-indicator></td>
+                        <td class="date time">{{item.modifiedDate|amDateFormat:'DD/MM/YYYY HH:mm:ss'|coalesce:'-'}}</td>
+                        <td class="action">
+                            <detail-button ng-click="detail(item)"></detail-button>
+                        </td>
+                    </tr>
+                    <tr ng-if="!data.values || data.values.length === 0">
+                        <td colspan="7" class="domain">{{::'noData'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

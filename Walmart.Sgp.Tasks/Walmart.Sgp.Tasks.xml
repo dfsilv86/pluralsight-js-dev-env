@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<tasks>
+	<!-- Please refer to the README.md file or TaskConfigurationData.cs for more information on these options -->
+	
+	<!-- 
+		The task is considered to be late if it's been waiting for over a minute (a new thread will be spawned to run the task),
+		and it times out after 10 minutes (the running task is aborted and requeued). By default it will spawn 0 workers, and once the 
+		service starts, it will wait 1 second before the tasks start execution.
+	-->
+	<task type="Walmart.Sgp.Tasks.Processing.QueueProcessingTask" sla="00:00:01" timeout="00:10:00" spawn="10" delayStart="00:00:01">
+		<schedules>
+			<schedule from="00:00:00" to="23:59:59" spawn="100" timeUnit="00:00:01" maxRuns="1" wait="00:00:01" />
+		</schedules>
+		<configuration>
+			<!--
+			Defaults:
+			<service type="" methodName="" />
+			<processOrder createdUserId="" createdMachineName="(local)" />
+			-->
+			<processOrder createdUserId="" createdMachineName="" />
+			<!-- createdMachineName="" significa processar todos, independente de afinidade -->
+		</configuration>
+	</task>
+	
+	<task type="Walmart.Sgp.Tasks.Processing.CleanupTask" sla="00:01:00" timeout="00:10:00" delayStart="00:01:00">
+		<schedules>
+			<schedule from="00:00:00" to="23:59:59" timeUnit="01:00:00" maxRuns="1" />
+		</schedules>
+		<configuration>
+			<!--
+			Defaults:
+			<processOrder createdMachineName="(local)" />
+			-->
+			<processOrder createdMachineName="" />
+			<!-- createdMachineName="" significa processar todos, independente de afinidade -->
+		</configuration>
+	</task>
+</tasks>

@@ -1,0 +1,70 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaParametroFornecedorName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required disabled></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'vendorStatus'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-status-item-host name="vendorStatus" ng-model="filters.stFornecedor"></dropdown-status-item-host>
+                    </form-field>                            
+                    <form-field title="{{::'nineDigitsCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="cdV9D" ng-model="filters.cdV9D" maxlength="9" ui-number-mask="0"  ui-hide-group-sep class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'companyName'|translate|capitalize}}" lin line-width="6" grid-width="12">
+                        <input type="text" name="nmFornecedor" ng-model="filters.nmFornecedor" maxlength="50" class="form-control input-width-large" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier cd-vendor-9d" ng-click="orderBy('cdV9D')">{{::'nineDigitsCode'|translate|capitalize}}<sort-indicator ng-model="data.values" name="cdV9D"></sort-indicator></th>
+                            <th ng-click="orderBy('nmFornecedor')">{{::'companyName'|translate|capitalize}}<sort-indicator ng-model="data.values" name="nmFornecedor"></sort-indicator></th>
+                            <th class="domain parametro-vendor" ng-click="orderBy('stFornecedor')">{{::'vendorStatus'|translate|capitalize}}<sort-indicator ng-model="data.values" name="stFornecedor"></sort-indicator></th>
+                            <th class="domain parametro-vendor" ng-click="orderBy('cdTipo')">{{::'codeType'|translate}}<sort-indicator ng-model="data.values" name="cdTipo"></sort-indicator></th>
+                            <th class="domain parametro-vendor" ng-click="orderBy('cdStatusVendor')">{{::'vendorStatusRA'|translate}}<sort-indicator ng-model="data.values" name="cdStatusVendor"></sort-indicator></th>
+                            <th class="domain parametro-vendor" ng-click="orderBy('tpStoreApprovalRequired')">{{::'storeApproval'|translate}}<sort-indicator ng-model="data.values" name="tpStoreApprovalRequired"></sort-indicator></th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="identifier cd-vendor-9d">{{item.cdV9D}}</td>
+                            <td>{{item.fornecedor.nmFornecedor}}</td>
+                            <td class="domain parametro-vendor">{{item.fornecedor.stFornecedor|enum:'enTpStatusItemHost'|translate|capitalize}}</td>
+                            <td class="domain parametro-vendor">{{item.cdTipo|enum:'tipoCodigoReabastecimento'|translate|capitalize}}</td>
+                            <td class="domain parametro-vendor">{{item.cdStatusVendor|enum:'tipoStatusFornecedorReabastecimento'|translate|capitalize}}</td>
+                            <td class="domain parametro-vendor">{{item.tpStoreApprovalRequired}}</td>
+                            <td class="action">
+                                <detail-button ng-click="detail(item)"></detail-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="7" class="domain">{{ ::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateCadastroDepartamentoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalheLojaCdParametro">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="save()" security-action="Departamento.AtualizarPerecivel"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-default right" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.cdSistema" disabled></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{ data.divisao|divisionProfile }}" class="form-control full-width" disabled />
+                    </form-field>
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="3">
+                        <input type="text" value="{{ data.cdDepartamento }}" class="form-control full-width number" disabled />
+                    </form-field>
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{ data.dsDepartamento }}" class="form-control full-width" disabled />
+                    </form-field>
+                    <form-field title="{{::'blPerecivel'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="checkbox" name="blPerecivel" ng-model="data.booleanPerecivel" class="checkbox" />
+                    </form-field>
+                    <form-field title="{{::'InvoiceDivergences'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <div class="input-group">
+                            <input type="text" name="pcDivergenciaNF" value="{{ data.pcDivergenciaNF|number:2 }}" class="form-control input-full-width number look-alive" disabled />
+                            <span class="input-group-addon">%</span>
+                        </div>                        
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+

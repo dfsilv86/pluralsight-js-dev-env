@@ -1,0 +1,40 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-AtualizacaoRelacionamentoItem-Inclusao_Colunas" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				ALTER TABLE AtualizacaoRelacionamentoItem ADD
+					IDCD INT NULL,
+					IDLoja INT NULL,
+					IDItemDetalheSaida BIGINT NULL,
+					IDItemDetalheEntradaAntigo BIGINT NULL,
+					IDItemDetalheEntradaNovo BIGINT NULL,
+					cdCrossRefAntigo VARCHAR(50) NULL,
+					cdCrossRefNovo VARCHAR(50) NULL,
+					vlTipoReabastecimento SMALLINT NULL;
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+				ALTER TABLE AtualizacaoRelacionamentoItem DROP COLUMN
+					IDCD,
+					IDLoja,
+					IDItemDetalheSaida,
+					IDItemDetalheEntradaAntigo,
+					IDItemDetalheEntradaNovo,
+					cdCrossRefAntigo,
+					cdCrossRefNovo,
+					vlTipoReabastecimento;
+				~
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

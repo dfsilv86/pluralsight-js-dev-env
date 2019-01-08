@@ -1,0 +1,150 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateConsultaReturnSheetRAName'|translate|capitalize }}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="returnSheetQuery">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="discardChanges();search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                        <button class="btn btn-primary" style="margin-left:10px" ng-click="save()" ng-disabled="!hasChanges()" security-action="SugestaoReturnSheet.SalvarRA"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <!--<button class="btn btn-default" ng-click="discardChanges()" ng-disabled="!hasChanges()"><span class="icon-undo"></span> &nbsp; {{::'discardChanges'|translate}}</button>-->
+                        <button class="btn btn-default" style="margin-left:10px" ng-disabled="!data.autorizarHabilitado" ng-click="authorize()" security-action="SugestaoReturnSheet.AutorizarE"><i class="glyphicon glyphicon-save-file" /> &nbsp; {{::'orderExport'|translate}}</button>
+                        <button class="btn btn-default"
+                                mwl-confirm
+                                title="{{::'confirmExportTitle'|translate }}"
+                                message="{{::'confirmExportMessage'|translate }}"
+                                on-confirm="exportGrid()"
+                                is-disabled="!hasChanges()"
+                                ng-click="exportGridWithoutChanges()"
+                                ng-disabled="!habilitarExportarGrid">
+                            <i class="glyphicon glyphicon-save-file" /> &nbsp; {{::'export'|translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'searchReturnSheetBetween'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <div class="col-md-12" style="padding:0px;margin:0px;">
+                            <div class="col-md-5" style="padding:0px;margin:0px;">
+                                <datepicker name="startDateReturnSheet" class="input-width-xlarge" ng-model="filters.inicioReturn" format="dd/MM/yyyy" style="padding:0px;margin:0px;" required />
+                            </div>
+                            <div class="col-md-1" style="padding:0px;margin:0px;">
+                                <label class="control-label" style="padding-left:10px;">{{::'and'|translate|capitalize}}</label>
+                            </div>
+                            <div class="col-md-5" style="padding:0px;margin:0px;">
+                                <datepicker name="endDateReturnSheet" class="input-width-xlarge" ng-model="filters.finalReturn" format="dd/MM/yyyy" style="padding:0px;margin:0px;" required />
+                            </div>
+                        </div>
+                    </form-field>
+                    <form-field title="{{::'vendorNineDigitsCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-vendor-nove-digitos name="CdDV9" ng-model="filters.cdV9D" sistema="filters.cdSistema" item-out="filters.vendor" description-width="large"></lookup-vendor-nove-digitos>
+                    </form-field>
+                    <form-field title="{{::'inputItemCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="filters.cdOldNumber" departamento="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.item"></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'event'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" name="evento" class="form-control" ng-model="filters.evento" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" item-out="filters.departamento" sistema="1" required></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.bandeira" sistema="filters.cdSistema" description-width="large" item-out="temp.loja" ignore-bandeira="true"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'purchaseArea'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <dropdown-regiao-compra ng-model="filters.idRegiaoCompra" show-all></dropdown-regiao-compra>
+                    </form-field>
+                    <form-field title="{{::'exported'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <select ui-select2 class="dropdown full-width-fix" data-placeholder="Sim" ng-model="filters.blAutorizado">
+                            <option value="true">Sim</option>
+                            <option value="false">Não</option>
+                            <option value="null">Todos</option>
+                        </select>
+                    </form-field>
+                    <form-field line-width="6" grid-width="6">
+                        <span></span>
+                    </form-field>
+                    <form-field title="{{::'generatedReport'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <select ui-select2 class="dropdown full-width-fix" data-placeholder="Sim" ng-model="filters.blExportado">
+                            <option value="true">Sim</option>
+                            <option value="false">Não</option>
+                            <option value="null">Todos</option>
+                        </select>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <div class="pesquisa-return-sheet">
+                    <table class="table pesquisa-return-sheet table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th ng-click="orderBy('BlAutorizado')">{{::'exported'|translate}}? <sort-indicator ng-model="data.values" name="BlAutorizado"></sort-indicator></th>
+                                <th ng-click="orderBy('BlExportado')">{{::'generatedReport'|translate}}? <sort-indicator ng-model="data.values" name="BlExportado"></sort-indicator></th>
+                                <th ng-click="orderBy('Descricao')">{{::'event'|translate}} <sort-indicator ng-model="data.values" name="Descricao"></sort-indicator></th>
+                                <th ng-click="orderBy('DhInicioEvento')">{{::'eventPeriod'|translate}} <sort-indicator ng-model="data.values" name="DhInicioEvento"></sort-indicator></th>
+                                <th ng-click="orderBy('DhInicioReturn')">{{::'startDateReturnSheet'|translate}} <sort-indicator ng-model="data.values" name="DhInicioReturn"></sort-indicator></th>
+                                <th ng-click="orderBy('DhFinalReturn')">{{::'endingDateTimeReturnSheet'|translate}} <sort-indicator ng-model="data.values" name="DhFinalReturn"></sort-indicator></th>
+                                <th ng-click="orderBy('cdV9D')">{{::'vendorNineDigitsCode'|translate}} <sort-indicator ng-model="data.values" name="cdV9D"></sort-indicator></th>
+                                <th ng-click="orderBy('nmFornecedor')">{{::'vendorName'|translate}} <sort-indicator ng-model="data.values" name="nmFornecedor"></sort-indicator></th>
+                                <th ng-click="orderBy('cdItemDetalheEntrada')">{{::'inputItemCode'|translate}} <sort-indicator ng-model="data.values" name="cdItemDetalheEntrada"></sort-indicator></th>
+                                <th ng-click="orderBy('dsItemDetalheEntrada')">{{::'description'|translate}} <sort-indicator ng-model="data.values" name="dsItemDetalheEntrada"></sort-indicator></th>
+                                <th ng-click="orderBy('precoVenda')">{{::'priceSale'|translate}} <sort-indicator ng-model="data.values" name="precoVenda"></sort-indicator></th>
+                                <th ng-click="orderBy('cdLoja')">{{::'store'|translate}} <sort-indicator ng-model="data.values" name="cdLoja"></sort-indicator></th>
+                                <th class="currency">{{::'stock'|translate}}</th>
+                                <th class="number">{{::'pack'|translate}}</th>
+                                <th class="number">{{::'weight'|translate}}</th>
+                                <th ng-click="orderBy('TipoRA')">{{::'raType'|translate}} <sort-indicator ng-model="data.values" name="TipoRA"></sort-indicator></th>
+                                <th class="currency">{{::'cost'|translate}}</thclass>
+                                <th class="number" ng-click="orderBy('QtdLoja')">{{::'storeQtd'|translate}} <sort-indicator ng-model="data.values" name="QtdLoja"></sort-indicator></th>
+                                <th ng-click="orderBy('qtdRA')">{{::'raQtd'|translate}} <sort-indicator ng-model="data.values" name="qtdRA"></sort-indicator></th>
+                                <th class="number" ng-click="orderBy('Subtotal')">{{::'itemSubtotalInBoxes'|translate}} <sort-indicator ng-model="data.values" name="Subtotal"></sort-indicator></th>
+                                <th class="action"></th> <!--Editar-->
+                            </tr>
+                        </thead>
+                        <tbody ng-if="data.values && data.values.length > 0">
+                            <tr ng-repeat="item in data.values track by item.idSugestaoReturnSheet">
+                                <td ng-if="!item.blAutorizado">{{item.blAutorizado|fixedValue:'tipoSimNao'|translate|capitalize}}</td>
+                                <td ng-if="item.blAutorizado" title="{{item.usuarioAutorizacao.fullName}} - {{item.dhAutorizacao | date:'dd/MM/yyyy // HH:mm'}}">{{item.blAutorizado|fixedValue:'tipoSimNao'|translate|capitalize}}</td>
+                                <td ng-if="!item.blExportado">{{item.blExportado|fixedValue:'tipoSimNao'|translate|capitalize}}</td>
+                                <td ng-if="item.blExportado" title="{{item.usuarioAtualizacao.fullName}} - {{item.dhExportacao | date:'dd/MM/yyyy // HH:mm'}}">{{item.blExportado|fixedValue:'tipoSimNao'|translate|capitalize}}</td>
+                                <td>{{item.returnSheet.descricao}}</td>
+                                <td>{{item.returnSheet.dhInicioEvento | date:'dd/MM/yyyy'}} - {{item.returnSheet.dhFinalEvento | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.returnSheet.dhInicioReturn | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.returnSheet.dhFinalReturn | date:'dd/MM/yyyy // HH:mm'}}</td>
+                                <td>{{item.fornecedorParametro.cdV9D}}</td>
+                                <td>{{item.fornecedor.nmFornecedor}}</td>
+                                <td>{{item.itemDetalheEntrada.cdItem}}</td>
+                                <td>{{item.itemDetalheEntrada.dsItem}}</td>
+                                <td class="number">{{item.precoVenda | number:2}}</td>
+                                <td>{{item.loja.cdLoja}}</td>
+                                <td class="currency">{{item.estoqueItemVenda | number:2}}</td>
+                                <td class="number">{{item.qtVendorPackageItemCompra}}</td>
+                                <td class="number">{{item.vlPesoLiquidoItemCompra}}</td>
+                                <td>{{item.itemDetalheEntrada.vlTipoReabastecimento|fixedValue:'valorTipoReabastecimento'|translate}}</td>
+                                <td class="currency">{{item.vlCustoContabilItemVenda | number:2}}</td>
+                                <td class="number">{{item.qtdLoja}}</td>
+                                <td><input name="qtdRA" ng-model="item.qtdRA" class="form-control input-width-mini" type="text" number ui-number-mask="0" ui-hide-group-sep min="0" max="99999" ng-disabled="item.blExportado || !item.returnSheet.blAtivo || item.blAutorizado" ng-change="recalcularSubtotal(item)" maxlength="5" /></td>
+                                <td class="number">{{item.subtotal}}</td>
+                                <td class="action"><detail-button ng-click="edit(item)"></detail-button></td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!data.values || data.values.length === 0">
+                            <tr>
+                                <td colspan="19" class="domain">{{::'noData'|translate|capitalize}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

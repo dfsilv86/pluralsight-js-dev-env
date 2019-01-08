@@ -1,0 +1,830 @@
+<?xml version="1.0"?>
+<RuleSet xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <RuleCategories>
+    <RuleCategory Name="All">
+      <RuleCategories>
+        <RuleCategory Name="Nitriq">
+          <RuleCategories>
+            <RuleCategory Name="Design Problems">
+              <RuleCategories />
+              <Rules>
+                <Rule Name="Methods to Refactor" Active="true">
+                  <Code>var results = 
+from method in Methods
+where (method.Cyclomatic &gt; 25 || method.PhysicalLineCount &gt; 200 || 
+method.TypesUsed.Count &gt; 30 || method.ParameterCount &gt; 7) &amp;&amp; method.Type.IsInCoreAssembly
+&amp;&amp; !method.Name.Equals("CreateUser") // Herdado do MembershipProvider.
+&amp;&amp; !method.Name.Equals("GetByFilter")
+&amp;&amp; !method.Name.Equals("DropDownList")
+&amp;&amp; !method.Name.Equals(".ctor")
+&amp;&amp; !method.Name.Equals("PesquisarPorFiltro")
+&amp;&amp; !method.Name.Equals("PesquisarPorFiltroTipoReabastecimento")
+&amp;&amp; !method.Name.Equals("ObterItensDetalheReturnSheet")
+&amp;&amp; !method.Type.Name.Contains("f__")
+&amp;&amp; !method.Type.Name.Contains("EFContext")
+&amp;&amp; !method.Type.Name.Contains("Sprint01DataTest")
+&amp;&amp; !method.Type.Name.Equals("NumberSpellOut")
+&amp;&amp; !method.Name.Contains("CreateSprint01User")
+&amp;&amp; !method.Name.Contains("CreateSprint01Cooperations")
+&amp;&amp; !method.Name.Contains("CooperationCreate")
+&amp;&amp; !method.Name.Contains("ToEntity")
+&amp;&amp; !method.Name.Equals("MoveNext")
+&amp;&amp; !method.Name.Equals("PesquisarPorTipoRelacionamento")
+&amp;&amp; !method.Name.Equals("DistribuirCargaProcessamento")
+&amp;&amp; !method.Type.Name.Equals("LightInjectSetup")
+&amp;&amp; !method.Type.Name.Equals("WebApiConfig")
+&amp;&amp; !method.Type.Name.Equals("LzwInputStream")
+&amp;&amp; !method.Type.Name.Equals("TransferidorArquivosInventario")
+&amp;&amp; !method.Name.Equals("LogarComPapel")
+&amp;&amp; !method.Name.Equals("Dispatch")
+&amp;&amp; !method.Name.Equals("ToArgumentList")
+&amp;&amp; !method.Name.Equals("ImportarMultisourcing")
+&amp;&amp; !(method.Name.Equals("Pesquisar") &amp;&amp; method.Type.Name.Equals("SugestaoPedidoCDController"))
+&amp;&amp; !(method.Name.Equals("AutorizarExportarPlanilhas") &amp;&amp; method.Type.Name.Equals("DapperSugestaoReturnSheetGateway"))
+&amp;&amp; !method.Name.Equals("AutorizarExportarPlanilhas")
+&amp;&amp; !method.Name.Equals("ConsultaReturnSheetLojaRA")
+&amp;&amp; !(method.Name.Equals("CriarArquivoExportacao") &amp;&amp; method.Type.Name.Equals("SugestaoReturnSheetRAExporter"))
+&amp;&amp; !(method.Name.Equals("Exportar") &amp;&amp; method.Type.Name.Equals("SugestaoReturnSheetRAExporter"))
+select new { method.MethodId, Name = method.Type.FullName + "." + method.Name, method.Cyclomatic,
+method.PhysicalLineCount, OutTypes = method.TypesUsed.Count, method.ParameterCount };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Types To Refactor" Active="true">
+                  <Code>var results = 
+from type in Types
+where (type.Methods.Count(m =&gt; !m.IsPropertyGetter &amp;&amp; !m.IsPropertySetter) &gt; 35 || (type.Fields.Count(f =&gt; !f.IsConstant) &gt; 25 &amp;&amp; !type.IsEnum)) &amp;&amp;
+type.IsInCoreAssembly
+// Ignora código com dynamic.
+&amp;&amp; !type.Name.Contains("__SiteContainer")
+&amp;&amp; !type.Name.StartsWith("Migration_")
+&amp;&amp; !type.Name.Contains("__AnonymousType")
+&amp;&amp; !type.Name.Contains("&lt;&gt;c")
+&amp;&amp; !type.Name.Equals("ServiceWebGuardianSoapClient")
+&amp;&amp; !type.Name.Equals("UsuarioTO")
+&amp;&amp; !type.Name.Equals("PerfilTO")
+&amp;&amp; !type.Name.Equals("Estoque")
+&amp;&amp; !type.Name.Equals("CustoNotaFiscal")
+&amp;&amp; !type.Name.Equals("InventarioController")
+&amp;&amp; !type.Name.Equals("InventarioImportacaoService")
+&amp;&amp; !type.Name.Equals("InventarioService")
+&amp;&amp; !type.Name.Equals("ProcessOrderArgumentExtensions")
+&amp;&amp; !type.Name.Equals("InventarioService")
+&amp;&amp; !type.Name.Equals("SugestaoReturnSheetConsolidado")
+&amp;&amp; !type.BaseType.Name.Equals("EntityBase")
+&amp;&amp; !type.Name.Equals("ItemDetalhe")
+select new { 
+    type.TypeId, 
+    type.Name, 
+    MethodsCount = type.Methods.Count(m =&gt; !m.IsPropertyGetter &amp;&amp; !m.IsPropertySetter),
+    FieldsCount = type.Fields.Count(f =&gt; !f.IsConstant)
+};
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Fields that are never set" Active="true">
+                  <Code>var results = 
+from field in Fields
+where field.SetByMethods.Count == 0 &amp;&amp; field.IsPrivate &amp;&amp; !field.IsConstant
+&amp;&amp; field.Type.IsInCoreAssembly
+&amp;&amp; !field.Type.Namespace.FullName.Equals("Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian")
+&amp;&amp; !field.Name.Contains("t__")
+select new { field.FieldId, field.Name, field.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Methods that may violate SRP" Active="true">
+                  <Code>//if a method name contains a conjunction like "And", "Or", or "Then", 
+//then it may be doing too many things and is violating the 
+//Single Responsibility Principle (SRP)
+
+var results = 
+from m in Methods
+where !m.IsPropertyGetter &amp;&amp; !m.IsPropertySetter &amp;&amp; m.IsInCoreAssembly &amp;&amp;
+m.Name.Like(".*And[A-Z].*|.*Then[A-Z].*|.*Or[A-Z].*", false) //false =&gt; case sensitive
+&amp;&amp; !m.Name.Equals("ChangePasswordQuestionAndAnswer") // Herdado do MembershipProvider.
+&amp;&amp; !m.Name.Contains("op_") // operadores.
+&amp;&amp; !m.Name.Contains("NullOrEmpty") // perfeitamente aceitavel - string.IsNullOrEmpty(), AtLeastOneMustBeInformedSpec.PropertyValueIsNullOrEmpty.
+select new { m.MethodId, m.Name, m.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+              </Rules>
+            </RuleCategory>
+            <RuleCategory Name="Informational">
+              <RuleCategories />
+              <Rules>
+                <Rule Name="Recursive Methods" Active="true">
+                  <Code>var results = 
+from m in Methods
+where m.Calls.Contains(m)
+select new { m.MethodId, m.Name, m.FullName };
+
+//Recursive methods aren't necessarily a bad thing, so there is no warning
+//its just a nice thing to be aware of how many and where these methods are</Code>
+                </Rule>
+                <Rule Name="Methods that take or return System.Object" Active="true">
+                  <Code>var objectType = Types.Where(t =&gt; t.FullName == "System.Object").Single();
+
+var results = 
+from m in Methods
+let TakeObjectParam = m.ParameterTypes.Contains(objectType)
+let ReturnsObject = m.ReturnType == objectType
+where m.IsInCoreAssembly &amp;&amp; (TakeObjectParam || ReturnsObject)
+select new { m.MethodId, m.Name, m.FullName, TakeObjectParam, ReturnsObject };
+
+//There are a lot of methods that force you to accept a parameter of type object
+//particularly event handlers, so no warning. But if you see a lot of these
+//in your non-ui layers, you may want to check it out</Code>
+                </Rule>
+                <Rule Name="Static methods that instantiate objects" Active="true">
+                  <Code>var results = 
+from m in Methods
+let ConstructorCalls = m.Calls.Where(callMethod =&gt; callMethod.IsConstructor).Count()
+where m.IsStatic &amp;&amp; !m.IsConstructor &amp;&amp; ConstructorCalls &gt; 0
+select new { m.MethodId, m.Name, m.FullName, ConstructorCalls };
+
+//Your design could be more loosely coupled if classes being instantiated were
+//instead passed in as a parameter</Code>
+                </Rule>
+                <Rule Name="Assembly Breakout Info" Active="true">
+                  <Code>var results = 
+from a in Assemblies
+orderby a.IsCoreAssembly descending, a.Name, a.Version
+select new { a.AssemblyId, IsCore = a.IsCoreAssembly, a.Name, a.Version, 
+Types = Types.Where(t =&gt; t.Assembly == a).Count(),
+Methods = Methods.Where(m =&gt; m.Type.Assembly == a).Count(),
+};
+
+//the code tree won't display assembly results unless the "Top Level" is
+//set to "Assembly", for best results, view the results in the "grid" tab.</Code>
+                </Rule>
+                <Rule Name="All Properties" Active="true">
+                  <Code>var results = 
+from m in Methods
+where m.IsPropertyGetter || m.IsPropertySetter
+select new { m.MethodId, m.Name, m.FullName };</Code>
+                </Rule>
+              </Rules>
+            </RuleCategory>
+          </RuleCategories>
+          <Rules />
+        </RuleCategory>
+        <RuleCategory Name="NX Cop">
+          <RuleCategories>
+            <RuleCategory Name="Design">
+              <RuleCategories />
+              <Rules>
+                <Rule Name="Abstract types should not have constructors" Active="true">
+                  <Code>var results = 
+from type in Types
+let ConstructorCount = type.Methods.Where(m =&gt; m.IsConstructor &amp;&amp; (m.IsPublic || m.IsInternal)).Count()
+where type.IsAbstract &amp;&amp; ConstructorCount &gt; 0 &amp;&amp; type.IsInCoreAssembly
+select new { type.TypeId, type.Name, ConstructorCount } ;
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Do not declare static members on generic types" Active="true">
+                  <Code>var results = 
+	from type in Types
+	from method in type.Methods
+	from field in type.Fields
+	from ev in type.Events
+	where type.GenericParameterCount &gt; 0 &amp;&amp; (method.IsStatic || field.IsStatic || ev.IsStatic)
+		&amp;&amp; type.IsInCoreAssembly
+	select new { 
+		type.TypeId, 
+		type.Name, 
+		type.FullName, 
+		MethodName = method.Name,
+		FieldName = field.Name, 
+		EventName = ev.Name 
+	};
+
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Do not expose generic lists" Active="true">
+                  <Code>var listOfT = Types.FullNameIs("System.Collections.Generic.List`1").FirstOrDefault();
+var results = 
+from type in Types
+from method in type.Methods
+where (method.ReturnType == listOfT || method.ParameterTypes.Any(t =&gt; t == listOfT)) &amp;&amp;
+!method.IsPrivate &amp;&amp; !method.IsProtected &amp;&amp; method.Type.IsInCoreAssembly
+select new { method.MethodId, method.Name, Type = method.Type.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Exceptions should be public" Active="true">
+                  <Code>var results = 
+from exceptableBaseException in Types
+from type in exceptableBaseException.DerivedTypes
+where (exceptableBaseException.FullName == "System.Exception" ||
+	exceptableBaseException.FullName == "System.SystemException" ||
+	exceptableBaseException.FullName == "System.ApplicationException")
+	&amp;&amp; !type.IsPublic &amp;&amp; type.IsInCoreAssembly
+select new { type.TypeId, type.Name, type.FullName, 
+	type.IsInternal, type.IsProtected,
+	type.IsProtectedAndInternal, type.IsPrivate };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Indexers should not be multidimensional" Active="true">
+                  <Code>var results = 
+from method in Methods
+where ((method.IsIndexGetter &amp;&amp; method.ParameterCount &gt; 1) ||
+    (method.IsIndexSetter &amp;&amp; method.ParameterCount &gt; 2)) &amp;&amp; method.Type.IsInCoreAssembly
+select new { method.MethodId, method.Name, Type = method.Type.FullName, method.ParameterCount};
+
+Error(results, 0);
+
+//the last parameter on an index setter is the value, we don't want to count
+//that for whether or not it is multi dimensional
+
+</Code>
+                </Rule>
+                <Rule Name="Nested types should not be visible" Active="true">
+                  <Code>var iEnumerator = Types.FullNameIs("System.Collections.IEnumerator").FirstOrDefault();
+
+var results = 
+from type in Types
+where type.IsNested &amp;&amp; type.IsInCoreAssembly &amp;&amp; 
+type.IsPublic &amp;&amp; type.Interfaces.Contains(iEnumerator)
+select new { type.TypeId, type.Name, type.FullName };
+
+Error(results, 0);
+
+//enumerators are exempt from this rule</Code>
+                </Rule>
+                <Rule Name="Static holder types should not have constructors" Active="true">
+                  <Code>var results = 
+from type in Types
+where !type.IsSealed &amp;&amp; 
+	type.Methods.Where(method =&gt; method.IsConstructor &amp;&amp; method.ParameterCount != 0).Count() &gt; 0 &amp;&amp;
+	type.Methods.Where(method =&gt; !method.IsStatic).Count() == 0 &amp;&amp;
+	type.Fields.Where(field =&gt; !field.IsStatic).Count() == 0 &amp;&amp;
+	type.Events.Where(ev =&gt; !ev.IsStatic).Count() == 0 &amp;&amp;
+	type.IsInCoreAssembly
+select new { type.TypeId, type.Name, type.FullName } ;
+
+Error(results, 0);
+</Code>
+                </Rule>
+                <Rule Name="Types that own disposable fields should be disposable" Active="true">
+                  <Code>var iDisposable = Types.FullNameIs("System.IDisposable").FirstOrDefault();
+
+var results = 
+from type in Types
+from field in type.Fields
+where !type.Interfaces.Contains(iDisposable) &amp;&amp; type.IsInCoreAssembly &amp;&amp;
+	field.FieldType != null &amp;&amp; field.FieldType.Interfaces.Contains(iDisposable)
+select new { field.FieldId, field.Name, Type = type.FullName } ;
+
+Warn(results.Count() &gt; 0, "Types that own disposable fields should be disposable");</Code>
+                </Rule>
+                <Rule Name="Use events where appropriate" Active="true">
+                  <Code>var results = 
+from method in Methods
+where (method.IsPublic || method.IsProtected || method.IsPrivate) &amp;&amp;
+(method.Name.StartsWith("AddOn") || method.Name.StartsWith("RemoveOn") ||
+method.Name.StartsWith("Fire") || method.Name.StartsWith("Raise")) &amp;&amp; method.Type.IsInCoreAssembly
+&amp;&amp; !method.Type.Namespace.FullName.Equals("Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian")
+select new { method.MethodId, method.Name };
+
+Error(results, 0);</Code>
+                </Rule>
+              </Rules>
+            </RuleCategory>
+            <RuleCategory Name="Maintainability">
+              <RuleCategories />
+              <Rules>
+                <Rule Name="Avoid excessive class coupling" Active="true">
+                  <Code>//We're not exactly sure at what point the actual FxCop engine cries foul
+//about this rule, so we guessed 75.
+var results = 
+from type in Types
+where type.TypesUsed.Count(c =&gt; c.IsInCoreAssembly) &gt; 50
+&amp;&amp; !type.Name.Equals("InventarioController")
+&amp;&amp; !type.Name.Equals("DapperInventarioGateway")
+&amp;&amp; !type.Name.Equals("SetupData")
+&amp;&amp; !type.Name.Equals("DapperItemDetalheGateway")
+&amp;&amp; !type.Name.Equals("SugestaoPedidoService")
+&amp;&amp; !type.Name.Equals("InventarioService")
+&amp;&amp; !type.Name.Equals("InventarioImportacaoService")
+&amp;&amp; !type.Name.StartsWith("&lt;&gt;")
+&amp;&amp; !type.Name.Equals("ItemDetalheService")
+&amp;&amp; !type.Name.Equals("DapperRelacaoItemLojaCDGateway")
+select new { type.TypeId, type.Name, In = type.TypesUsing.Count, Out = type.TypesUsed.Count(c =&gt; c.IsInCoreAssembly) };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Avoid excessive complexity" Active="true">
+                  <Code>var results = 
+from method in Methods
+where method.Cyclomatic &gt; 25 &amp;&amp; method.Type.IsInCoreAssembly
+&amp;&amp; !method.Type.Name.Equals("LzwInputStream")
+select new { method.MethodId, method.Name, Type = method.Type.Name, method.Cyclomatic };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Avoid excessive inheritance" Active="true">
+                  <Code>var results = 
+from type in Types
+where type.InheritanceDepth &gt; 5
+select new { type.TypeId, type.Name, type.InheritanceDepth };</Code>
+                </Rule>
+                <Rule Name="Review misleading field names" Active="true">
+                  <Code>var results = 
+from field in Fields
+where ((field.Name.StartsWith("s_") &amp;&amp; !field.IsStatic) ||
+(field.Name.StartsWith("m_") &amp;&amp; field.IsStatic)) &amp;&amp; field.Type.IsInCoreAssembly
+select new { field.FieldId, field.Name, Type = field.Type.FullName };
+
+Error(results, 0);
+</Code>
+                </Rule>
+              </Rules>
+            </RuleCategory>
+            <RuleCategory Name="Naming">
+              <RuleCategories />
+              <Rules>
+                <Rule Name="Do not name enum values 'Reserved'" Active="true">
+                  <Code>var results = 
+from field in Fields
+where field.Type.IsEnum &amp;&amp; (field.Name == "Reserved" || field.Name == "reserved") 
+	&amp;&amp; field.Type.IsInCoreAssembly
+select new { field.FieldId, field.Name, Type = field.Type.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Do not prefix enum values with type name" Active="true">
+                  <Code>var results = 
+from field in Fields
+where field.Type.IsEnum &amp;&amp; (field.Name.StartsWith(field.Type.Name)) &amp;&amp; field.Type.IsInCoreAssembly
+select new { field.FieldId, field.Name, Type = field.Type.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Events should not have before or after prefix" Active="true">
+                  <Code>var results = 
+from myEvent in Events
+where (myEvent.Name.StartsWith("Before") || myEvent.Name.StartsWith("After")) &amp;&amp; myEvent.Type.IsInCoreAssembly
+select new { myEvent.EventId, myEvent.Name, Type = myEvent.Type.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Identifiers should have correct prefix" Active="true">
+                  <Code>//The full version of this FxCop rule requires Type Parameters
+//on Generic classes to begin with "T", but Nitriq doesn't currently
+//support querying Type Parameters
+
+var results = 
+from type in Types
+where type.IsInterface &amp;&amp; !type.Name.StartsWith("I") &amp;&amp; type.IsInCoreAssembly
+&amp;&amp; !type.Namespace.FullName.Equals("Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian")
+select new { type.TypeId, type.Name, type.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Identifiers should have correct suffix" Active="true">
+                  <Code>// use FirstOrDefault because if these types are never references, the Types collection
+// won't have a record for them. 
+var attribute = Types.FullNameIs("System.Attribute").FirstOrDefault();
+var eventArgs = Types.FullNameIs("System.EventArgs").FirstOrDefault();
+var exception = Types.FullNameIs("System.Exception").FirstOrDefault();
+var iCollection = Types.FullNameIs("System.Collections.ICollection").FirstOrDefault();
+var iDictionary = Types.FullNameIs("System.Collections.IDictionary").FirstOrDefault();
+var iEnumerable = Types.FullNameIs("System.Collections.IEnumerable").FirstOrDefault();
+var queue = Types.FullNameIs("System.Collections.Queue").FirstOrDefault();
+var stack = Types.FullNameIs("System.Collections.Stack").FirstOrDefault();
+var iCollectionT = Types.FullNameIs("System.Collections.ICollection`1").FirstOrDefault();
+var iDictionaryKV = Types.FullNameIs("System.Collections.IDictionary`2").FirstOrDefault();
+var dataSet = Types.FullNameIs("System.Data.DataSet").FirstOrDefault();
+var dataTable = Types.FullNameIs("System.Data.DataTable").FirstOrDefault();
+var stream = Types.FullNameIs("System.IO.Stream").FirstOrDefault();
+var permission = Types.FullNameIs("System.Security.Permission").FirstOrDefault();
+var membershipCondition = Types.FullNameIs("System.Security.Policy.IMembershipCondition").FirstOrDefault();
+
+
+var results = 
+from type in Types
+let typeName = System.Text.RegularExpressions.Regex.Replace(type.Name, @"`\d+", "")
+where 
+type.IsInCoreAssembly &amp;&amp;
+type.BaseType != null &amp;&amp; (
+(type.BaseType == attribute &amp;&amp; !typeName.EndsWith("Attribute")) ||
+(type.BaseType == eventArgs &amp;&amp; !typeName.EndsWith("EventArgs")) ||
+(type.BaseType == exception &amp;&amp; !typeName.EndsWith("Exception")) ||
+(type.BaseType == iCollection &amp;&amp; !typeName.EndsWith("Collection")) ||
+(type.BaseType == iDictionary &amp;&amp; !typeName.EndsWith("Dictionary")) ||
+(type.BaseType == iEnumerable &amp;&amp; !typeName.EndsWith("Collection")) ||
+(type.BaseType == queue &amp;&amp; !typeName.EndsWith("Collection") &amp;&amp; !typeName.EndsWith("Queue")) ||
+(type.BaseType == stack &amp;&amp; !typeName.EndsWith("Collection") &amp;&amp; !typeName.EndsWith("Stack")) ||
+(type.BaseType == iCollectionT &amp;&amp; !typeName.EndsWith("Collection")) ||
+(type.BaseType == iDictionaryKV &amp;&amp; !typeName.EndsWith("Dictionary")) ||
+(type.BaseType == dataSet &amp;&amp; !typeName.EndsWith("DataSet")) ||
+(type.BaseType == dataTable &amp;&amp; !typeName.EndsWith("Collection") &amp;&amp; !typeName.EndsWith("DataTable")) ||
+(type.BaseType == stream &amp;&amp; !typeName.EndsWith("Stream")) ||
+(type.BaseType == permission &amp;&amp; !typeName.EndsWith("Permission")) ||
+(type.BaseType == membershipCondition &amp;&amp; !typeName.EndsWith("Condition"))
+)
+select new { type.TypeId, type.Name, typeName, type.FullName };
+
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Identifiers should not contain underscores (Namespaces)" Active="true">
+                  <Code>var results = 
+from myNamespace in Namespaces
+where myNamespace.FullName.Contains("_") &amp;&amp; !myNamespace.FullName.Contains(".App_Start")
+select new { myNamespace.NamespaceId, myNamespace.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+                <Rule Name="Identifiers should not contain underscores (Methods)" Active="true">
+                  <Code>var results = 
+from method in Methods
+where method.Name.Contains("_") 
+&amp;&amp; !method.Name.StartsWith("&lt;") 
+&amp;&amp; !method.Name.StartsWith("Application_") 
+&amp;&amp; !method.Name.StartsWith("Session_") 
+&amp;&amp; !method.Name.StartsWith("Page_") 
+&amp;&amp; !method.IsPropertyGetter 
+&amp;&amp; !method.IsPropertySetter &amp;&amp;
+!method.IsEventAdder &amp;&amp; !method.IsEventRemover &amp;&amp; !method.IsOperator &amp;&amp; method.Type.IsInCoreAssembly
+select new { method.MethodId, method.Name, Type = method.Type.FullName };
+
+Error(results, 0);</Code>
+                </Rule>
+              </Rules>
+            </RuleCategory>
+          </RuleCategories>
+          <Rules />
+        </RuleCategory>
+        <RuleCategory Name="Specific">
+          <RuleCategories />
+          <Rules>
+            <Rule Name="Classe com mais de 200 linhas" Active="true">
+              <Code>var results = 
+from t in Types
+where t.LogicalLineCount &gt; 200 
+&amp;&amp; t.Name != "Texts"
+&amp;&amp; t.Name != "HtmlExtensions"
+&amp;&amp; t.Name != "UsuarioTO"
+&amp;&amp; t.Name != "SugestaoPedidoService"
+&amp;&amp; t.Name != "InventarioService"
+&amp;&amp; t.Name != "TransferidorArquivosInventario"
+&amp;&amp; t.Name != "InventarioImportacaoService"
+&amp;&amp; !t.Name.StartsWith("Migration_")
+&amp;&amp; t.Name != "LzwInputStream"
+&amp;&amp; t.Name != "ProcessingService"
+&amp;&amp; t.Name != "ProcessOrderArgumentExtensions"
+select new { t.TypeId, t.Name, t.FullName };
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Especificação sem o sufixo Specification ou Spec" Active="true">
+              <Code>var results = from t in Types
+where 
+    t.BaseType != null
+&amp;&amp;  t.BaseType.Name.StartsWith("SpecificationBase")
+&amp;&amp;  
+    !t.Name.EndsWith("Specification") 
+ &amp;&amp; !t.Name.EndsWith("Specification`1")
+ &amp;&amp; !t.Name.EndsWith("Specification`2")
+ &amp;&amp; !t.Name.EndsWith("SpecificationBase")
+ &amp;&amp; !t.Name.EndsWith("Spec")
+ &amp;&amp; !t.Name.EndsWith("Spec`1")
+ &amp;&amp; !t.Name.EndsWith("Spec`2")
+select
+    new { t.TypeId, t.Name, a=t.BaseType.Name };
+
+Error(results, 0);
+</Code>
+            </Rule>
+            <Rule Name="Método com mais de 30 linhas" Active="true">
+              <Code>var results = 
+from m in Methods
+where m.LogicalLineCount &gt; 30
+&amp;&amp; m.Type.Name != "AuthController"
+&amp;&amp; m.Type.Name != "AnalyticalReportExcelBuilder"
+&amp;&amp; m.Type.Name != "EFContext"
+&amp;&amp; m.Type.Name != "NinjectWebCommon"
+&amp;&amp; m.Type.Name != "NumberSpellOut"
+&amp;&amp; !m.Type.Name.Contains("&lt;&gt;")
+&amp;&amp; !m.Type.Name.Contains("Migration_")
+&amp;&amp; !m.Name.Equals("AssertAll")
+&amp;&amp; !m.Name.Equals("ToEntity")
+&amp;&amp; !m.Name.Equals("MoveNext")
+&amp;&amp; !m.Name.Equals("DistribuirCargaProcessamento")
+&amp;&amp; !m.Type.Name.Equals("LightInjectSetup")
+&amp;&amp; (!m.Type.Name.Equals("MultisourcingSpecBase") &amp;&amp; !m.Name.Equals("IsSatisfiedBy"))
+&amp;&amp; (!m.Type.Name.Equals("ItemRelacionamentoService") &amp;&amp; !m.Name.Equals("Salvar"))
+&amp;&amp; !m.Type.Name.Equals("SugestaoPedidoModel")
+&amp;&amp; !m.Type.Name.Equals("LightInjectSetup")
+&amp;&amp; !m.Type.Name.StartsWith("LeitorArquivoInventario")
+&amp;&amp; m.Type.Name != "LzwInputStream"
+&amp;&amp; m.Type.Name != "SGPZCompressionHelper"
+&amp;&amp; m.Type.Name != "DownloadFtpHelper"
+&amp;&amp; m.Type.Name != "TransferidorArquivosInventario"
+&amp;&amp; m.Type.Name != "WebApiErrorHandlingFilterAttribute"
+&amp;&amp; m.Type.Name != "ProcessingService"
+&amp;&amp; m.Type.Name != "ProcessOrderArgumentExtensions"
+&amp;&amp; m.Type.Name != "ProcessOrderSpec"
+&amp;&amp; m.Type.Name != "WebApiProcessingFilterAttribute"
+&amp;&amp; !m.Name.Equals("TryParse")
+&amp;&amp; !m.Name.Equals("ImportarMultisourcing")
+&amp;&amp; m.Type.FullName != "Walmart.Sgp.Infrastructure.Data.ItemDetalhe"
+&amp;&amp; !m.Name.Equals("RegisterSerializator")
+
+select new { m.MethodId, m.Name, m.FullName, m.LogicalLineCount };
+
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Código muito complexo" Active="true">
+              <Code>// http://stackoverflow.com/questions/20702/whats-your-a-good-limit-for-cyclomatic-complexity
+
+var results = 
+from m in Methods
+where m.ILCyclomatic &gt; 11
+&amp;&amp; !m.FullName.Contains("Migration_")
+&amp;&amp; !m.Type.Name.Equals("DomainConfig")
+&amp;&amp; !m.Type.Name.Equals("NumberSpellOut")
+&amp;&amp; !m.FullName.EndsWith("Controller..ctor")
+&amp;&amp; !m.FullName.Contains("c__DisplayClass")
+&amp;&amp; !m.FullName.Contains("Sprint01DataTest")
+&amp;&amp; !m.Type.Name.EndsWith("ViewModel")
+&amp;&amp; m.Type.Name != "AnalyticalReportExcelBuilder"
+&amp;&amp; m.Type.Name != "HtmlExtensions"
+&amp;&amp; m.Type.Name != "BackEndHtmlExtensions"
+&amp;&amp; !m.FullName.EndsWith("AverageCooperationsStepTime")
+&amp;&amp; !m.FullName.Contains("IsSatisfiedBySustituing")
+&amp;&amp; !m.FullName.EndsWith("RefreshWithWebApi")
+&amp;&amp; !m.Type.Name.Contains("f__")
+&amp;&amp; !m.Name.Equals("GetSubComponents")
+&amp;&amp; !m.Name.Equals("SendSpecialProductsCellEmail")
+&amp;&amp; !m.Name.Equals("ToViewModel")
+&amp;&amp; !m.Name.Equals("CheckIfIsEmpty")
+&amp;&amp; !m.Type.Name.Contains("&lt;&gt;c")
+&amp;&amp; !m.Name.Equals("MoveNext")
+&amp;&amp; !m.Name.Equals("Sanitize")
+&amp;&amp; !m.Name.Equals("UpdateExistingItem")
+&amp;&amp; (!m.Type.Name.Equals("ItemDetalhePodeSerUtilizadoNoRelacionamentoSpec") &amp;&amp; !m.Name.Equals("IsSatisfiedByVinculado"))
+&amp;&amp; (!m.Type.Name.Equals("AlterarSugestaoResponseExtensions") &amp;&amp; !m.Name.Equals("Summarize"))
+&amp;&amp; (!m.Type.Name.Equals("FixedValuesConverter") &amp;&amp; !m.Name.Equals("RegisterSerializator"))
+&amp;&amp; (!m.Type.Name.Equals("FixedValuesConverter") &amp;&amp; !m.Name.Equals("RegisterDeserializator"))
+&amp;&amp; !m.Type.Name.Equals("AtLeastOneMustBeInformedSpec")
+&amp;&amp; !m.Type.Name.Equals("AlcadaDevePermitirSugestaoSpec")
+&amp;&amp; !m.Name.Equals("Summarize")
+&amp;&amp; (!m.Type.Name.Equals("SugestaoPedidoService") &amp;&amp; !m.Name.Equals("VerificarStatusAutorizarPedido"))
+&amp;&amp; !m.Type.Name.StartsWith("LeitorArquivoInventario")
+&amp;&amp; m.Type.Name != "LzwInputStream"
+&amp;&amp; m.Type.Name != "DownloadFtpHelper"
+&amp;&amp; m.Type.Name != "ArquivoPipeEValidoSpec"
+&amp;&amp; m.Name != "RealizarTransferenciaPipe"
+&amp;&amp; m.Name != "DistribuirCargaProcessamento"
+&amp;&amp; m.Name != "DistribuirCargaProcessamentoItens"
+&amp;&amp; m.Name != "ImportarAutomatico"
+&amp;&amp; m.Type.Name != "WebApiErrorHandlingFilterAttribute"
+&amp;&amp; m.Name != "MapearCarimboAtualizacao"
+&amp;&amp; m.Name != "MapearCarimboCriacao"
+&amp;&amp; m.Name != "ObterDisponibilidade"
+&amp;&amp; m.Name != "RealizarImportacao"
+&amp;&amp; m.Name != "RemoverDuplicidadesPerfil"
+&amp;&amp; m.Type.Name != "ProcessOrderArgumentExtensions"
+&amp;&amp; m.Type.Name != "ProcessOrderSpec"
+&amp;&amp; m.Type.Name != "ProcessingService"
+&amp;&amp; m.Type.Name != "WebApiProcessingFilterAttribute"
+&amp;&amp; !m.Name.Equals("TryParse")
+
+&amp;&amp; m.Name != "MapItemDetalheSaidaEntradaMultisourcing"
+&amp;&amp; m.Name != "PopulaItem"
+&amp;&amp; m.Name != "RemoverDuplicidadesPerfil"
+&amp;&amp; m.Name != "CriarArquivoExportacao"
+
+select new { m.MethodId, m.Name, m.FullName, m.ILCyclomatic };
+
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Repositórios sem a extensão Repository" Active="true">
+              <Code>var results = 
+from t in Types
+where t.Interfaces.Any(i =&gt; i.Name.StartsWith("IRepository"))
+&amp;&amp; !t.Name.EndsWith("Repository")
+&amp;&amp; !t.Name.StartsWith("IDomainRepository")
+select new { t.TypeId, t.FullName };
+
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Especificação fora de um namespace Specifications ou Specs" Active="true">
+              <Code>var results = 
+from t in Types
+where t.BaseType != null &amp;&amp; t.BaseType.Name.StartsWith("SpecificationBase")
+&amp;&amp; !t.Namespace.FullName.EndsWith(".Specifications")
+&amp;&amp; !t.Namespace.FullName.EndsWith(".Specs")
+select new { t.TypeId, t.FullName };
+
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Métodos de serviço de domínio com nomenclatura de repositório" Active="true">
+              <Code>var results = 
+from m in Methods
+where m.Type.BaseType != null &amp;&amp; m.Type.BaseType.Name.StartsWith("ServiceBase")
+&amp;&amp; m.Name.Contains("Find")
+select new { m.MethodId, m.Type.FullName, m.Name };
+
+Error(results, 0); </Code>
+            </Rule>
+            <Rule Name="Métodos de serviço sem nome de entidade" Active="true">
+              <Code>var results = 
+from m in Methods
+where m.Type.BaseType != null &amp;&amp; m.Type.BaseType.Name.StartsWith("ServiceBase")
+&amp;&amp; !m.IsConstructor
+&amp;&amp; m.IsPublic
+&amp;&amp; 
+(!m.Name.Contains(m.Type.Name.Substring(0, m.Type.Name.IndexOf("Service"))) &amp;&amp; (m.Type.Name.IndexOf("sService") &gt; -1 &amp;&amp; !m.Name.Contains(m.Type.Name.Substring(0, m.Type.Name.IndexOf("sService"))))
+&amp;&amp; !m.Name.Replace("ies", "y").Contains(m.Type.Name.Substring(0, m.Type.Name.IndexOf("Service"))))
+&amp;&amp; !m.Name.StartsWith("Validate")
+&amp;&amp; !m.Name.StartsWith("Delete")
+select new { m.MethodId, m.Type.FullName, m.Name };
+
+Error(results, 0); </Code>
+            </Rule>
+            <Rule Name="Serviço de domínio com método Deactivate, mas sem método Delete" Active="true">
+              <Code>var results = 
+from t in Types
+where t.BaseType != null &amp;&amp; t.BaseType.Name.StartsWith("ServiceBase")
+&amp;&amp; t.Methods.Any(m =&gt; m.Name.StartsWith("Deactivate"))
+&amp;&amp; !t.Methods.Any(m =&gt; m.Name.StartsWith("Delete"))
+select new { t.TypeId, t.FullName };
+
+Error(results, 0); </Code>
+            </Rule>
+            <Rule Name="Nome de membro composto com o nome da classe" Active="true">
+              <Code>var results = 
+from m in Methods
+let pName = m.Name.Replace("get_", "").Replace("set_", "")
+where 
+   pName.StartsWith(m.Type.Name) &amp;&amp; !pName.Equals(m.Type.Name + "Id")
+&amp;&amp; !pName.EndsWith("Type")
+&amp;&amp; !pName.Equals("UserName", StringComparison.OrdinalIgnoreCase)
+&amp;&amp; !pName.Equals("BillingConfigurationSegmentations", StringComparison.OrdinalIgnoreCase)
+&amp;&amp; !m.Type.Namespace.FullName.Contains(".ClientLibrary.")
+&amp;&amp; !m.IsStatic
+&amp;&amp; (m.IsPropertyGetter || m.IsPropertySetter)
+select new { m.MethodId, m.Type.FullName, m.Name };
+
+Error(results, 0); </Code>
+            </Rule>
+            <Rule Name="Utilizando DateTime.Now ao invés de DataTime.UtcNow" Active="false">
+              <Code>var results = 
+from m in Methods
+where 
+   m.IsPropertyGetter 
+&amp;&amp; m.Type.Name.Equals("DateTime")
+&amp;&amp; m.Name.Equals("get_Now")
+select new {m.MethodId, m.Name };
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Propriedade específica ao invés de utilizar DomainEntityBase.Created e Modified" Active="true">
+              <Code>var results = 
+from m in Methods
+where 
+   m.IsPropertyGetter 
+&amp;&amp; (
+   m.Name.Equals("get_CreatedDate") 
+|| m.Name.Equals("get_ModifiedDate")
+|| m.Name.Equals("get_LastModifiedDate")
+)
+&amp;&amp; !m.Type.Name.Equals("Texts")
+&amp;&amp; !m.Type.Name.Equals("FileVaultTicket") // nao possui data de modificacao
+&amp;&amp; !m.Type.Name.Equals("ProcessOrder") // nao existe DomainEntityBase neste projeto
+&amp;&amp; !m.Type.Name.Equals("ProcessOrderSummary") // nao existe DomainEntityBase neste projeto
+&amp;&amp; !m.Type.Name.StartsWith("&lt;&gt;")
+select new {m.MethodId, m.Name };
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Especificação lançando exceção no método IsSatisfiedBy" Active="true">
+              <Code>// Especificações não devem lançar exceções SpecificationNotSatisfiedException, 
+// pois isso é feito pelo SpecService.
+// O método IsSatisfiedBy deve apenas retornar true ou false.
+
+var results = from t in Types
+where 
+    t.BaseType != null
+&amp;&amp;  t.BaseType.Name.StartsWith("SpecificationBase")
+&amp;&amp; t.Methods.Any(
+                    m =&gt; m.TypesUsed.Any(
+                        u =&gt; u.Name.Equals("SpecificationNotSatisfiedException")
+                    )
+                )    
+select
+    new { t.TypeId, t.Name, a=t.BaseType.Name };
+
+Error(results, 0);
+</Code>
+            </Rule>
+            <Rule Name="Especificação que não define NotSatisfiedReason" Active="true">
+              <Code>var results = from t in Types
+where 
+    t.BaseType != null
+&amp;&amp;  t.BaseType.Name.StartsWith("SpecificationBase")
+&amp;&amp; t.Methods.Count(
+                    m =&gt;
+                        m.Calls.Count(
+                            c =&gt;
+                                c.IsPropertySetter 
+                            &amp;&amp;  c.Name.Contains("NotSatisfiedReason")) &gt; 0                        
+                ) == 0
+select
+    new { t.TypeId, t.Name, a=t.BaseType.Name };
+
+Error(results, 0);
+</Code>
+            </Rule>
+            <Rule Name="Entidade com propriedade referenciando outra entidade sem virtual (lazy loading)" Active="false">
+              <Code>var results = 
+from t in Types
+where 
+t.BaseType != null
+    &amp;&amp; t.BaseType.Name.Contains("EntityBase")
+    &amp;&amp; !t.Name.Equals("Division")
+    &amp;&amp; 
+t.Methods.Any(       
+    m =&gt;
+        m.IsPropertyGetter
+    &amp;&amp;  !m.IsVirtual   
+    &amp;&amp;  m.ReturnType != null 
+    &amp;&amp;  m.ReturnType.BaseType != null
+    &amp;&amp;  m.ReturnType.BaseType.Name.Contains("EntityBase")
+    )
+select new { t.TypeId, t.Name, t.FullName };
+
+
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Exceção lançada sem utilizar texto globalizado" Active="true">
+              <Code>var results = 
+from m in Methods
+where 
+    !m.Type.Name.Equals("SwaggerNet") 
+    &amp;&amp; !m.Type.Name.Equals("NotSatisfiedSpecException") 
+	&amp;&amp; !m.Type.Name.Equals("UserInvalidOperationException") 
+    &amp;&amp; !m.Type.Name.Equals("ImportacaoArquivoInventarioException")
+    &amp;&amp; !m.Type.Name.Equals("WebGuardianException")
+	&amp;&amp; !m.Type.Name.Equals("SsoException")
+    &amp;&amp; !m.Type.Name.Equals("SpecService") 
+    &amp;&amp; m.Type.Name != "LzwInputStream"
+    &amp;&amp; m.Type.Name != "LzwException"
+    &amp;&amp; m.Type.Name != "SharpZipBaseException"
+    &amp;&amp; m.Type.Name != "ProcessException"	
+    &amp;&amp; m.Type.Name != "ProcessNotFinishedException"	
+    &amp;&amp; m.Name != "AssertCritica"
+    &amp;&amp; m.Name != "UnwrapResult"
+    &amp;&amp; !m.Type.Name.Contains("d__")
+&amp;&amp;   m.Calls.Any(
+        c =&gt; c.IsConstructor 
+     &amp;&amp; c.Type.Name.EndsWith("Exception")
+     &amp;&amp; !c.Type.Name.Equals("ArgumentNullException")
+     &amp;&amp; !c.Type.Name.Equals("NotImplementedException")
+	 &amp;&amp; !c.Type.Name.Equals("HttpResponseException")
+     )
+&amp;&amp;  !m.Calls.Any(c =&gt; c.Type.Name.EndsWith("Texts") || c.Type.Name.EndsWith("GlobalizationHelper"))
+select new { m.MethodId, m.Name, Type=m.Type.Name };
+
+
+Error(results, 0);</Code>
+            </Rule>
+            <Rule Name="Método de pesquisa retornando apenas um valor" Active="true">
+              <Code>var results = 
+from m in Methods
+where 
+ !m.IsConstructor
+&amp;&amp; m.IsPublic
+&amp;&amp; m.Name.StartsWith("Pesquisa")
+&amp;&amp; m.ReturnType.IsValueType
+select new { m.MethodId, m.Type.FullName, m.Name };
+
+Error(results, 0); </Code>
+            </Rule>
+            <Rule Name="Serviço de domínio sendo instanciado direto" Active="true">
+              <Code>var results = 
+from m in Methods
+where    
+ m.Calls.Any(c =&gt; 
+  c.IsConstructor
+  &amp;&amp; c.Type.Namespace.FullName.Contains(".Domain.")
+  &amp;&amp; c.Type.Name.EndsWith("Service")
+)
+&amp;&amp;  !m.Calls.Any(c =&gt; c.Type.Name.EndsWith("Texts") || c.Type.Name.EndsWith("GlobalizationHelper"))
+select new { m.MethodId, m.Name, Type=m.Type.Name };
+
+
+Error(results, 0);</Code>
+            </Rule>
+          </Rules>
+        </RuleCategory>
+      </RuleCategories>
+      <Rules />
+    </RuleCategory>
+  </RuleCategories>
+</RuleSet>

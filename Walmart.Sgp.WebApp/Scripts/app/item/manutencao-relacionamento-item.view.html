@@ -1,0 +1,230 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::('stateManutencaoRelacionamento' + tipoRelacionamentoCapitalizado + (data.itemRelacionamento.isNew ? 'New':'Edit') + 'Name')|translate|capitalize}}" has-box="true">
+            <form name="manutencao" class="form-horizontal row-border" novalidate="novalidate">
+                <div class="form-group actions">
+                    <div class="col-md-8">
+                        <button class="btn btn-default" ng-click="clear()" security-action="ItemRelacionamento.Salvar"><i class="glyphicon glyphicon-file" /> &nbsp; {{::'new'|translate}}</button>
+                        <button class="btn btn-primary" ng-click="save()" security-action="ItemRelacionamento.Salvar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-danger"
+                                mwl-confirm
+                                title="{{::'confirmRemoveTitle'|translate }}"
+                                message="{{::'confirmRemoveMessage'|translate }}"
+                                on-confirm="remove()"
+                                ng-disabled="data.itemRelacionamento.id == 0"
+                                security-action="ItemRelacionamento.Remover">
+                            <i class="glyphicon glyphicon-remove" /> &nbsp; {{::'remove'|translate}}
+                        </button>
+                    </div>
+                    <div class="col-md-4 align-right">
+                        <a class="btn btn-default"
+                           ng-click="custosItem(data.itemRelacionamento.idItemDetalhe)"
+                           ng-if="data.itemRelacionamento.id > 0"
+                           security-action="ItemDetalhe.AtualizarDadosCustos">
+                            <i class="glyphicon glyphicon-usd" /> &nbsp; {{::'costs'|translate}}
+                        </a>
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.itemRelacionamento.cdSistema" required disabled></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'relationshipType'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-relacionamento ng-model="data.itemRelacionamento.idTipoRelacionamento" required disabled></dropdown-tipo-relacionamento>
+                    </form-field>
+                    <form-field title="{{::data.tituloItemPrincipal|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item name="{{data.tituloItemPrincipal}}" ng-model="data.cdItem" sistema="data.itemRelacionamento.cdSistema" item-out="data.itemRelacionamento.itemDetalhe" description-width="large" required ng-disabled="data.itemRelacionamento.id > 0"></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'weightGrossProduct'|translate}} ({{::'kg'|translate}})" ng-if="data.isReceituario" line-width="6" grid-width="12">
+                        <input name="qtProdutoBruto" type="text" ng-model="data.itemRelacionamento.qtProdutoBruto" number ui-number-mask="3" maxlength="10" class="form-control input-width-small" disabled />
+                    </form-field>
+                    <form-field title="{{::'plu'|translate}}" line-width="6" grid-width="12">
+                        <input name="cdplu" type="text" ng-model="data.itemRelacionamento.itemDetalhe.cdplu" number maxlength="10" class="form-control input-width-small" disabled />
+                    </form-field>
+                    <form-field title="{{::'revenueIncome'|translate}} ({{::'percent'|translate}})" ng-if="data.isReceituario" line line-width="6" grid-width="12">
+                        <input name="revenueIncome" type="text" ng-model="data.itemRelacionamento.pcRendimentoReceita" number ui-number-mask="2" maxlength="6" min="0.001" data-validation-key-min="greaterThanZero" class="form-control input-width-small" ng-disabled="!data.podeEditarPesoInsumos" required ng-blur="calcularQtProdutoAcabado()" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <div class="form-control input-width-xlarge" disabled>
+                            {{data.itemRelacionamento.itemDetalhe.departamento|departmentProfile}}
+                        </div>
+                    </form-field>
+
+                    <form-field title="{{::'catchWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.tpIndPesoReal" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'vendorPackFormat'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{::data.itemDetalhe.tpCaixaFornecedor|fixedValue:'tipoCaixaFornecedorFixoVariavel'|translate|capitalize}}" readonly="readonly" class="form-control look-alive" />
+                    </form-field>
+                    <form-field title="{{::'vendorPackNetWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-if="data.itemDetalhe.vlPesoLiquido != null" value="{{data.itemDetalhe.vlPesoLiquido|number:2}}" class="form-control look-alive" readonly="readonly" />
+                        <input type="text" ng-if="data.itemDetalhe.vlPesoLiquido == null" value="{{data.itemDetalhe.vlPesoLiquido}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'warehouseAlignment'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.tpAlinhamentoCD" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'warehouseArea'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.areaCD.dsAreaCD" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'purchaseArea'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.regiaoCompra.dsRegiaoCompra" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'minimumWarehouseLife'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.itemDetalhe.tempoMinimoCD" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+
+                    <form-field title="{{::'finishedProductWeight'|translate}} ({{::'kg'|translate}})" ng-if="data.isReceituario" line line-width="6" grid-width="12">
+                        <input name="finishedProductWeight" type="text" ng-model="data.itemRelacionamento.qtProdutoAcabado" number ui-number-mask="3" maxlength="10" min="0.001" data-validation-key-min="greaterThanZero" class="form-control input-width-small" ng-disabled="!data.podeEditarPesoInsumos" required ng-blur="calcularPcRendimentoReceita()" />
+                    </form-field>
+                    <form-field title="{{::'measurementUnit'|translate}}" line-width="6" grid-width="12">
+                        <!-- atenção: este campo não é number, pode vir por exemplo "FATIA" como valor, vide item 8136751 -->
+                        <input name="dsTamanhoItem" type="text" ng-model="data.itemRelacionamento.itemDetalhe.dsTamanhoItem" maxlength="10" class="form-control input-width-small" disabled />
+                    </form-field>
+                    <form-field title="{{::'unitWeightProduct'|translate}} ({{::'kg'|translate}})" ng-if="data.isReceituario" line line-width="6" grid-width="12">
+                        <input name="psUnitario" type="text" ng-model="data.itemRelacionamento.psUnitario" number ui-number-mask="3" maxlength="10" class="form-control input-width-small" ng-disabled="!data.podeEditarPesoInsumos" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget title="{{::data.tituloGrid|translate|capitalize}}" has-box="true">
+            <form name="detail" class="form-horizontal row-border" novalidate="novalidate">
+                <div class="form-group" style="margin-top: -11px; padding-bottom: 5px;">
+                    <form-field title="{{::'item'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="data.itemSecundarioCdItem" sistema="data.itemRelacionamento.cdSistema" item-out="data.itemSecundario" description-width="large" ng-disabled="!!data.itemRelacionamentoEmEdicao" departamento="data.cdDepartamentoFilter"></lookup-item>
+                    </form-field>
+                    <form-field class="align-right" title="{{::'productivityPercent'|translate|capitalize}}" ng-if="data.isManipulado" line-width="3">
+                        <input name="productivityPercent" type="text" ng-model="data.itemSaidaPcRendimentoDerivado" number ui-number-mask="2" min="0" max="100" class="form-control input-width-small" />
+                    </form-field>
+                    <form-field class="align-right" title="{{::'weightInKg'|translate|capitalize}}" ng-if="data.isReceituario" line-width="3">
+                        <input name="weightInKg" type="text" ng-model="data.itemMateriaPrimaPsUnitario" number ui-number-mask="3" min="0" max="100000" class="form-control input-width-small" />
+                    </form-field>
+                    &nbsp;
+                    <button class="btn btn-primary"
+                            ng-click="adicionarItemSecundario()"
+                            ng-disabled="!podeAdicionarItemSecundario()" title="{{(data.isEditing ? 'updateItem' : 'addItem')|translate}}">
+                        <i class="glyphicon" ng-class="{'glyphicon-plus': !data.isEditing, 'glyphicon-ok': data.isEditing}" />
+                    </button>
+                    <button class="btn btn-danger"
+                            ng-click="removerItemSecundario()"
+                            ng-disabled="!podeRemoverItemSecundario()" title="{{::'removeCheckedItems'|translate}}">
+                        <i class="glyphicon glyphicon-minus" />
+                    </button>
+                    <button class="btn btn-default" ng-click="limparSecundario()"><i class="glyphicon glyphicon-erase" title="{{::'clearItem'|translate}}"/></button>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="action">
+                                    <input type="checkbox"
+                                           ng-model="data.itemRelacionamento.relacionamentoSecundario.marcado"
+                                           ng-click="marcarTodos()"
+                                           ng-checked="data.itemRelacionamento.relacionamentoSecundario.all('marcado', true)"
+                                           ng-disabled="data.itemRelacionamentoEmEdicao != null" />
+                                </th>
+                                <th class="identifier">{{::'code'|translate|capitalize}}</th>
+                                <th>{{::'description'|translate|capitalize}}</th>
+                                <th class="number rendimento-derivado" ng-if="data.isManipulado">{{::'productivityPercent'|translate|capitalize}}</th>
+                                <th class="number peso-kg" ng-if="data.isReceituario">{{::'weightInKg'|translate|capitalize}}</th>
+                                <th class="domain unidade-medida" ng-if="data.isVinculado">{{::'measurementUnit'|translate|capitalize}}</th>
+                                <th class="action" ng-if="!data.isVinculado"></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="data.relacionamentoSecundarioPaginado.length > 0">
+                            <tr ng-repeat="secundario in data.relacionamentoSecundarioPaginado" ng-class="{ 'active-item': secundario === data.itemRelacionamentoEmEdicao }">
+                                <td class="action"><input type="checkbox" ng-model="secundario.marcado" ng-disabled="data.itemRelacionamentoEmEdicao != null" /></td>
+                                <td class="identifier">{{secundario.itemDetalhe.cdItem}}</td>
+                                <td>{{secundario.itemDetalhe.dsItem}}</td>
+                                <td class="number rendimento-derivado" ng-if="data.isManipulado">{{secundario.pcRendimentoDerivado|percentage:2}}</td>
+                                <td class="number peso-kg" ng-if="data.isReceituario">{{secundario.psItem|number:3}}</td>
+                                <td class="domain unidade-medida" ng-if="data.isVinculado">{{secundario.itemDetalhe.dsTamanhoItem}}</td>
+                                <td class="action" ng-if="!data.isVinculado">
+                                    <edit-button ng-click="editarItemSecundario(secundario)"></edit-button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="data.relacionamentoSecundarioPaginado.length === 0">
+                            <tr>
+                                <td colspan="11" class="domain">{{::'noData'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="table-footer">
+                            <div class="col-md-12">
+                                <grid-pager ng-model="data.relacionamentoSecundarioPaginado" page-method="pageRelacionamentoSecundario" settings="data.relacionamentoSecundarioPaginado"></grid-pager>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </widget>
+        <widget title="{{::'packing'|translate|capitalize}}" ng-if="data.isReceituario" has-box="true">
+            <form name="packing" class="form-horizontal row-border" novalidate="novalidate">
+                <div class="form-group" style="margin-top: -11px; padding-bottom: 5px;">
+                    <form-field title="{{::'item'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="data.itemSecundarioEmbalagemCdItem" sistema="data.itemRelacionamento.cdSistema" item-out="data.itemSecundarioEmbalagem" description-width="large" ng-disabled="!!data.itemRelacionamentoEmbalagemEmEdicao" departamento="data.cdDepartamentoFilter"></lookup-item>
+                    </form-field>
+                    <form-field class="align-right" title="{{::'quantity'|translate|capitalize}}" line-width="3">
+                        <input type="text" ng-model="data.itemSecundarioEmbalagemPsItem" number min="0" ui-number-mask="3" max="100000" maxlength="100" class="form-control input-width-small" />
+                    </form-field>
+                    &nbsp;
+                    <button class="btn btn-primary"
+                            ng-click="adicionarItemSecundarioEmbalagem()"
+                            ng-disabled="!podeAdicionarItemSecundarioEmbalagem()" title="{{(data.isEditing ? 'updateItem' : 'addItem')|translate}}">
+                        <i class="glyphicon" ng-class="{'glyphicon-plus': !data.isEditing, 'glyphicon-ok': data.isEditing}" />
+                    </button>
+                    <button class="btn btn-danger"
+                            ng-click="removerItemSecundarioEmbalagem()"
+                            ng-disabled="!podeRemoverItemSecundarioEmbalagem()" title="{{::'removeCheckedItems'|translate}}">
+                        <i class="glyphicon glyphicon-minus" />
+                    </button>
+                    <button class="btn btn-default" ng-click="limparSecundarioEmbalagem()" title="{{::'clearItem'|translate}}"><i class="glyphicon glyphicon-erase" /></button>
+                </div>
+                <div class="form-inline">
+                    <table class="table table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="action">
+                                    <input type="checkbox"
+                                           ng-model="data.itemRelacionamento.relacionamentoSecundarioEmbalagem.marcado"
+                                           ng-click="marcarTodosEmbalagem()"
+                                           ng-checked="data.itemRelacionamento.relacionamentoSecundarioEmbalagem.all('marcado', true)"
+                                           ng-disabled="data.itemRelacionamentoEmbalagemEmEdicao != null" />
+                                </th>
+                                <th class="identifier">{{::'code'|translate|capitalize}}</th>
+                                <th>{{::'description'|translate|capitalize}}</th>
+                                <th class="number">{{::'quantity'|translate|capitalize}}</th>
+                                <th class="action"></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="data.embalagemPaginado.length > 0">
+                            <tr ng-repeat="secundario in data.embalagemPaginado" ng-class="{ 'active-item': secundario === data.itemRelacionamentoEmbalagemEmEdicao }">
+                                <td class="action"><input type="checkbox" ng-model="secundario.marcado" ng-disabled="data.itemRelacionamentoEmbalagemEmEdicao != null" /></td>
+                                <td class="identifier">{{secundario.itemDetalhe.cdItem}}</td>
+                                <td>{{secundario.itemDetalhe.dsItem}}</td>
+                                <td class="number">{{secundario.psItem|number:3}}</td>
+                                <td class="action">
+                                    <button class="" ng-click="editarItemSecundarioEmbalagem(secundario)"><i class="glyphicon glyphicon-pencil"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="data.embalagemPaginado.length === 0">
+                            <tr>
+                                <td colspan="11" class="domain">{{::'noData'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="table-footer">
+                            <div class="col-md-12">
+                                <grid-pager ng-model="data.embalagemPaginado" page-method="pageEmbalagem" settings="data.embalagemPaginado"></grid-pager>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

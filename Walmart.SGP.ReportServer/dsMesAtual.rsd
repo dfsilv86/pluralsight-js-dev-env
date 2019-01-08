@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@Ano">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>
+SELECT 
+	ID, Descricao
+FROM
+	(	
+	SELECT '01' as ID, 'Janeiro' as Descricao
+	UNION
+	SELECT '02' as ID, 'Fevereiro'as Descricao
+	UNION 
+	SELECT '03' as ID, 'Março'as Descricao
+	UNION
+	SELECT '04' as ID, 'Abril'as Descricao
+	UNION 
+	SELECT '05' as ID, 'Maio'as Descricao
+	UNION 
+	SELECT '06' as ID, 'Junho'as Descricao
+	UNION
+	SELECT '07' as ID, 'Julho'as Descricao
+	UNION 
+	SELECT '08' as ID, 'Agosto'as Descricao
+	UNION
+	SELECT '09' as ID, 'Setembro'as Descricao
+	UNION
+	SELECT '10' as ID, 'Outubro'as Descricao
+	UNION 
+	SELECT '11' as ID, 'Novembro'as Descricao
+	UNION
+	SELECT '12' as ID, 'Dezembro'as Descricao
+	) MES
+WHERE
+(
+	@Ano = YEAR(GETDATE()) AND CAST(ID AS INT) &lt;= MONTH(GETDATE()) 
+)
+
+OR	@Ano &lt; YEAR(GETDATE())	</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="ID">
+        <DataField>ID</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="Descricao">
+        <DataField>Descricao</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

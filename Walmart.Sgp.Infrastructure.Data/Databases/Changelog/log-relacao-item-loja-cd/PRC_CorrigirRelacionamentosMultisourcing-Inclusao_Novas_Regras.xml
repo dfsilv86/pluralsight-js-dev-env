@@ -1,0 +1,593 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-PRC_CorrigirRelacionamentosMultisourcing-Inclusao_Novas_Regras" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				/*
+					=======================================================================================================================
+					Procedure..............: PRC_CorrigirRelacionamentosMultisourcing
+					Autor..................: Evandro Henrique Dapper (CWI)
+					Data de criação........: 14/04/2016 (Projeto PESS)
+					Objetivo...............: Corrigir relacionamentos da tabela Multisourcing
+					Parâmetros.............: 
+					Exemplo de uso.........: 
+					=======================================================================================================================
+					HISTÓRICO DE ALTERAÇÃO
+
+					Alterado por...........: Rafael de Souza Bueno (CWI)
+					Data Alteração.........: 11/10/2016
+					Descrição da alteração.: 
+						- Inclusão de regra para exclusão do multisourcing caso existam itens de entrada que possuam o mesmo idFornecedorParametro.
+						- Inclusão de regra para exclusão do multisourcing caso o vendor informado seja Walmart.
+					
+					=======================================================================================================================
+					*/
+				ALTER PROCEDURE [dbo].[PRC_CorrigirRelacionamentosMultisourcing]
+				AS
+				BEGIN
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+					DECLARE @ItemAtivo CHAR(1)
+						,@vlTipoReabastecimento SMALLINT
+						,@cdItemEntrada INT
+						,@dsItemEntrada VARCHAR(100)
+						,@cdItemSaida INT
+						,@dsItemSaida VARCHAR(100)
+						,@cdCD INT
+						,@vlPercentual DECIMAL(5, 2)
+						,@Observacao VARCHAR(200)
+						,@VendorAtivo CHAR(1)
+						,@AbastecidoCD CHAR(1)
+						,@idCD INT
+						,@idItemSaida BIGINT
+						,@idItemEntrada BIGINT
+						,@IDFornecedorParametro BIGINT
+						,@AlterouDepartamento CHAR(1)
+						,@IDRelacionamentoItemPrincipal BIGINT
+						,@idDepartamento INT
+						,@LogDataInicio DATETIME
+						,@qtdRegistros INT
+						,@EVendorWalmart CHAR(1)
+						,@ItemPossuiOutroVendorIgual CHAR(1)
+
+					SET @LogDataInicio = GETDATE()
+
+					DECLARE ItensComMultisourcing CURSOR LOCAL
+					FOR
+					SELECT DISTINCT RIP.IDRelacionamentoItemPrincipal
+						,RIP.IDItemDetalhe
+						,ITS.cdItem
+						,ITS.dsItem
+						,ITS.idDepartamento
+					FROM Multisourcing MS
+					JOIN RelacionamentoItemSecundario RIS ON RIS.IDRelacionamentoItemSecundario = MS.IDRelacionamentoItemSecundario
+					JOIN RelacionamentoItemPrincipal RIP ON RIP.IDRelacionamentoItemPrincipal = RIS.IDRelacionamentoItemPrincipal
+					JOIN ItemDetalhe ITS ON ITS.IDItemDetalhe = RIP.IDItemDetalhe
+					WHERE MS.vlPercentual > 0
+
+					OPEN ItensComMultisourcing
+
+					FETCH NEXT
+					FROM ItensComMultisourcing
+					INTO @IDRelacionamentoItemPrincipal
+						,@idItemSaida
+						,@cdItemSaida
+						,@dsItemSaida
+						,@idDepartamento
+
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+						DECLARE ValidaMultisourcing CURSOR LOCAL
+						FOR
+						SELECT CASE 
+								WHEN ITD.tpStatus = 'A'
+									AND ITD.blAtivo = 1
+									THEN 'S'
+								ELSE 'N'
+								END ItemAtivo
+							,dbo.fnObterTipoReabastecimento(itd.IDItemDetalhe, MS.IDCD, NULL) vlTipoReabastecimento
+							,RIS.idItemDetalhe
+							,ITD.cdItem cdItemEntrada
+							,ITD.dsItem dsItemEntrada
+							,ITD.IDFornecedorParametro
+							,MS.IDCD
+							,MS.vlPercentual
+							,CASE 
+								WHEN ISNULL(F.stFornecedor, 'I') = 'A'
+									AND ISNULL(FP.cdStatusVendor, 'I') = 'A'
+									AND ISNULL(F.blAtivo, 0) = 1
+									AND ISNULL(FP.blAtivo, 0) = 1
+									THEN 'S'
+								ELSE 'N'
+								END VendorAtivo
+							,ISNULL((
+									SELECT DISTINCT 'S'
+									FROM LojaCDParametro LP
+									JOIN RelacaoItemLojaCD RL ON RL.IDLojaCDParametro = LP.IDLojaCDParametro
+										AND RL.IDItem = @idItemSaida
+										AND RL.blAtivo = 1
+									WHERE LP.IDCD = MS.IDCD
+										AND LP.blAtivo = 1
+									), 'N') AbastecidoCD
+							,CASE 
+								WHEN ITD.IDDepartamento = @idDepartamento
+									THEN 'N'
+								ELSE 'S'
+								END AlterouDepartamento
+							,CASE 
+								WHEN F.IdFornecedor IS NOT NULL
+									AND dbo.fnEVendorWalmart(F.cdFornecedor) = 1
+									THEN 'S'
+								ELSE 'N'
+								END EVendorWalmart
+							,CASE 
+								WHEN (
+										SELECT TOP 1 1
+										FROM Multisourcing MS2
+										JOIN RelacionamentoItemSecundario RIS2 ON RIS2.IDRelacionamentoItemSecundario = MS2.IDRelacionamentoItemSecundario
+										JOIN ItemDetalhe ITD2 ON ITD2.IDItemDetalhe = RIS2.IDItemDetalhe
+										JOIN FornecedorParametro FP2 ON FP2.IDFornecedorParametro = ITD2.IDFornecedorParametro
+										WHERE RIS2.IDRelacionamentoItemPrincipal = @IDRelacionamentoItemPrincipal
+											AND MS2.vlPercentual > 0
+											AND FP2.IDFornecedorParametro = FP.IDFornecedorParametro
+											AND MS2.idMultisourcing <> MS.idMultisourcing
+										) = 1
+									THEN 'S'
+								ELSE 'N'
+								END ItemPossuiOutroVendorIgual
+						FROM Multisourcing MS
+						JOIN RelacionamentoItemSecundario RIS ON RIS.IDRelacionamentoItemSecundario = MS.IDRelacionamentoItemSecundario
+						JOIN ItemDetalhe ITD ON itd.IDItemDetalhe = RIS.IDItemDetalhe
+						LEFT JOIN FornecedorParametro FP ON FP.IDFornecedorParametro = ITD.IDFornecedorParametro
+						LEFT JOIN Fornecedor F ON F.idFornecedor = FP.idFornecedor
+						WHERE RIS.IDRelacionamentoItemPrincipal = @IDRelacionamentoItemPrincipal
+							AND MS.vlPercentual > 0
+
+						OPEN ValidaMultisourcing
+
+						FETCH NEXT
+						FROM ValidaMultisourcing
+						INTO @ItemAtivo
+							,@vlTipoReabastecimento
+							,@idItemEntrada
+							,@cdItemEntrada
+							,@dsItemEntrada
+							,@idFornecedorParametro
+							,@idCD
+							,@vlPercentual
+							,@VendorAtivo
+							,@AbastecidoCD
+							,@AlterouDepartamento
+							,@EVendorWalmart
+							,@ItemPossuiOutroVendorIgual
+
+						WHILE @@FETCH_STATUS = 0
+						BEGIN
+							SET @Observacao = NULL
+
+							-- Se o item deixou de ser abastecido pelo CD
+							IF @AbastecidoCD <> 'S'
+								SET @Observacao = 'o item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' deixou de ser abastecido pelo CD'
+							ELSE
+							-- Se um dos itens multisourcing for inativado/deletado o relacionamento multisourcing será excluído
+							IF @ItemAtivo = 'N'
+								SET @Observacao = 'o item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' foi inativado ou deletado'
+							ELSE
+							-- Se um dos itens multisourcing sofrer alteração de tipo de reabastecimento o relacionamento multisourcing será excluído
+							IF @vlTipoReabastecimento NOT IN (
+									3
+									,33
+									,94
+									)
+								SET @Observacao = 'o item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' deixou de ser XDock'
+							ELSE
+							-- Se um dos vendors definidos no split for inativado/deletado o relacionamento multisourcing será excluído
+							IF @VendorAtivo = 'N'
+								SET @Observacao = 'vendor do item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' foi inativado/deletado ou item sem vendor'
+							ELSE
+							-- Se o departamento do item foi alterado
+							IF @AlterouDepartamento = 'S'
+								SET @Observacao = 'o departamento do item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' foi alterado'
+							ELSE
+							-- Se é vendor Walmart
+							IF @EVendorWalmart = 'S'
+								SET @Observacao = 'o vendor do item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' é Walmart'
+							ELSE
+							-- Se possui outro vendor igual (idFornecedorParametro)
+							IF @ItemPossuiOutroVendorIgual = 'S'
+								SET @Observacao = 'existe outro item com mesmo vendor do item ' + CONVERT(VARCHAR, @cdItemEntrada)
+
+							IF @Observacao IS NOT NULL
+							BEGIN
+								INSERT INTO LogMultiSourcing (
+									IdCd
+									,IdItemDetalheSaida
+									,IdItemDetalheEntrada
+									,IdFornecedorParametro
+									,Data
+									,IdUsuario
+									,PercAnterior
+									,PercPosterior
+									,TpOperacao
+									,Observacao
+									)
+								SELECT MS.idCD
+									,@IdItemSaida
+									,RIS.idItemDetalhe
+									,ITE.idFornecedorParametro
+									,GETDATE()
+									,3 -- 3=Root
+									,MS.vlPercentual
+									,MS.vlPercentual
+									,'E' -- Exclusão
+									,'O relacionamento Multisourcing do item ' + CONVERT(VARCHAR, @cdItemSaida) + CASE 
+										WHEN RIS.idItemDetalhe = @idItemEntrada
+											THEN ''
+										ELSE ' com o item ' + CONVERT(VARCHAR, ITE.cdItem)
+										END + ' foi desfeito porque ' + @Observacao
+								FROM MultiSourcing MS WITH (NOLOCK)
+								JOIN RelacionamentoItemSecundario RIS WITH (NOLOCK) ON ris.IDRelacionamentoItemSecundario = ms.idRelacionamentoItemSecundario
+								JOIN ItemDetalhe ITE WITH (NOLOCK) ON ITE.IDItemDetalhe = RIS.IDItemDetalhe
+								WHERE RIS.IDRelacionamentoItemPrincipal = @IDRelacionamentoItemPrincipal
+									AND MS.vlPercentual > 0
+
+								BREAK
+							END
+
+							FETCH NEXT
+							FROM ValidaMultisourcing
+							INTO @ItemAtivo
+								,@vlTipoReabastecimento
+								,@idItemEntrada
+								,@cdItemEntrada
+								,@dsItemEntrada
+								,@idFornecedorParametro
+								,@idCD
+								,@vlPercentual
+								,@VendorAtivo
+								,@AbastecidoCD
+								,@AlterouDepartamento
+								,@EVendorWalmart
+								,@ItemPossuiOutroVendorIgual
+						END
+
+						CLOSE ValidaMultisourcing
+
+						DEALLOCATE ValidaMultisourcing
+
+						FETCH NEXT
+						FROM ItensComMultisourcing
+						INTO @IDRelacionamentoItemPrincipal
+							,@idItemSaida
+							,@cdItemSaida
+							,@dsItemSaida
+							,@idDepartamento
+					END
+
+					CLOSE ItensComMultisourcing
+
+					DEALLOCATE ItensComMultisourcing
+
+					DELETE
+					FROM Multisourcing
+					WHERE IDMultisourcing IN (
+							SELECT MS.IDMultisourcing
+							FROM LogMultiSourcing LG
+							JOIN RelacionamentoItemPrincipal RIP ON RIP.IDItemDetalhe = LG.idItemDetalheSaida
+							JOIN RelacionamentoItemSecundario RIS ON RIS.IDRelacionamentoItemPrincipal = RIP.IDRelacionamentoItemPrincipal
+							JOIN Multisourcing MS ON MS.idRelacionamentoItemSecundario = RIS.IDRelacionamentoItemSecundario
+								AND MS.idCD = LG.idCD
+							WHERE CONVERT(DATE, [Data]) = CONVERT(DATE, GETDATE())
+								AND LG.TpOperacao = 'E'
+								AND LG.idUsuario = 3
+							)
+
+					SET @qtdRegistros = @@ROWCOUNT
+
+					INSERT INTO LogExecucao (
+						IDProcesso
+						,DataInicio
+						,DataTermino
+						,QtdRegistros
+						,QtdRegistrosProcessados
+						,IdUltimoRegistroProcessado
+						,dsDescricaoExecucao
+						)
+					VALUES (
+						(
+							SELECT IdProcesso
+							FROM LogTipoProcesso WITH (NOLOCK)
+							WHERE Descricao = 'PRC_CorrigirRelacionamentosMultisourcing'
+							)
+						,@LogDataInicio
+						,GETDATE()
+						,@qtdRegistros
+						,@qtdRegistros
+						,NULL
+						,'Excluídos cadastros inválidos na tabela Multisourcing'
+						)
+				END
+
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+					/*
+					=======================================================================================================================
+					Procedure..............: PRC_CorrigirRelacionamentosMultisourcing
+					Autor..................: Evandro Henrique Dapper (CWI)
+					Data de criação........: 14/04/2016 (Projeto PESS)
+					Objetivo...............: Corrigir relacionamentos da tabela Multisourcing
+					Parâmetros.............: 
+					Exemplo de uso.........: 
+					=======================================================================================================================
+					HISTÓRICO DE ALTERAÇÃO
+
+					Alterado por...........: 
+					Data Alteração.........: 
+					Descrição da alteração.: 
+
+					=======================================================================================================================
+					*/
+					ALTER PROCEDURE [dbo].[PRC_CorrigirRelacionamentosMultisourcing]
+					AS
+					BEGIN
+						SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+						DECLARE @tpStatus CHAR(1)
+							,@vlTipoReabastecimento SMALLINT
+							,@cdItemEntrada INT
+							,@dsItemEntrada VARCHAR(100)
+							,@cdItemSaida INT
+							,@dsItemSaida VARCHAR(100)
+							,@cdCD INT
+							,@vlPercentual DECIMAL(5, 2)
+							,@Observacao VARCHAR(200)
+							,@cdStatusVendor CHAR(1)
+							,@AbastecidoCD CHAR(1)
+							,@idCD INT
+							,@idItemSaida BIGINT
+							,@idItemEntrada BIGINT
+							,@IDFornecedorParametro BIGINT
+							,@AlterouDepartamento CHAR(1)
+							,@IDRelacionamentoItemPrincipal BIGINT
+							,@idDepartamento INT
+							,@LogDataInicio DATETIME
+							,@qtdRegistros INT
+
+						SET @LogDataInicio = GETDATE()
+
+						DECLARE ItensComMultisourcing CURSOR LOCAL
+						FOR
+						SELECT DISTINCT RIP.IDRelacionamentoItemPrincipal
+							,RIP.IDItemDetalhe
+							,ITS.cdItem
+							,ITS.dsItem
+							,ITS.idDepartamento
+						FROM Multisourcing MS
+						JOIN RelacionamentoItemSecundario RIS
+							ON RIS.IDRelacionamentoItemSecundario = MS.IDRelacionamentoItemSecundario
+						JOIN RelacionamentoItemPrincipal RIP
+							ON RIP.IDRelacionamentoItemPrincipal = RIS.IDRelacionamentoItemPrincipal
+						JOIN ItemDetalhe ITS
+							ON ITS.IDItemDetalhe = RIP.IDItemDetalhe
+						WHERE MS.vlPercentual > 0
+
+						OPEN ItensComMultisourcing
+
+						FETCH NEXT
+						FROM ItensComMultisourcing
+						INTO @IDRelacionamentoItemPrincipal
+							,@idItemSaida
+							,@cdItemSaida
+							,@dsItemSaida
+							,@idDepartamento
+
+						WHILE @@FETCH_STATUS = 0
+						BEGIN
+							DECLARE ValidaMultisourcing CURSOR LOCAL
+							FOR
+							SELECT ITD.tpStatus
+								,dbo.fnObterTipoReabastecimento(itd.IDItemDetalhe, MS.IDCD, NULL) vlTipoReabastecimento
+								,RIS.idItemDetalhe
+								,ITD.cdItem cdItemEntrada
+								,ITD.dsItem dsItemEntrada
+								,ITD.IDFornecedorParametro
+								,MS.IDCD
+								,MS.vlPercentual
+								,CASE 
+									WHEN ISNULL(F.stFornecedor, 'I') <> 'A'
+										THEN 'I'
+									ELSE ISNULL(FP.cdStatusVendor, 'I')
+									END cdStatusVendor
+								,ISNULL((
+										SELECT DISTINCT 'S'
+										FROM LojaCDParametro LP
+										JOIN RelacaoItemLojaCD RL
+											ON RL.IDLojaCDParametro = LP.IDLojaCDParametro
+												AND RL.IDItem = @idItemSaida
+												AND RL.blAtivo = 1
+										WHERE LP.IDCD = MS.IDCD
+											AND LP.blAtivo = 1
+										), 'N') AbastecidoCD
+								,CASE 
+									WHEN ITD.IDDepartamento = @idDepartamento
+										THEN 'N'
+									ELSE 'S'
+									END AlterouDepartamento
+							FROM Multisourcing MS
+							JOIN RelacionamentoItemSecundario RIS
+								ON RIS.IDRelacionamentoItemSecundario = MS.IDRelacionamentoItemSecundario
+							JOIN ItemDetalhe ITD
+								ON itd.IDItemDetalhe = RIS.IDItemDetalhe
+							LEFT JOIN FornecedorParametro FP
+								ON FP.IDFornecedorParametro = ITD.IDFornecedorParametro
+							LEFT JOIN Fornecedor F
+								ON F.idFornecedor = ITD.idFornecedor
+							WHERE RIS.IDRelacionamentoItemPrincipal = @IDRelacionamentoItemPrincipal
+								AND MS.vlPercentual > 0
+
+							OPEN ValidaMultisourcing
+
+							FETCH NEXT
+							FROM ValidaMultisourcing
+							INTO @tpStatus
+								,@vlTipoReabastecimento
+								,@idItemEntrada
+								,@cdItemEntrada
+								,@dsItemEntrada
+								,@idFornecedorParametro
+								,@idCD
+								,@vlPercentual
+								,@cdStatusVendor
+								,@AbastecidoCD
+								,@AlterouDepartamento
+
+							WHILE @@FETCH_STATUS = 0
+							BEGIN
+								SET @Observacao = NULL
+
+								-- Se o item deixou de ser abastecido pelo CD
+								IF @AbastecidoCD <> 'S'
+									SET @Observacao = 'o item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' deixou de ser abastecido pelo CD'
+								ELSE
+								-- Se um dos itens multisourcing for inativado/deletado o relacionamento multisourcing será excluído
+								IF @tpStatus IN ('I', 'D')
+									SET @Observacao = 'o item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' foi inativado ou deletado'
+								ELSE
+								-- Se um dos itens multisourcing sofrer alteração de tipo de reabastecimento o relacionamento multisourcing será excluído
+								IF @vlTipoReabastecimento NOT IN (3, 33, 94)
+									SET @Observacao = 'o item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' deixou de ser XDock'
+								ELSE
+								-- Se um dos vendors definidos no split for inativado/deletado o relacionamento multisourcing será excluído
+								IF @cdStatusVendor IN ('I', 'D')
+									SET @Observacao = 'vendor do item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' foi inativado/deletado ou item sem vendor'
+								ELSE
+								-- Se o departamento do item foi alterado
+								IF @AlterouDepartamento = 'S'
+									SET @Observacao = 'o departamento do item ' + CONVERT(VARCHAR, @cdItemEntrada) + ' foi alterado'
+
+								IF @Observacao IS NOT NULL
+								BEGIN
+									INSERT INTO LogMultiSourcing (
+										IdCd
+										,IdItemDetalheSaida
+										,IdItemDetalheEntrada
+										,IdFornecedorParametro
+										,Data
+										,IdUsuario
+										,PercAnterior
+										,PercPosterior
+										,TpOperacao
+										,Observacao
+										)
+									SELECT MS.idCD
+										,@IdItemSaida
+										,RIS.idItemDetalhe
+										,ITE.idFornecedorParametro
+										,GETDATE()
+										,3 -- 3=Root
+										,MS.vlPercentual
+										,MS.vlPercentual
+										,'E' -- Exclusão
+										,'O relacionamento Multisourcing do item ' + CONVERT(VARCHAR, @cdItemSaida) + CASE 
+											WHEN RIS.idItemDetalhe = @idItemEntrada
+												THEN ''
+											ELSE ' com o item ' + CONVERT(VARCHAR, ITE.cdItem)
+											END + ' foi desfeito porque ' + @Observacao
+									FROM MultiSourcing MS WITH (NOLOCK)
+									JOIN RelacionamentoItemSecundario RIS WITH (NOLOCK)
+										ON ris.IDRelacionamentoItemSecundario = ms.idRelacionamentoItemSecundario
+									JOIN ItemDetalhe ITE WITH (NOLOCK)
+										ON ITE.IDItemDetalhe = RIS.IDItemDetalhe
+									WHERE RIS.IDRelacionamentoItemPrincipal = @IDRelacionamentoItemPrincipal
+										AND MS.vlPercentual > 0
+
+									BREAK
+								END
+
+								FETCH NEXT
+								FROM ValidaMultisourcing
+								INTO @tpStatus
+									,@vlTipoReabastecimento
+									,@idItemEntrada
+									,@cdItemEntrada
+									,@dsItemEntrada
+									,@idFornecedorParametro
+									,@idCD
+									,@vlPercentual
+									,@cdStatusVendor
+									,@AbastecidoCD
+									,@AlterouDepartamento
+							END
+
+							CLOSE ValidaMultisourcing
+
+							DEALLOCATE ValidaMultisourcing
+
+							FETCH NEXT
+							FROM ItensComMultisourcing
+							INTO @IDRelacionamentoItemPrincipal
+								,@idItemSaida
+								,@cdItemSaida
+								,@dsItemSaida
+								,@idDepartamento
+						END
+
+						CLOSE ItensComMultisourcing
+
+						DEALLOCATE ItensComMultisourcing
+
+						DELETE
+						FROM Multisourcing
+						WHERE IDMultisourcing IN (
+								SELECT MS.IDMultisourcing
+								FROM LogMultiSourcing LG
+								JOIN RelacionamentoItemPrincipal RIP
+									ON RIP.IDItemDetalhe = LG.idItemDetalheSaida
+								JOIN RelacionamentoItemSecundario RIS
+									ON RIS.IDRelacionamentoItemPrincipal = RIP.IDRelacionamentoItemPrincipal
+								JOIN Multisourcing MS
+									ON MS.idRelacionamentoItemSecundario = RIS.IDRelacionamentoItemSecundario
+										AND MS.idCD = LG.idCD
+								WHERE CONVERT(DATE, [Data]) = CONVERT(DATE, GETDATE())
+									AND LG.TpOperacao = 'E'
+									AND LG.idUsuario = 3
+								)
+
+						SET @qtdRegistros = @@ROWCOUNT
+
+						INSERT INTO LogExecucao (
+							IDProcesso
+							,DataInicio
+							,DataTermino
+							,QtdRegistros
+							,QtdRegistrosProcessados
+							,IdUltimoRegistroProcessado
+							,dsDescricaoExecucao
+							)
+						VALUES (
+							(
+								SELECT IdProcesso
+								FROM LogTipoProcesso WITH (NOLOCK)
+								WHERE Descricao = 'PRC_CorrigirRelacionamentosMultisourcing'
+								)
+							,@LogDataInicio
+							,GETDATE()
+							,@qtdRegistros
+							,@qtdRegistros
+							,NULL
+							,'Excluídos cadastros inválidos na tabela Multisourcing'
+							)
+					END
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

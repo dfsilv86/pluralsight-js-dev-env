@@ -1,0 +1,24 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="pesquisaDepartamento">
+    <modal-breadcrumb title="{{::'districtDetails'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="save()" security-action="Distrito.Salvar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+            <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-bandeira ng-model="distrito.regiao.bandeira.idBandeira" sistema="distrito.regiao.bandeira.cdSistema" ng-disabled="true"></dropdown-bandeira>
+        </form-field>
+        <form-field title="{{::'region'|translate}}" line-width="6" grid-width="8">
+            <dropdown-regiao ng-model="distrito.idRegiao" bandeira="distrito.regiao.bandeira.idBandeira" item-out="temp.regiao" show-select="true" ng-disabled="true"></dropdown-regiao>
+        </form-field>
+        <form-field title="{{::'district'|translate}}" line-width="6" grid-width="8">
+            <dropdown-distrito ng-model="distrito.idDistrito" regiao="distrito.idRegiao" show-select="true" item-out="temp.distrito" ng-disabled="true"></dropdown-distrito>
+        </form-field>
+        <form-field title="{{::'districtUserResponsible'|translate}}" line-width="6" grid-width="12">
+            <lookup-usuario ng-model="temp.userName" item-out="temp.user" usuario="distrito.cdUsuarioResponsavelDistrito" name="districtUserResponsible" required></lookup-usuario>
+        </form-field>
+    </div>
+    <br />
+</form>

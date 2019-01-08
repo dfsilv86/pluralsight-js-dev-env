@@ -1,0 +1,105 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateCadastroRelacaoItemLojaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="discardChanges();search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                        <button class="btn btn-default" ng-click="save()" security-action="RelacaoItemLojaCD.Salvar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-default" ng-click="vincular()"><i class="glyphicon glyphicon-import" /> &nbsp; {{::'doLink'|translate}}</button>
+                        <button class="btn btn-default" ng-click="desvincular()"><i class="glyphicon glyphicon-import" /> &nbsp; {{::'undoLink'|translate}}</button>
+                        <button class="btn btn-default"
+                                mwl-confirm
+                                title="{{::'confirmExportTitle'|translate }}"
+                                message="{{::'confirmExportMessage'|translate }}"
+                                on-confirm="toExport()"
+                                is-disabled="!hasChanges()"
+                                ng-click="exportWithoutChanges()">
+                            <i class="glyphicon glyphicon-save-file" /> &nbsp; {{::'export'|translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field-placeholder></form-field-placeholder>
+                    <form-field title="{{::'vendorNineDigitsCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-vendor-nove-digitos ng-model="filters.cdV9D" canal="filters.cdTipo" sistema="filters.cdSistema" item-out="filters.vendor" description-width="large"></lookup-vendor-nove-digitos>
+                    </form-field>
+                    <!--<form-field-placeholder></form-field-placeholder>-->
+                    <form-field title="{{::'region'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-regiao-compra ng-model="filters.idRegiaoCompra" show-all></dropdown-regiao-compra>
+                    </form-field>
+                    <form-field title="{{::'itemStockControl'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item-saida ng-model="filters.cdItemSaida" sistema="filters.cdSistema" fornecedor-param="filters.vendor.id" description-width="large" required></lookup-item-saida>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" show-all="true"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'pendingAttachment'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <checkbox name="blVinculado" ng-model="filters.blVinculado" label="{{::'pendingAttachment'|translate|capitalize}}" show-label="false"></checkbox>
+                    </form-field>
+                    <form-field title="{{::'uF'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-uf ng-model="filters.dsEstado" regiao="filters.IDRegiaoCompra"></dropdown-uf>
+                    </form-field>                  
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th ng-click="orderBy('dsRegiaoCompra')">{{::'region'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsRegiaoCompra"></sort-indicator></th>
+                            <th class="identifier" ng-click="orderBy('cdCD')">{{::'tipoDetalhamentoReviewDateFixedValueCD'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdCD"></th>
+                            <th class="domain" ng-click="orderBy('dsBandeira')">{{::'chain'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsBandeira"></th>
+                            <th class="identifier" ng-click="orderBy('cdLoja')">{{::'store'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdLoja"></th>
+                            <th class="domain" ng-click="orderBy('dsEstado')">{{::'uF'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsEstado"></th>
+                            <th class="domain relacao-item-loja">{{::'vendorItem'|translate|capitalize}}</th>
+                            <!--<th ng-click="orderBy('nmFornecedor')">{{::'supplier'|translate|capitalize}} <sort-indicator ng-model="data.values" name="nmFornecedor"></th>-->
+                            <th class="domain relacionamento-item-loja-tipo-reabastecimento" ng-click="orderBy('vlTipoReabastecimento')">{{::'supplyKind'|translate|capitalize}} <sort-indicator ng-model="data.values" name="vlTipoReabastecimento"></th>
+                            <th>{{::'xdock'|translate}}</th>
+                            <th>{{::'dsd'|translate}}</th>
+                            <th>{{::'staple'|translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td>{{item.dsRegiaoCompra}}</td>
+                            <td class="identifier">{{item.cdCD}}</td>
+                            <td class="domain">{{item.dsBandeira}}</td>
+                            <td class="identifier">{{item.cdLoja}}</td>
+                            <td class="domain">{{item.dsEstado}}</td>
+                            <td class="domain relacao-item-loja">
+                                <select ui-select2 class="dropdown full-width-fix" ng-model="item.relacaoItemLojaCD.idItemEntrada"
+                                        ng-options="itemEnt.id as (itemEnt.fornecedorParametro.cdV9D + ' - ' + itemEnt.fornecedor.nmFornecedor + ' / ' + itemEnt.cdItem + ' - ' + itemEnt.dsItem) for itemEnt in item.itensDisponiveis | orderBy:sortFornecedor track by itemEnt.id"
+                                        ng-change="change(item)" style="text-align: left;">
+                                    <option value="">{{::'noRelatedInputItem'|translate|capitalize}}</option>
+                                </select>
+                            </td>
+                            <!--<td>{{item.itemEntrada.fornecedor.nmFornecedor}}</td>-->
+                            <td class="domain relacionamento-item-loja-tipo-reabastecimento">{{item.itemEntrada.vlTipoReabastecimento}}</td>
+                            <td>{{item.blPossuiItensXDockDisponiveis ? 'X' : ''}}</td>
+                            <td>{{item.blPossuiItensDSDDisponiveis ? 'X' : ''}}</td>
+                            <td>{{item.blPossuiItensStapleDisponiveis ? 'X' : ''}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="10" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

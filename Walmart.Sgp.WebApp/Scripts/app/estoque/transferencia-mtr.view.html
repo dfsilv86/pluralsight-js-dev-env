@@ -1,0 +1,49 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateTransferenciaMtrName'|translate|capitalize}}" has-b has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="transferenciaMtr">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="confirm()" security-action="Estoque.RealizarMtr" ng-disabled="data.custoUnitario == null"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'confirm'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="data.idBandeira" sistema="data.cdSistema"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="data.cdLoja" bandeira="data.idBandeira" sistema="data.cdSistema" item-out="data.loja" description-width="large" required></lookup-loja>
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'sourceItem'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="data.cdItemOrigem" sistema="data.cdSistema" item-out="data.itemOrigem" description-width="large" required name="sourceItem"></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'destItem'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="data.cdItemDestino" sistema="data.cdSistema" item-out="data.itemDestino" description-width="large" required name="destItem"></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'quantity'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <div class="input-group lookup-group" style="width:126px;">
+                            <input type="text" ng-model="data.quantidade" number ui-number-mask="3" maxlength="9" min="0.001" class="form-control input-width-small lookup-component" required name="quantity" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-info" ng-click="obterCustos()" title="{{::'confirm'|translate}}"><i class="glyphicon glyphicon-check" /></button>
+                            </span>
+                        </div>
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'realUnitCost'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <span class="form-control input-width-medium" readonly>{{data.custoUnitario|number:3}}</span>
+                    </form-field>
+                    <form-field title="{{::'realMtrCost'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <span class="form-control input-width-medium" readonly>{{data.custoMtr|number:3}}</span>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

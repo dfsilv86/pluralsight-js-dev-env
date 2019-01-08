@@ -1,0 +1,92 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaNotaFiscalName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema"></dropdown-sistema>
+                    </form-field>
+                    <form-field-placeholder></form-field-placeholder>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.loja" description-width="large"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'supplier'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-fornecedor ng-model="filters.cdFornecedor" sistema="filters.cdSistema" item-out="filters.fornecedor" description-width="large"></lookup-fornecedor>
+                    </form-field>
+                    <form-field title="{{::'invoice'|translate|capitalize}}" grid-width="6" line-width="6">
+                        <input type="text" name="nrNotaFiscal" ng-model="filters.nrNotaFiscal" number maxlength="10" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'item'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="filters.cdItem" sistema="filters.cdSistema" item-out="filters.item" description-width="large"></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'receiveInterval'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <daterangepicker name-start="receiveIntervalStart" name-end="receiveIntervalEnd" date-start="filters.dtRecebimento.startValue" date-end="filters.dtRecebimento.endValue" required></daterangepicker>
+                    </form-field>
+                    <form-field title="{{::'fiscalConcentratorInclusion2'|translate|capitalize}}" line-w line-width="6" grid-width="10">
+                        <daterangepicker date-start="filters.dtCadastroConcentrador.startValue" date-end="filters.dtCadastroConcentrador.endValue"></daterangepicker>
+                    </form-field>
+                    <form-field title="{{::'fiscalConcentratorAlteration2'|translate|capitalize}}" line-w line-width="6" grid-width="10">
+                        <daterangepicker date-start="filters.dtAtualizacaoConcentrador.startValue" date-end="filters.dtAtualizacaoConcentrador.endValue"></daterangepicker>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>{{::'supplier'|translate|capitalize}}</th>
+                            <th>{{::'store'|translate|capitalize}}</th>
+                            <th class="identifier">{{::'invoice'|translate|capitalize}}</th>
+                            <th class="date">{{::'emissionDateCondensed'|translate}}</th>
+                            <th class="date">{{::'receive'|translate}}</th>                            
+                            <th class="date">{{::'fiscalConcentratorInclusion'|translate}}</th>
+                            <th class="date">{{::'fiscalConcentratorAlteration'|translate}}</th>
+                            <th class="date">{{::'sgpInclusion'|translate}}</th>
+                            <th class="domain">{{::'divergences'|translate}}</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td>{{item.fornecedor|supplierProfile}}</td>
+                            <td>{{item.loja|storeProfile}}</td>
+                            <td class="identifier">{{item.nrNotaFiscal|coalesce:'-'}}</td>
+                            <td class="date">{{item.dtEmissao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="date">{{item.dtRecebimento|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="date">{{item.dtCadastroConcentrador|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="date">{{item.dtAtualizacaoConcentrador|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="date">{{item.dhCriacao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="domain"><semaphore value="{{!item.blDivergente}}"></semaphore></td>
+                            <td class="action">
+                                <detail-button ng-click="detail(item)"></detail-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="10" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

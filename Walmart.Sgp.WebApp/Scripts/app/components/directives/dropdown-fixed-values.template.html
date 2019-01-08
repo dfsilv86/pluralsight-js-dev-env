@@ -1,0 +1,7 @@
+﻿<select ui-select2 class="dropdown full-width-fix" data-placeholder="Selecione..." name="{{::dropdownName}}">
+    <option value="" selected ng-if="showSelect">{{::'select'|translate}}</option>
+    <option value="" selected ng-if="showAll">{{::'all2'|translate}}</option>    
+    <option value="" selected ng-if="showAll2">{{::'all'|translate}}</option>
+    <option ng-if="!showSelect && !showAll && !showAll2"></option>
+    <option ng-repeat="item in data.values" value="{{::item.value}}">{{::item.description}}</option>
+</select>

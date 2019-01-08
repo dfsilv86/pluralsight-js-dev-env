@@ -1,0 +1,70 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-SUGESTAOPEDIDO_PRE-Criacao" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				CREATE TABLE [dbo].[SUGESTAOPEDIDO_PRE](
+					[IDItemDetalhePedido] [bigint] NULL,
+					[cdItemPedido] [int] NULL,
+					[IDItemDetalheSugestao] [bigint] NULL,
+					[cdItemSugestao] [int] NULL,
+					[IdLoja] [int] NULL,
+					[cdLoja] [int] NULL,
+					[dtPedido] [date] NULL,
+					[tpWeek] [smallint] NULL,
+					[tpInterval] [smallint] NULL,
+					[cdReviewDate] [int] NULL,
+					[vlLeadTime] [smallint] NULL,
+					[qtVendorPackage] [int] NULL,
+					[vlModulo] [decimal](11, 3) NULL,
+					[vlEstoque] [decimal](11, 3) NULL,
+					[vlTotalPedidosAberto] [decimal](11, 3) NULL,
+					[vlPipeline] [decimal](11, 3) NULL,
+					[dtProximoReviewDate] [date] NULL,
+					[dtInicioForecast] [date] NULL,
+					[dtFimForecast] [date] NULL,
+					[vlForecast] [decimal](11, 3) NULL,
+					[vlForecastMedio] [decimal](11, 3) NULL,
+					[vlLeadTimeReal] [int] NULL,
+					[vlEstoqueSeguranca] [int] NULL,
+					[vlEstoqueSegurancaQtd] [decimal](11, 3) NULL,
+					[vlPackSugerido1] [int] NULL,
+					[qtdPackCompra] [int] NULL,
+					[vlQtdDiasEstoque] [decimal](11, 3) NULL,
+					[vlShelfLife] [numeric](18, 0) NULL,
+					[vlSugestaoPedido] [decimal](11, 3) NULL,
+					[blAtendePedidoMinimo] [bit] NULL,
+					[IDFornecedorParametro] [bigint] NULL,
+					[vlFatorConversao] [float] NULL,
+					[blPossuiVendasUltimaSemana] [bit] NULL,
+					[IDOrigemDadosCalculo] [int] NULL,
+					[tpCaixaFornecedor] [char](1) NULL,
+					[vlPesoLiquido] [decimal](11, 4) NULL,
+					[vlTipoReabastecimento] [smallint] NULL,
+					[blCDConvertido] [bit] NULL,
+					[idCD] [int] NULL,
+					[vlSaldoOO] [decimal](11, 3) NULL,
+					[vlSaldoIW] [decimal](11, 3) NULL,
+					[vlSaldoIT] [decimal](11, 3) NULL,
+					[PackModulo] [decimal](11, 3) NULL,
+					[PackCompra] [int] NULL,
+					[qtVendorPackageAux] [int] NULL,
+					[vlPackSugeridoAux] [int] NULL
+				) 
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					DROP TABLE SUGESTAOPEDIDO_PRE
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

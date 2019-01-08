@@ -1,0 +1,2 @@
+ALTER TABLE loja 
+ADD blEnviaPedidoOMS BIT NOT NULL DEFAULT 0

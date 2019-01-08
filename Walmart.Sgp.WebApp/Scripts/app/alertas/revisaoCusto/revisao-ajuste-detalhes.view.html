@@ -1,0 +1,146 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateRevisaoAjusteCustoEditName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroDados">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                        <button class="btn btn-primary"
+                                mwl-confirm
+                                title="{{::'costAjustmentReview'|translate|capitalize}}"
+                                message="{{::'confirmCostAjustmentReview'|translate}}"
+                                on-confirm="save(2)"
+                                ng-disabled="data.idStatus == 2 || data.idStatus == 4">
+                            <i class="glyphicon glyphicon-floppy-disk" /> &nbsp; {{::'review'|translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="11">
+                        <span class="form-control" disabled>{{data.loja}}</span>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="11">
+                        <span class="form-control" disabled>{{data.departamento}}</span>
+                    </form-field>
+                    <form-field title="{{::'item'|translate|capitalize}}" line-width="6" grid-width="11">
+                        <span class="form-control" disabled>{{data.item}}</span>
+                    </form-field>
+                    <form-field title="{{::'requestDate'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.dataSolicitacao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</span>
+                    </form-field>
+                    <form-field title="{{::'requester'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.solicitante}}</span>
+                    </form-field>
+                    <form-field title="{{::'requestStatus'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.statusSolicitacao}}</span>
+                    </form-field>
+                    <form-field title="{{::'attached'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.vinculado}}</span>
+                    </form-field>
+                    <form-field title="{{::'lossIncome'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.perdaRendimento}}</span>
+                    </form-field>
+                    <form-field title="{{::'prescription'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.receituario}}</span>
+                    </form-field>
+                    <form-field title="{{::'manipulated'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.manipulado}}</span>
+                    </form-field>
+                    <form-field title="{{::'costRequested'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.custoSolicitado|money:'BRL':2}}</span>
+                    </form-field>
+                    <form-field title="{{::'dateNewCost'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.dataNovoCusto|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</span>
+                    </form-field>
+                    <form-field title="{{::'currentCostManagement'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.custos.ultimoCustoAtual|money:'BRL':2}}</span>
+                    </form-field>
+                    <form-field title="{{::'costLastInventory'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.custos.custoInventario|money:'BRL':2}}</span>
+                    </form-field>
+                    <form-field title="{{::'costAccounted'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.custos.ultCustoMesAnterior|money:'BRL':2}}</span>
+                    </form-field>
+                    <form-field title="{{::'currentInventory'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <span class="form-control" disabled>{{data.custos.posEstoqueAtual}}</span>
+                    </form-field>
+                    <form-field title="{{::'reasonRequest'|translate|capitalize}}" line-width="6" grid-width="11">
+                        <span class="form-control" disabled>{{data.motivo}}</span>
+                    </form-field>
+                    <form-field title="{{::'requesterNote'|translate|capitalize}}" line-width="6" grid-width="11">
+                        <span class="form-control" disabled style="min-height: 100px;">{{data.dsMotivo}}</span>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <!-- Grid -->
+        <widget has-box="no-padding">
+            <div class="form-inline">                
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>{{::'item'|translate}}</th>
+                            <th class="identifier">{{::'invoiceNumber'|translate}}</th>
+                            <th class="currency">{{::'costValue'|translate}}</th>
+                            <th class="date">{{::'receiptDate'|translate|capitalize}}</th>
+                            <th class="date">{{::'emissionDate'|translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td>{{item|productProfile}}</td>
+                            <td class="identifier">{{item.nrNotaFiscal}}</td>
+                            <td class="currency">{{item.vlCusto|money:'BRL':2}}</td>
+                            <td class="date">{{item.dtRecebimento|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="date">{{item.dtEmissao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="5" class="domain">{{::'noData'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </widget>
+
+        <!-- Revisor -->
+        <widget>
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroNovo">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary"
+                                mwl-confirm
+                                title="{{::'costAjustmentReview'|translate|capitalize}}"
+                                message="{{::'confirmCostAjustmentDone'|translate}}"
+                                on-confirm="save(4)"
+                                ng-disabled="data.idStatus == 2 || data.idStatus == 4">
+                            <i class="glyphicon glyphicon-floppy-disk" /> &nbsp; {{::'adjust'|translate}}
+                        </button>
+                        <button class="btn btn-danger"
+                                mwl-confirm
+                                title="{{::'costAjustmentReview'|translate|capitalize}}"
+                                message="{{::'confirmCostAjustmentInReview'|translate}}"
+                                on-confirm="save(3)"                                
+                                ng-disabled="data.idStatus == 2 || data.idStatus == 4">
+                            <i class="glyphicon glyphicon-floppy-disk" /> &nbsp; {{::'inReview'|translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'dateNewCost'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <datepicker ng-model="data.dtCustoRevisado" ng-disabled="data.idStatus == 2 || data.idStatus == 4"></datepicker>
+                        <span ng-if="data.notasPendentes == true" class="text-right" style="color: red; font-size: 12px">Existem notas pendentes com data anterior à data informada.</span>
+                    </form-field>
+                    <form-field class="align-right" title="{{::'newCost'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <input type="text" ng-model="data.vlCustoRevisado" ng-disabled="data.idStatus == 2 || data.idStatus == 4" number ui-number-mask="3" min="0" max="100000" class="form-control" />
+                    </form-field>
+                    <form-field title="{{::'dsRevisor'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <textarea ng-model="data.dsRevisor" name="dsRevisor" ng-disabled="data.idStatus == 2 || data.idStatus == 4" rows="4" style="width: 100%;" required></textarea>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

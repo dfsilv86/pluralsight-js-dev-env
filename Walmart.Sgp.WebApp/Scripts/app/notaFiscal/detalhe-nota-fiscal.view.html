@@ -1,0 +1,86 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'invoiceDetail'|translate|capitalize}}" ha has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalhesNotaFiscal">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.loja|storeProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.bandeira.dsBandeira}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'supplier'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.fornecedor|supplierProfile}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'invoice'|translate|capitalize}}" line-width="6" grid-width="3">
+                        <input type="text" value="{{data.nrNotaFiscal}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'serialNumber'|translate|capitalize}}" line-width="6" grid-width="3">
+                        <input type="text" value="{{data.srNotaFiscal}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'emissionDate'|translate|capitalize}}" line-width="6" grid-width="4">
+                        <input type="text" value="{{data.dtEmissao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'receiveStore'|translate|capitalize}}" line-width="6" grid-width="4">
+                        <input type="text" value="{{data.dtRecebimento|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'ledgerInclusionDate'|translate|capitalize}}" line-width="6" grid-width="4">
+                        <input type="text" value="{{data.dtCadastroLivro|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'fiscalConcentratorInclusion2'|translate|capitalize}}" line-width="6" grid-width="4">
+                        <input type="text" value="{{data.dtCadastroConcentrador|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'fiscalConcentratorAlteration2'|translate|capitalize}}" line-w line-width="6" grid-width="4">
+                        <input type="text" value="{{data.dtAtualizacaoConcentrador|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>{{::'item'|translate|capitalize}}</th>
+                            <th class="number">{{::'quantity'|translate|capitalize}}</th>
+                            <th class="currency">{{::'itemUnitCostValue'|translate}}</th>
+                            <th class="currency">{{::'itemTotalValue'|translate}}</th>
+                            <th>{{::'status'|translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.itens && data.itens.length > 0">
+                        <tr ng-repeat="item in data.itens">
+                            <td>{{item.itemDetalhe|productProfile}}</td>
+                            <td class="number">{{item.qtItem|number:3}}</td>
+                            <td class="currency">{{item.vlCusto|money:'BRL':2}}</td>
+                            <td class="currency">{{item.vlTotal|money:'BRL':2}}</td>
+                            <td>{{item.status.dsNotaFiscalItemStatus}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.itens || data.itens.length === 0">
+                        <tr>
+                            <td colspan="5" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.itens" page-method="paginate" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>
+
+
+
+
+

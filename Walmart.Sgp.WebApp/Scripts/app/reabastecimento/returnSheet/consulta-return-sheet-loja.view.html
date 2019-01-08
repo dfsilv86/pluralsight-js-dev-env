@@ -1,0 +1,94 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateConsultaReturnSheetLojaName'|translate|capitalize }}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="returnSheetQuery">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="discardChanges();search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                        <button class="btn btn-primary" style="margin-left:10px" ng-click="save()" ng-disabled="!hasChanges()" security-action="SugestaoReturnSheet.SalvarLoja"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <!--<button class="btn btn-default" ng-click="discardChanges()" ng-disabled="!hasChanges()"><span class="icon-undo"></span> &nbsp; {{::'discardChanges'|translate}}</button>-->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'requestDate'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <datepicker name="requestDate" ng-model="filters.dtSolicitacao" format="dd/MM/yyyy" required />
+                    </form-field>
+                    <form-field title="{{::'vendorNineDigitsCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-vendor-nove-digitos ng-model="filters.vendor" sistema="filters.cdSistema" description-width="large" name="vendor"></lookup-vendor-nove-digitos>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja name="store" ng-model="filters.cdLoja" description-width="large" sistema="filters.cdSistema" item-out="temp.loja" ignore-bandeira="true" required></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'event'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <input type="text" name="event" class="form-control input-width-xlarge" ng-model="filters.evento" />
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento name="department" ng-model="filters.cdDepartamento" description-width="large" item-out="temp.departamento" sistema="filters.cdSistema" modo-pereciveis="restrito" excluir-padaria="true" required></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'outputItemCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item name="item" ng-model="filters.cdOldNumber" description-width="large" departamento="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.item"></lookup-item>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <div class="pesquisa-return-sheet">
+                    <table class="table pesquisa-return-sheet table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th ng-click="orderBy('descricao')">{{::'event'|translate}} <sort-indicator ng-model="data.values" name="descricao"></sort-indicator></th>
+                                <th ng-click="orderBy('dhInicioEvento')">{{::'eventPeriod'|translate}} <sort-indicator ng-model="data.values" name="dhInicioEvento"></sort-indicator></th>
+                                <th ng-click="orderBy('dhInicioReturn')">{{::'startDateReturnSheet'|translate}} <sort-indicator ng-model="data.values" name="dhInicioReturn"></sort-indicator></th>
+                                <th ng-click="orderBy('dhFinalReturn')">{{::'endingDateTimeReturnSheet'|translate}} <sort-indicator ng-model="data.values" name="dhFinalReturn"></sort-indicator></th>
+                                <th ng-click="orderBy('cdV9D')">{{::'vendorNineDigitsCode'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdV9D"></sort-indicator></th>
+                                <th ng-click="orderBy('nmFornecedor')">{{::'vendorName'|translate|capitalize}} <sort-indicator ng-model="data.values" name="nmFornecedor"></sort-indicator></th>
+                                <th ng-click="orderBy('cdItem')">{{::'outputItemCode'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdItem"></sort-indicator></th>
+                                <th ng-click="orderBy('dsItem')">{{::'itemDescription'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsItem"></sort-indicator></th>
+                                <th class="number" ng-click="orderBy('precoVenda')">{{::'priceSale'|translate|capitalize}} <sort-indicator ng-model="data.values" name="precoVenda"></sort-indicator></th>
+                                <th class="number" ng-click="orderBy('EstoqueItemVenda')">{{::'originalStock'|translate|capitalize}} <sort-indicator ng-model="data.values" name="EstoqueItemVenda"></sort-indicator></th>
+                                <th class="number" ng-click="orderBy('packSugeridoCompra')">{{::'sugestedPackWeight'|translate|capitalize}} <sort-indicator ng-model="data.values" name="packSugeridoCompra"></sort-indicator></th>
+                                <th class="number" ng-click="orderBy('qtVendorPackageItemCompra')">{{::'pack'|translate|capitalize}} <sort-indicator ng-model="data.values" name="qtVendorPackageItemCompra"></sort-indicator></th>
+                                <th class="number" ng-click="orderBy('vlPesoLiquidoItemCompra')">{{::'weight'|translate|capitalize}} <sort-indicator ng-model="data.values" name="vlPesoLiquidoItemCompra"></sort-indicator></th>
+                                <th ng-click="orderBy('qtdLoja')">{{::'storeQtd'|translate|capitalize}} <sort-indicator ng-model="data.values" name="qtdLoja"></sort-indicator></th>
+                                <th ng-click="orderBy('tpCaixaFornecedor')">{{::'buyingUnit'|translate|capitalize}} <sort-indicator ng-model="data.values" name="tpCaixaFornecedor"></sort-indicator></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="data.values && data.values.length > 0">
+                            <tr ng-repeat="item in data.values">
+                                <td>{{item.itemLoja.itemPrincipal.returnSheet.descricao}}</td>
+                                <td>{{item.itemLoja.itemPrincipal.returnSheet.dhInicioEvento | date:'dd/MM/yyyy'}} - {{item.itemLoja.itemPrincipal.returnSheet.dhFinalEvento | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.itemLoja.itemPrincipal.returnSheet.dhInicioReturn | date:'dd/MM/yyyy'}}</td>
+                                <td>{{item.itemLoja.itemPrincipal.returnSheet.dhFinalReturn | date:'dd/MM/yyyy // HH:mm'}}</td>
+                                <td>{{item.itemLoja.itemPrincipal.itemDetalhe.fornecedorParametro.cdV9D}}</td>
+                                <td>{{item.itemLoja.itemPrincipal.itemDetalhe.fornecedorParametro.nmFornecedor}}</td>
+                                <td>{{item.itemLoja.itemPrincipal.itemDetalhe.cdItem}}</td>
+                                <td>{{item.itemLoja.itemPrincipal.itemDetalhe.dsItem}}</td>
+                                <td class="number">{{item.precoVenda | number:2}}</td>
+                                <td class="number">{{item.estoqueItemVenda}}</td>
+                                <td class="number">{{item.packSugeridoCompra}}</td>
+                                <td class="number">{{item.qtVendorPackageItemCompra}}</tdclass>
+                                <td class="number">{{item.vlPesoLiquidoItemCompra}}</tdclass>
+                                <td><input class="form-control input-width-mini" type="text" number ui-number-mask="0" ui-hide-group-sep min="0" max="99999" name="qtdLoja" ng-model="item.qtdLoja" ng-disabled="item.Finalizada || item.blExportado || item.blAutorizado" maxlength="5" /></td>
+                                <td>{{item.itemLoja.itemPrincipal.itemDetalhe.tpCaixaFornecedor|fixedValue:'tipoCaixaFornecedorShort'|translate}}</td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!data.values || data.values.length === 0">
+                            <tr>
+                                <td colspan="15" class="domain">{{::'noData'|translate|capitalize}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

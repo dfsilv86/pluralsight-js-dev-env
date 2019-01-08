@@ -1,0 +1,61 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::(isVincular ? 'stateImpVincularItemLojaCDName' : 'stateImpDesvincularItemLojaCDName')|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="impRelacaoItemLoja">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="save()"><i class="glyphicon glyphicon-save" security-action="{{::data.securityAction}}" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-default" ng-click="cancel()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" grid-width="2">
+                        <dropdown-sistema ng-model="data.cdSistema"></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'selectExcelFile'|translate|capitalize}}" line-width="12" grid-width="10">
+                        <input type="file" nv-file-select="" uploader="uploader" />
+                    </form-field>
+                    <form-field title="{{::'sheetModel'|translate|capitalize}}" line-width="12" grid-width="10">
+                        <div style="padding-top:6px;padding-bottom:6px;">
+                            <a href="#" ng-click="baixarTemplate()">template.xlsx</a>
+                        </div>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th style="width:160px;" ng-click="orderBy('value')">{{::'fileName'|translate|capitalize}}<sort-indicator ng-model="data.values" name="value"></sort-indicator></th>
+                            <th ng-click="orderBy('stateName')">{{::'situation'|translate|capitalize}} <sort-indicator ng-model="data.values" name="stateName"></sort-indicator></th>
+                            <th ng-click="orderBy('createdDate')">{{::'dtCriacao'|translate}} <sort-indicator ng-model="data.values" name="createdDate"></sort-indicator></th>
+                            <th ng-click="orderBy('fullName')" ng-if="isAdmin()">{{::'user'|translate}} <sort-indicator ng-model="data.values" name="fullName"></sort-indicator></th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values">
+                            <td>{{item.arguments[0].value | fileName}}</td>
+                            <td>{{item.state|enum:'processOrderState'|translate}}</td>
+                            <td>{{item.createdDate | date:'dd/MM/yyyy // HH:mm'}}</td>
+                            <td ng-if="isAdmin()">{{item.createdUser.fullName}}</td>
+                            <td class="action"><a href="#" ng-click="download(item)" ng-if="downloadEnabled(item)"><span class="glyphicon glyphicon-download-alt"></span></a></td>
+                        </tr>
+                        <tr ng-if="!data.values || data.values.length === 0">
+                            <td colspan="5" class="domain">{{::'noItemFound'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

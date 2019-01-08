@@ -1,0 +1,65 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-SaldoPedido_Alteracao_Tipo_Dados" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[ 
+				DROP INDEX IX_SaldoPedido ON SaldoPedido;
+				~			
+				
+				ALTER TABLE SaldoPedido ALTER COLUMN vlSaldoOO DECIMAL(11,3)
+				~
+				
+				ALTER TABLE SaldoPedido ALTER COLUMN vlSaldoIW DECIMAL(11,3)
+				~
+				
+				ALTER TABLE SaldoPedido ALTER COLUMN vlSaldoIT DECIMAL(11,3)
+				~
+				
+				CREATE NONCLUSTERED INDEX [IX_SaldoPedido] ON [dbo].[SaldoPedido]
+					(
+						[cdItem] ASC
+					)
+					INCLUDE ( 	[cdLoja],
+						[qtSaldoPedido],
+						[vlSaldoOO],
+						[vlSaldoIW],
+						[vlSaldoIT]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+					DROP INDEX IX_SaldoPedido ON SaldoPedido;
+					~
+				
+					ALTER TABLE SaldoPedido ALTER COLUMN vlSaldoOO INT
+					~
+				
+					ALTER TABLE SaldoPedido ALTER COLUMN vlSaldoIW INT
+					~
+				
+					ALTER TABLE SaldoPedido ALTER COLUMN vlSaldoIT INT
+					~
+					
+					CREATE NONCLUSTERED INDEX [IX_SaldoPedido] ON [dbo].[SaldoPedido]
+					(
+						[cdItem] ASC
+					)
+					INCLUDE ( 	[cdLoja],
+						[qtSaldoPedido],
+						[vlSaldoOO],
+						[vlSaldoIW],
+						[vlSaldoIT]) WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, FILLFACTOR = 90)
+					~
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

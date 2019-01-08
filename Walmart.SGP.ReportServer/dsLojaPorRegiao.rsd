@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@Bandeira">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@UsuarioCorrente">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@Regiao">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>/*
+DECLARE @Bandeira INT, @UsuarioCorrente INT, @Regiao INT;
+SET @Bandeira = 1;
+SET @UsuarioCorrente = 2337;
+SET @Regiao = 1;
+--*/
+
+Declare @countPermissoes INT
+SET @countPermissoes = 0
+
+SET @countPermissoes = (SELECT COUNT(LOJ.IDLoja) 
+						FROM Loja LOJ
+						LEFT JOIN
+							PermissaoLoja PLJ
+						ON
+							PLJ.IDLoja = LOJ.IDLoja
+						INNER JOIN	
+							Permissao PER
+						ON
+							PER.IDPermissao = PLJ.IDPermissao
+						WHERE 
+							LOJ.blAtivo = 1
+						AND LOJ.IDBandeira = ISNULL(@Bandeira, LOJ.IDBandeira)
+						AND PER.IDUsuario = ISNULL(@UsuarioCorrente, PER.IDUsuario))
+
+IF @countPermissoes &gt; 0
+	BEGIN
+		SELECT NULL as IDLoja, 'Todas' as DescLoja, 0 as codLoja
+		UNION 
+		SELECT LOJ.IDLoja, CONVERT(VARCHAR, LOJ.cdLoja) + ' - ' + LOJ.nmLoja AS DescLoja, LOJ.cdLoja as codLoja
+		FROM Loja LOJ
+		LEFT JOIN
+			PermissaoLoja PLJ
+		ON
+			PLJ.IDLoja = LOJ.IDLoja
+		LEFT JOIN
+			PermissaoBandeira	PBA  WITH (NOLOCK)
+		ON
+			PBA.IDBandeira		= LOJ.IDBandeira
+		INNER JOIN	
+			Permissao	PER
+		ON
+			PER.IDPermissao = PLJ.IDPermissao
+		AND	PER.IDUsuario = ISNULL(@UsuarioCorrente, PER.IDUsuario)
+		WHERE 
+			LOJ.blAtivo = 1
+		AND LOJ.IDBandeira = ISNULL(@Bandeira, LOJ.IDBandeira)
+		AND LOJ.idRegiaoAdministrativa = @Regiao
+		GROUP BY
+			LOJ.IDLoja
+		,	CONVERT(VARCHAR, LOJ.cdLoja) + ' - ' + LOJ.nmLoja
+		,	LOJ.cdLoja
+		order by codLoja
+	END
+ELSE
+	BEGIN
+		SELECT NULL as IDLoja, 'Todas' as DescLoja, 0 as codLoja
+		UNION 
+		SELECT LOJ.IDLoja, CONVERT(VARCHAR, LOJ.cdLoja) + ' - ' + LOJ.nmLoja AS DescLoja, LOJ.cdLoja as codLoja
+		FROM Loja LOJ
+		LEFT JOIN
+			PermissaoLoja PLJ
+		ON
+			PLJ.IDLoja = LOJ.IDLoja
+		LEFT JOIN
+			PermissaoBandeira	PBA  WITH (NOLOCK)
+		ON
+			PBA.IDBandeira		= LOJ.IDBandeira
+		LEFT JOIN
+			Permissao	PER
+		ON
+			PER.IDPermissao = PLJ.IDPermissao
+		AND	PER.IDUsuario = ISNULL(@UsuarioCorrente, PER.IDUsuario)
+		WHERE 
+			LOJ.blAtivo = 1
+		AND LOJ.IDBandeira = ISNULL(@Bandeira, LOJ.IDBandeira)
+		AND LOJ.idRegiaoAdministrativa = @Regiao
+		GROUP BY
+			LOJ.IDLoja
+		,	CONVERT(VARCHAR, LOJ.cdLoja) + ' - ' + LOJ.nmLoja
+		,	LOJ.cdLoja
+		order by codLoja
+	END</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IDLoja">
+        <DataField>IDLoja</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="DescLoja">
+        <DataField>DescLoja</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="codLoja">
+        <DataField>codLoja</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

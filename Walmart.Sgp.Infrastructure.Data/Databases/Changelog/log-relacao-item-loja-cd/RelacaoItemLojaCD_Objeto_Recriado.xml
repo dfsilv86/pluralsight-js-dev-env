@@ -1,0 +1,99 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-RelacaoItemLojaCDLog-Objeto-recriado" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				DROP TABLE RelacaoItemLojaCDLog;
+				~
+								
+				CREATE TABLE RelacaoItemLojaCDLog (
+					IdAuditRecord INT IDENTITY(1,1) NOT NULL,
+					IDCD INT NOT NULL,
+					IDLoja INT NOT NULL,
+					IDItemDetalheSaida BIGINT NOT NULL,
+					IDItemDetalheEntradaAnterior BIGINT NULL,
+					IDItemDetalheEntradaNovo BIGINT NULL,
+					IdAuditUser INT NOT NULL,
+					IDLogTipoProcesso INT NOT NULL,
+					CdAuditKind INT NOT NULL,
+					cdCrossRefAnterior VARCHAR(50) NULL,
+					cdCrossRefNovo VARCHAR(50) NULL,
+					DhAuditStamp DATETIME NOT NULL,
+					vlTipoReabastecimento SMALLINT NULL,
+					Observacao VARCHAR(150)
+				);
+				~
+				
+				ALTER TABLE RelacaoItemLojaCDLog 
+					ADD CONSTRAINT PK_RelacaoItemLojaCDLog 
+					PRIMARY KEY (IdAuditRecord);
+				~
+					
+				ALTER TABLE RelacaoItemLojaCDLog
+					ADD CONSTRAINT CK_RelacaoItemLojaCDLog_CdAuditKind
+					CHECK (CdAuditKind BETWEEN 1 AND 3);	
+				~				
+				
+				CREATE INDEX IX_RelacaoItemLojaCDLog_IDCD
+					ON RelacaoItemLojaCDLog(IDCD);
+				~
+					
+				CREATE INDEX IX_RelacaoItemLojaCDLog_IDLoja 
+					ON RelacaoItemLojaCDLog(IDLoja);
+				~
+					
+				CREATE INDEX IX_RelacaoItemLojaCDLog_IDItemDetalheSaida 
+					ON RelacaoItemLojaCDLog(IDItemDetalheSaida);
+				~
+				
+				CREATE INDEX IX_RelacaoItemLojaCDLog_IDItemDetalheEntradaAnterior 
+					ON RelacaoItemLojaCDLog(IDItemDetalheEntradaAnterior);
+				~
+					
+				CREATE INDEX IX_RelacaoItemLojaCDLog_IDItemDetalheEntradaNovo 
+					ON RelacaoItemLojaCDLog(IDItemDetalheEntradaNovo);
+				~
+					
+				CREATE INDEX IX_RelacaoItemLojaCDLog_IDLogTipoProcesso 
+					ON RelacaoItemLojaCDLog(IDLogTipoProcesso);
+				~
+					
+				CREATE INDEX IX_RelacaoItemLojaCDLog_CdAuditKind 
+					ON RelacaoItemLojaCDLog(CdAuditKind);
+				~
+					
+				CREATE INDEX IX_RelacaoItemLojaCDLog_DhAuditStamp 
+					ON RelacaoItemLojaCDLog(DhAuditStamp);	
+				~
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+
+				DROP TABLE RelacaoItemLojaCDLog;
+				~
+				
+				CREATE TABLE [dbo].[RelacaoItemLojaCDLog](
+					[IdAuditRecord] [int] IDENTITY(1,1) NOT NULL,
+					[IdAuditUser] [int] NOT NULL,
+					[DhAuditStamp] [datetime] NOT NULL,
+					[CdAuditKind] [int] NOT NULL,
+					[IDRelacaoItemLojaCD] [int] NOT NULL,
+					[idItemEntrada] [bigint] NULL,
+				PRIMARY KEY CLUSTERED 
+				(
+					[IdAuditRecord] ASC
+				)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON, FILLFACTOR = 90) ON [PRIMARY]
+				) ON [PRIMARY];
+				~
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,110 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateManutencaoAlcadaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="manutencao">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                        <button class="btn btn-primary" ng-click="save()" security-action="Alcada.Salvar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'profileCode'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.idPerfil}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'profileName'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.papel.name}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'changeSuggestion'|translate|capitalize}}" line-width="6">
+                        <boolean-radio name="blAlterarSugestao" ng-model="data.blAlterarSugestao" ng-change="marcouAlterarSugestao()"></boolean-radio>
+                    </form-field>
+                    <form-field title="{{::'changeStockInformations'|translate|capitalize}}" line-width="6">
+                        <boolean-radio name="blAlterarInformacaoEstoque" ng-model="data.blAlterarInformacaoEstoque" ng-disabled="!data.blAlterarSugestao"></boolean-radio>
+                    </form-field>
+                    <form-field title="{{::'allowChangePercentage'|translate|capitalize}}" line-width="6">
+                        <boolean-radio name="blAlterarPercentual" ng-model="data.blAlterarPercentual" ng-disabled="!data.blAlterarSugestao"></boolean-radio>
+                    </form-field>
+                    <form-field title="{{::'vlPercentualAlterado'|translate|capitalize}}" line-width="6">
+                        <input name="vlPercentualAlterado" type="text" ng-model="data.vlPercentualAlterado" number ui-number-mask="2" maxlength="12" min="0.01" data-validation-key-min="greaterThanZero" class="form-control" ng-disabled="!data.blAlterarPercentual" ng-required="data.blAlterarPercentual" />
+                    </form-field>
+                    <form-field title="{{::'allowResetItem'|translate|capitalize}}" line-width="6">
+                        <boolean-radio name="blZerarItem" ng-model="data.blZerarItem" ng-disabled="!data.blAlterarSugestao"></boolean-radio>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget title="{{::'alcadaManagementDetails'|translate|capitalize}}">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="manutencaoDetalhes">
+                <div class="form-group">
+                    <form-field title="{{::'region'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <dropdown-regiao-administrativa ng-model="filters.idRegiaoAdministrativa" item-out="filters.regiaoAdministrativa" show-select="true" ng-disabled="filters.bloquearCampos"></dropdown-regiao-administrativa>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <dropdown-bandeira ng-model="filters.idBandeira" permite-busca-por-regiao="true" sistema="filters.cdSistema" regiao-administrativa="filters.idRegiaoAdministrativa" item-out="filters.bandeira" show-select="true" ng-disabled="filters.bloquearCampos"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <lookup-departamento name="department" ng-model="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.departamento" modo-pereciveis="restrito" ng-disabled="filters.bloquearCampos"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'changedVlPercentual'|translate|capitalize}}" line-width="3" grid-width="10">
+                        <input name="vlPercentualAlteradoDetalhado" type="text" ng-model="filters.vlPercentualAlteradoDetalhado" number ui-number-mask="2" maxlength="12" min="0.01" data-validation-key-min="greaterThanZero" class="form-control input-width-small" />
+                    </form-field>
+                    <div>
+                        <button class="btn btn-primary" ng-if="!filters.atualizando" ng-click="inserir()" ng-disabled="!camposPreenchidos()" title="{{::'add'|translate|capitalize}}">
+                            <i class="glyphicon glyphicon-plus" />
+                        </button>
+                        <button class="btn btn-primary" ng-if="filters.atualizando" ng-click="atualizar()" title="{{::'refresh'|translate|capitalize}}" ng-disabled="filters.vlPercentualAlteradoDetalhado == null">
+                            <i class="glyphicon glyphicon-ok" />
+                        </button> 
+                        <button class="btn btn-danger" ng-disabled="!filters.atualizando" ng-click="remover()" title="{{::'remove'|translate|capitalize}}">
+                            <i class="glyphicon glyphicon-minus" />
+                        </button>
+                        <button class="btn btn-default" ng-click="limparEdesemarcar()" title="{{::'clear'|translate|capitalize}}">
+                            <i class="glyphicon glyphicon-erase" />
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <!-- TODO: componente de grid -->
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier"><input type="checkbox" name="checkAll" ng-click="selecionarTodos(filters.marcouTodos)" ng-model="filters.marcouTodos" /></th>
+                            <th ng-click="orderBy('dsRegiaoAdministrativa')">{{::'region'|translate}} <sort-indicator ng-model="data.detalhe" name="dsRegiaoAdministrativa"></sort-indicator></th>
+                            <th ng-click="orderBy('dsBandeira')">{{::'chain'|translate}} <sort-indicator ng-model="data.detalhe" name="dsBandeira"></sort-indicator></th>
+                            <th ng-click="orderBy('cdDepartamento')">{{::'department'|translate}} <sort-indicator ng-model="data.detalhe" name="cdDepartamento"></sort-indicator></th>
+                            <th ng-click="orderBy('vlPercentualAlterado')">{{::'changedVlPercentual'|translate}} <sort-indicator ng-model="data.detalhe" name="vlPercentualAlterado"></sort-indicator></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.alcadaDetalhePaginado && data.alcadaDetalhePaginado.length > 0">
+                        <tr ng-repeat="item in data.alcadaDetalhePaginado">
+                            <td class="identifier">
+                                <input type="checkbox" ng-model="item.selecionado" ng-change="selecionou(item)" />
+                            </td>
+                            <td>{{item.regiaoAdministrativa.dsRegiaoAdministrativa}}</td>
+                            <td>{{item.bandeira.dsBandeira}}</td>
+                            <td>{{item.departamento.cdDepartamento + ' - ' + item.departamento.dsDepartamento}}</td>
+                            <td class="number">{{item.vlPercentualAlterado|number: 2}}%</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.alcadaDetalhePaginado || data.alcadaDetalhePaginado.length === 0">
+                        <tr>
+                            <td colspan="5" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.alcadaDetalhePaginado" page-method="applyPagingInMemory" settings="data.alcadaDetalhePaginado"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

@@ -1,0 +1,1681 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://wal-mart.com/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://wal-mart.com/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://wal-mart.com/">
+      <s:element name="ValidarAcesso">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoPerfil" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ValidarAcessoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ValidarAcessoResult" type="tns:Status" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="Status">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="CodigoRetorno" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Retorno" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="AlterarSenha">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="novaSenha" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="AlterarSenhaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="AlterarSenhaResult" type="tns:Status" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterUsuario">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterUsuarioResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterUsuarioResult" type="tns:UsuarioResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="UsuarioResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Usuario" type="tns:UsuarioTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="UsuarioTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Login" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Senha" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Nome" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Departamento" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Cargo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Telefone_Res" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Telefone_Com" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Telefone_Cel" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Email" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Ramal" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="WebPage" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Pais" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Endereco" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Bairro" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Cidade" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Estado" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="CEP" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Locado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Categoria" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_Inclusao" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_Expiracao_Senha" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:enStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="Qtd_Tentativas_Login" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Chapa" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_EfetivaInicio" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_EfetivaTermino" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Fornecedor" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Unidade_Negocio" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo_Loja" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="CPF" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="enStatus">
+        <s:restriction base="s:string">
+          <s:enumeration value="stAtivo" />
+          <s:enumeration value="stInativo" />
+          <s:enumeration value="stCancelado" />
+          <s:enumeration value="stSenhaExpirada" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="ObterAplicacao">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterAplicacaoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterAplicacaoResult" type="tns:AplicacaoResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AplicacaoResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Aplicacao" type="tns:AplicacaoTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="AplicacaoTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Cd_Sigla" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Nome" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Descricao" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Versao" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Icone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Url_css" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Prioridade" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Usuario_Coordenador" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_Inclusao" nillable="true" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:enStatus" />
+          <s:element minOccurs="0" maxOccurs="1" name="Url" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterAplicacoes">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="apenasAtivas" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterAplicacoesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterAplicacoesResult" type="tns:AplicacoesResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="AplicacoesResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Aplicacoes" type="tns:ArrayOfAplicacaoTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfAplicacaoTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="AplicacaoTO" nillable="true" type="tns:AplicacaoTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterUsuariosAplicacao">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterUsuariosAplicacaoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterUsuariosAplicacaoResult" type="tns:UsuariosAplicacaoResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="UsuariosAplicacaoResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Usuarios" type="tns:ArrayOfUsuarioTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfUsuarioTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="UsuarioTO" nillable="true" type="tns:UsuarioTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterPerfisUsuario">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPerfisUsuarioResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterPerfisUsuarioResult" type="tns:PerfisResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PerfisResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Perfis" type="tns:ArrayOfPerfilTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfPerfilTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="PerfilTO" nillable="true" type="tns:PerfilTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PerfilTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Nome" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Descricao" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="TimeOut" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_Inclusao" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:enStatus" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterPerfisOutroUsuario">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="loginProcurado" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPerfisOutroUsuarioResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterPerfisOutroUsuarioResult" type="tns:PerfisResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPerfisAplicacao">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPerfisAplicacaoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterPerfisAplicacaoResult" type="tns:PerfisResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPerfil">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="codigoPerfil" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPerfilResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterPerfilResult" type="tns:PerfilResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PerfilResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Perfil" type="tns:PerfilTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterFormulario">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoFormulario" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterFormularioResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterFormularioResult" type="tns:FormularioResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="FormularioResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Formulario" type="tns:FormularioTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="FormularioTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Nome" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Descricao" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:enStatus" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_Inclusao" type="s:dateTime" />
+          <s:element minOccurs="0" maxOccurs="1" name="Eventos" type="tns:ArrayOfEventoTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Menus" type="tns:ArrayOfMenuTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfEventoTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="EventoTO" nillable="true" type="tns:EventoTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="EventoTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Nome" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Descricao" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Icone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Url" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Image" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Target" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_Inclusao" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:enStatus" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfMenuTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="MenuTO" nillable="true" type="tns:MenuTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="MenuTO">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Nome" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Descricao" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Icone" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Url" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Image" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Target" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CodigoMenuPai" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="CodigoMenuFilho" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Posicao" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="IconeHot" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="IconeDesativado" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Codigo_Formulario_Filho" nillable="true" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="Dt_Inclusao" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:enStatus" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterFormulariosAplicacao">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterFormulariosAplicacaoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterFormulariosAplicacaoResult" type="tns:FormulariosAplicacaoResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="FormulariosAplicacaoResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Formularios" type="tns:ArrayOfFormularioTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfFormularioTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="FormularioTO" nillable="true" type="tns:FormularioTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterMenusAplicacao">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterMenusAplicacaoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterMenusAplicacaoResult" type="tns:MenusAplicacaoResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="MenusAplicacaoResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Menus" type="tns:ArrayOfMenuTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterEventosAplicacao">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterEventosAplicacaoResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterEventosAplicacaoResult" type="tns:EventosAplicacaoResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="EventosAplicacaoResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Eventos" type="tns:ArrayOfEventoTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterPermissoesPerfil">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoPerfil" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPermissoesPerfilResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterPermissoesPerfilResult" type="tns:PermissoesResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="PermissoesResultado">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Permissoes" type="tns:PermissoesTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Status" type="tns:Status" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="PermissoesTO">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Perfil" type="tns:PerfilTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Eventos" type="tns:ArrayOfEventoTO" />
+          <s:element minOccurs="0" maxOccurs="1" name="Menus" type="tns:ArrayOfMenuTO" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="ObterPermissoesPerfilFormulario">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="login" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="senha" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoPerfil" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoFormulario" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="codigoAplicacao" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="ObterPermissoesPerfilFormularioResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="ObterPermissoesPerfilFormularioResult" type="tns:PermissoesResultado" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Status" nillable="true" type="tns:Status" />
+      <s:element name="UsuarioResultado" nillable="true" type="tns:UsuarioResultado" />
+      <s:element name="AplicacaoResultado" nillable="true" type="tns:AplicacaoResultado" />
+      <s:element name="AplicacoesResultado" nillable="true" type="tns:AplicacoesResultado" />
+      <s:element name="UsuariosAplicacaoResultado" nillable="true" type="tns:UsuariosAplicacaoResultado" />
+      <s:element name="PerfisResultado" nillable="true" type="tns:PerfisResultado" />
+      <s:element name="PerfilResultado" nillable="true" type="tns:PerfilResultado" />
+      <s:element name="FormularioResultado" nillable="true" type="tns:FormularioResultado" />
+      <s:element name="FormulariosAplicacaoResultado" nillable="true" type="tns:FormulariosAplicacaoResultado" />
+      <s:element name="MenusAplicacaoResultado" nillable="true" type="tns:MenusAplicacaoResultado" />
+      <s:element name="EventosAplicacaoResultado" nillable="true" type="tns:EventosAplicacaoResultado" />
+      <s:element name="PermissoesResultado" nillable="true" type="tns:PermissoesResultado" />
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="ValidarAcessoSoapIn">
+    <wsdl:part name="parameters" element="tns:ValidarAcesso" />
+  </wsdl:message>
+  <wsdl:message name="ValidarAcessoSoapOut">
+    <wsdl:part name="parameters" element="tns:ValidarAcessoResponse" />
+  </wsdl:message>
+  <wsdl:message name="AlterarSenhaSoapIn">
+    <wsdl:part name="parameters" element="tns:AlterarSenha" />
+  </wsdl:message>
+  <wsdl:message name="AlterarSenhaSoapOut">
+    <wsdl:part name="parameters" element="tns:AlterarSenhaResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuarioSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterUsuario" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuarioSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterUsuarioResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacaoSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterAplicacao" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacaoSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterAplicacaoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacoesSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterAplicacoes" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacoesSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterAplicacoesResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuariosAplicacaoSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterUsuariosAplicacao" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuariosAplicacaoSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterUsuariosAplicacaoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisUsuarioSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterPerfisUsuario" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisUsuarioSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterPerfisUsuarioResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisOutroUsuarioSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterPerfisOutroUsuario" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisOutroUsuarioSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterPerfisOutroUsuarioResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisAplicacaoSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterPerfisAplicacao" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisAplicacaoSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterPerfisAplicacaoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfilSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterPerfil" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfilSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterPerfilResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormularioSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterFormulario" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormularioSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterFormularioResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormulariosAplicacaoSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterFormulariosAplicacao" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormulariosAplicacaoSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterFormulariosAplicacaoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterMenusAplicacaoSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterMenusAplicacao" />
+  </wsdl:message>
+  <wsdl:message name="ObterMenusAplicacaoSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterMenusAplicacaoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterEventosAplicacaoSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterEventosAplicacao" />
+  </wsdl:message>
+  <wsdl:message name="ObterEventosAplicacaoSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterEventosAplicacaoResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterPermissoesPerfil" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterPermissoesPerfilResponse" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilFormularioSoapIn">
+    <wsdl:part name="parameters" element="tns:ObterPermissoesPerfilFormulario" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilFormularioSoapOut">
+    <wsdl:part name="parameters" element="tns:ObterPermissoesPerfilFormularioResponse" />
+  </wsdl:message>
+  <wsdl:message name="ValidarAcessoHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoPerfil" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidarAcessoHttpGetOut">
+    <wsdl:part name="Body" element="tns:Status" />
+  </wsdl:message>
+  <wsdl:message name="AlterarSenhaHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="novaSenha" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="AlterarSenhaHttpGetOut">
+    <wsdl:part name="Body" element="tns:Status" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuarioHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuarioHttpGetOut">
+    <wsdl:part name="Body" element="tns:UsuarioResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacaoHttpGetIn">
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacaoHttpGetOut">
+    <wsdl:part name="Body" element="tns:AplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacoesHttpGetIn">
+    <wsdl:part name="apenasAtivas" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacoesHttpGetOut">
+    <wsdl:part name="Body" element="tns:AplicacoesResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuariosAplicacaoHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuariosAplicacaoHttpGetOut">
+    <wsdl:part name="Body" element="tns:UsuariosAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisUsuarioHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisUsuarioHttpGetOut">
+    <wsdl:part name="Body" element="tns:PerfisResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisOutroUsuarioHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="loginProcurado" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisOutroUsuarioHttpGetOut">
+    <wsdl:part name="Body" element="tns:PerfisResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisAplicacaoHttpGetIn">
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisAplicacaoHttpGetOut">
+    <wsdl:part name="Body" element="tns:PerfisResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfilHttpGetIn">
+    <wsdl:part name="codigoPerfil" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfilHttpGetOut">
+    <wsdl:part name="Body" element="tns:PerfilResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormularioHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoFormulario" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormularioHttpGetOut">
+    <wsdl:part name="Body" element="tns:FormularioResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormulariosAplicacaoHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormulariosAplicacaoHttpGetOut">
+    <wsdl:part name="Body" element="tns:FormulariosAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterMenusAplicacaoHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterMenusAplicacaoHttpGetOut">
+    <wsdl:part name="Body" element="tns:MenusAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterEventosAplicacaoHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterEventosAplicacaoHttpGetOut">
+    <wsdl:part name="Body" element="tns:EventosAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoPerfil" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilHttpGetOut">
+    <wsdl:part name="Body" element="tns:PermissoesResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilFormularioHttpGetIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoPerfil" type="s:string" />
+    <wsdl:part name="codigoFormulario" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilFormularioHttpGetOut">
+    <wsdl:part name="Body" element="tns:PermissoesResultado" />
+  </wsdl:message>
+  <wsdl:message name="ValidarAcessoHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoPerfil" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ValidarAcessoHttpPostOut">
+    <wsdl:part name="Body" element="tns:Status" />
+  </wsdl:message>
+  <wsdl:message name="AlterarSenhaHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="novaSenha" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="AlterarSenhaHttpPostOut">
+    <wsdl:part name="Body" element="tns:Status" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuarioHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuarioHttpPostOut">
+    <wsdl:part name="Body" element="tns:UsuarioResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacaoHttpPostIn">
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacaoHttpPostOut">
+    <wsdl:part name="Body" element="tns:AplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacoesHttpPostIn">
+    <wsdl:part name="apenasAtivas" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterAplicacoesHttpPostOut">
+    <wsdl:part name="Body" element="tns:AplicacoesResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuariosAplicacaoHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterUsuariosAplicacaoHttpPostOut">
+    <wsdl:part name="Body" element="tns:UsuariosAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisUsuarioHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisUsuarioHttpPostOut">
+    <wsdl:part name="Body" element="tns:PerfisResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisOutroUsuarioHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="loginProcurado" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisOutroUsuarioHttpPostOut">
+    <wsdl:part name="Body" element="tns:PerfisResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisAplicacaoHttpPostIn">
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfisAplicacaoHttpPostOut">
+    <wsdl:part name="Body" element="tns:PerfisResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfilHttpPostIn">
+    <wsdl:part name="codigoPerfil" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPerfilHttpPostOut">
+    <wsdl:part name="Body" element="tns:PerfilResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormularioHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoFormulario" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormularioHttpPostOut">
+    <wsdl:part name="Body" element="tns:FormularioResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormulariosAplicacaoHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterFormulariosAplicacaoHttpPostOut">
+    <wsdl:part name="Body" element="tns:FormulariosAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterMenusAplicacaoHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterMenusAplicacaoHttpPostOut">
+    <wsdl:part name="Body" element="tns:MenusAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterEventosAplicacaoHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterEventosAplicacaoHttpPostOut">
+    <wsdl:part name="Body" element="tns:EventosAplicacaoResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoPerfil" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilHttpPostOut">
+    <wsdl:part name="Body" element="tns:PermissoesResultado" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilFormularioHttpPostIn">
+    <wsdl:part name="login" type="s:string" />
+    <wsdl:part name="senha" type="s:string" />
+    <wsdl:part name="codigoPerfil" type="s:string" />
+    <wsdl:part name="codigoFormulario" type="s:string" />
+    <wsdl:part name="codigoAplicacao" type="s:string" />
+  </wsdl:message>
+  <wsdl:message name="ObterPermissoesPerfilFormularioHttpPostOut">
+    <wsdl:part name="Body" element="tns:PermissoesResultado" />
+  </wsdl:message>
+  <wsdl:portType name="ServiceWebGuardianSoap">
+    <wsdl:operation name="ValidarAcesso">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Valida o acesso de um usuário com um determinado perfil.</wsdl:documentation>
+      <wsdl:input message="tns:ValidarAcessoSoapIn" />
+      <wsdl:output message="tns:ValidarAcessoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AlterarSenha">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite alterar a senha de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:AlterarSenhaSoapIn" />
+      <wsdl:output message="tns:AlterarSenhaSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterUsuarioSoapIn" />
+      <wsdl:output message="tns:ObterUsuarioSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterAplicacaoSoapIn" />
+      <wsdl:output message="tns:ObterAplicacaoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacoes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as aplicações.</wsdl:documentation>
+      <wsdl:input message="tns:ObterAplicacoesSoapIn" />
+      <wsdl:output message="tns:ObterAplicacoesSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuariosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados dos usuário de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterUsuariosAplicacaoSoapIn" />
+      <wsdl:output message="tns:ObterUsuariosAplicacaoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisUsuarioSoapIn" />
+      <wsdl:output message="tns:ObterPerfisUsuarioSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisOutroUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de outro usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisOutroUsuarioSoapIn" />
+      <wsdl:output message="tns:ObterPerfisOutroUsuarioSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisAplicacaoSoapIn" />
+      <wsdl:output message="tns:ObterPerfisAplicacaoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfil">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter um perfil.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfilSoapIn" />
+      <wsdl:output message="tns:ObterPerfilSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de um formulário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterFormularioSoapIn" />
+      <wsdl:output message="tns:ObterFormularioSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulariosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os formulários de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterFormulariosAplicacaoSoapIn" />
+      <wsdl:output message="tns:ObterFormulariosAplicacaoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterMenusAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os eventos de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterMenusAplicacaoSoapIn" />
+      <wsdl:output message="tns:ObterMenusAplicacaoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterEventosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os eventos de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterEventosAplicacaoSoapIn" />
+      <wsdl:output message="tns:ObterEventosAplicacaoSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfil">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as permissões de eventos e menus que o perfil possui.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPermissoesPerfilSoapIn" />
+      <wsdl:output message="tns:ObterPermissoesPerfilSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfilFormulario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as permissões de eventos e menus que o perfil possui no formulário informado.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPermissoesPerfilFormularioSoapIn" />
+      <wsdl:output message="tns:ObterPermissoesPerfilFormularioSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ServiceWebGuardianHttpGet">
+    <wsdl:operation name="ValidarAcesso">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Valida o acesso de um usuário com um determinado perfil.</wsdl:documentation>
+      <wsdl:input message="tns:ValidarAcessoHttpGetIn" />
+      <wsdl:output message="tns:ValidarAcessoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AlterarSenha">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite alterar a senha de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:AlterarSenhaHttpGetIn" />
+      <wsdl:output message="tns:AlterarSenhaHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterUsuarioHttpGetIn" />
+      <wsdl:output message="tns:ObterUsuarioHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterAplicacaoHttpGetIn" />
+      <wsdl:output message="tns:ObterAplicacaoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacoes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as aplicações.</wsdl:documentation>
+      <wsdl:input message="tns:ObterAplicacoesHttpGetIn" />
+      <wsdl:output message="tns:ObterAplicacoesHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuariosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados dos usuário de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterUsuariosAplicacaoHttpGetIn" />
+      <wsdl:output message="tns:ObterUsuariosAplicacaoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisUsuarioHttpGetIn" />
+      <wsdl:output message="tns:ObterPerfisUsuarioHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisOutroUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de outro usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisOutroUsuarioHttpGetIn" />
+      <wsdl:output message="tns:ObterPerfisOutroUsuarioHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisAplicacaoHttpGetIn" />
+      <wsdl:output message="tns:ObterPerfisAplicacaoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfil">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter um perfil.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfilHttpGetIn" />
+      <wsdl:output message="tns:ObterPerfilHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de um formulário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterFormularioHttpGetIn" />
+      <wsdl:output message="tns:ObterFormularioHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulariosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os formulários de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterFormulariosAplicacaoHttpGetIn" />
+      <wsdl:output message="tns:ObterFormulariosAplicacaoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterMenusAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os eventos de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterMenusAplicacaoHttpGetIn" />
+      <wsdl:output message="tns:ObterMenusAplicacaoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterEventosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os eventos de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterEventosAplicacaoHttpGetIn" />
+      <wsdl:output message="tns:ObterEventosAplicacaoHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfil">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as permissões de eventos e menus que o perfil possui.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPermissoesPerfilHttpGetIn" />
+      <wsdl:output message="tns:ObterPermissoesPerfilHttpGetOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfilFormulario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as permissões de eventos e menus que o perfil possui no formulário informado.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPermissoesPerfilFormularioHttpGetIn" />
+      <wsdl:output message="tns:ObterPermissoesPerfilFormularioHttpGetOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ServiceWebGuardianHttpPost">
+    <wsdl:operation name="ValidarAcesso">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Valida o acesso de um usuário com um determinado perfil.</wsdl:documentation>
+      <wsdl:input message="tns:ValidarAcessoHttpPostIn" />
+      <wsdl:output message="tns:ValidarAcessoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="AlterarSenha">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite alterar a senha de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:AlterarSenhaHttpPostIn" />
+      <wsdl:output message="tns:AlterarSenhaHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterUsuarioHttpPostIn" />
+      <wsdl:output message="tns:ObterUsuarioHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterAplicacaoHttpPostIn" />
+      <wsdl:output message="tns:ObterAplicacaoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacoes">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as aplicações.</wsdl:documentation>
+      <wsdl:input message="tns:ObterAplicacoesHttpPostIn" />
+      <wsdl:output message="tns:ObterAplicacoesHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuariosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados dos usuário de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterUsuariosAplicacaoHttpPostIn" />
+      <wsdl:output message="tns:ObterUsuariosAplicacaoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de um usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisUsuarioHttpPostIn" />
+      <wsdl:output message="tns:ObterPerfisUsuarioHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisOutroUsuario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de outro usuário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisOutroUsuarioHttpPostIn" />
+      <wsdl:output message="tns:ObterPerfisOutroUsuarioHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os perfis de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfisAplicacaoHttpPostIn" />
+      <wsdl:output message="tns:ObterPerfisAplicacaoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfil">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter um perfil.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPerfilHttpPostIn" />
+      <wsdl:output message="tns:ObterPerfilHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os dados de um formulário.</wsdl:documentation>
+      <wsdl:input message="tns:ObterFormularioHttpPostIn" />
+      <wsdl:output message="tns:ObterFormularioHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulariosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os formulários de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterFormulariosAplicacaoHttpPostIn" />
+      <wsdl:output message="tns:ObterFormulariosAplicacaoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterMenusAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os eventos de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterMenusAplicacaoHttpPostIn" />
+      <wsdl:output message="tns:ObterMenusAplicacaoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterEventosAplicacao">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter os eventos de uma aplicação.</wsdl:documentation>
+      <wsdl:input message="tns:ObterEventosAplicacaoHttpPostIn" />
+      <wsdl:output message="tns:ObterEventosAplicacaoHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfil">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as permissões de eventos e menus que o perfil possui.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPermissoesPerfilHttpPostIn" />
+      <wsdl:output message="tns:ObterPermissoesPerfilHttpPostOut" />
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfilFormulario">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Permite obter as permissões de eventos e menus que o perfil possui no formulário informado.</wsdl:documentation>
+      <wsdl:input message="tns:ObterPermissoesPerfilFormularioHttpPostIn" />
+      <wsdl:output message="tns:ObterPermissoesPerfilFormularioHttpPostOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ServiceWebGuardianSoap" type="tns:ServiceWebGuardianSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ValidarAcesso">
+      <soap:operation soapAction="http://wal-mart.com/ValidarAcesso" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AlterarSenha">
+      <soap:operation soapAction="http://wal-mart.com/AlterarSenha" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuario">
+      <soap:operation soapAction="http://wal-mart.com/ObterUsuario" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacao">
+      <soap:operation soapAction="http://wal-mart.com/ObterAplicacao" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacoes">
+      <soap:operation soapAction="http://wal-mart.com/ObterAplicacoes" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuariosAplicacao">
+      <soap:operation soapAction="http://wal-mart.com/ObterUsuariosAplicacao" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisUsuario">
+      <soap:operation soapAction="http://wal-mart.com/ObterPerfisUsuario" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisOutroUsuario">
+      <soap:operation soapAction="http://wal-mart.com/ObterPerfisOutroUsuario" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisAplicacao">
+      <soap:operation soapAction="http://wal-mart.com/ObterPerfisAplicacao" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfil">
+      <soap:operation soapAction="http://wal-mart.com/ObterPerfil" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulario">
+      <soap:operation soapAction="http://wal-mart.com/ObterFormulario" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulariosAplicacao">
+      <soap:operation soapAction="http://wal-mart.com/ObterFormulariosAplicacao" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterMenusAplicacao">
+      <soap:operation soapAction="http://wal-mart.com/ObterMenusAplicacao" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterEventosAplicacao">
+      <soap:operation soapAction="http://wal-mart.com/ObterEventosAplicacao" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfil">
+      <soap:operation soapAction="http://wal-mart.com/ObterPermissoesPerfil" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfilFormulario">
+      <soap:operation soapAction="http://wal-mart.com/ObterPermissoesPerfilFormulario" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceWebGuardianSoap12" type="tns:ServiceWebGuardianSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="ValidarAcesso">
+      <soap12:operation soapAction="http://wal-mart.com/ValidarAcesso" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AlterarSenha">
+      <soap12:operation soapAction="http://wal-mart.com/AlterarSenha" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuario">
+      <soap12:operation soapAction="http://wal-mart.com/ObterUsuario" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacao">
+      <soap12:operation soapAction="http://wal-mart.com/ObterAplicacao" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacoes">
+      <soap12:operation soapAction="http://wal-mart.com/ObterAplicacoes" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuariosAplicacao">
+      <soap12:operation soapAction="http://wal-mart.com/ObterUsuariosAplicacao" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisUsuario">
+      <soap12:operation soapAction="http://wal-mart.com/ObterPerfisUsuario" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisOutroUsuario">
+      <soap12:operation soapAction="http://wal-mart.com/ObterPerfisOutroUsuario" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisAplicacao">
+      <soap12:operation soapAction="http://wal-mart.com/ObterPerfisAplicacao" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfil">
+      <soap12:operation soapAction="http://wal-mart.com/ObterPerfil" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulario">
+      <soap12:operation soapAction="http://wal-mart.com/ObterFormulario" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulariosAplicacao">
+      <soap12:operation soapAction="http://wal-mart.com/ObterFormulariosAplicacao" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterMenusAplicacao">
+      <soap12:operation soapAction="http://wal-mart.com/ObterMenusAplicacao" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterEventosAplicacao">
+      <soap12:operation soapAction="http://wal-mart.com/ObterEventosAplicacao" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfil">
+      <soap12:operation soapAction="http://wal-mart.com/ObterPermissoesPerfil" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfilFormulario">
+      <soap12:operation soapAction="http://wal-mart.com/ObterPermissoesPerfilFormulario" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceWebGuardianHttpGet" type="tns:ServiceWebGuardianHttpGet">
+    <http:binding verb="GET" />
+    <wsdl:operation name="ValidarAcesso">
+      <http:operation location="/ValidarAcesso" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AlterarSenha">
+      <http:operation location="/AlterarSenha" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuario">
+      <http:operation location="/ObterUsuario" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacao">
+      <http:operation location="/ObterAplicacao" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacoes">
+      <http:operation location="/ObterAplicacoes" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuariosAplicacao">
+      <http:operation location="/ObterUsuariosAplicacao" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisUsuario">
+      <http:operation location="/ObterPerfisUsuario" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisOutroUsuario">
+      <http:operation location="/ObterPerfisOutroUsuario" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisAplicacao">
+      <http:operation location="/ObterPerfisAplicacao" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfil">
+      <http:operation location="/ObterPerfil" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulario">
+      <http:operation location="/ObterFormulario" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulariosAplicacao">
+      <http:operation location="/ObterFormulariosAplicacao" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterMenusAplicacao">
+      <http:operation location="/ObterMenusAplicacao" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterEventosAplicacao">
+      <http:operation location="/ObterEventosAplicacao" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfil">
+      <http:operation location="/ObterPermissoesPerfil" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfilFormulario">
+      <http:operation location="/ObterPermissoesPerfilFormulario" />
+      <wsdl:input>
+        <http:urlEncoded />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="ServiceWebGuardianHttpPost" type="tns:ServiceWebGuardianHttpPost">
+    <http:binding verb="POST" />
+    <wsdl:operation name="ValidarAcesso">
+      <http:operation location="/ValidarAcesso" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="AlterarSenha">
+      <http:operation location="/AlterarSenha" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuario">
+      <http:operation location="/ObterUsuario" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacao">
+      <http:operation location="/ObterAplicacao" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterAplicacoes">
+      <http:operation location="/ObterAplicacoes" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterUsuariosAplicacao">
+      <http:operation location="/ObterUsuariosAplicacao" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisUsuario">
+      <http:operation location="/ObterPerfisUsuario" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisOutroUsuario">
+      <http:operation location="/ObterPerfisOutroUsuario" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfisAplicacao">
+      <http:operation location="/ObterPerfisAplicacao" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPerfil">
+      <http:operation location="/ObterPerfil" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulario">
+      <http:operation location="/ObterFormulario" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterFormulariosAplicacao">
+      <http:operation location="/ObterFormulariosAplicacao" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterMenusAplicacao">
+      <http:operation location="/ObterMenusAplicacao" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterEventosAplicacao">
+      <http:operation location="/ObterEventosAplicacao" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfil">
+      <http:operation location="/ObterPermissoesPerfil" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="ObterPermissoesPerfilFormulario">
+      <http:operation location="/ObterPermissoesPerfilFormulario" />
+      <wsdl:input>
+        <mime:content type="application/x-www-form-urlencoded" />
+      </wsdl:input>
+      <wsdl:output>
+        <mime:mimeXml part="Body" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ServiceWebGuardian">
+    <wsdl:port name="ServiceWebGuardianSoap" binding="tns:ServiceWebGuardianSoap">
+      <soap:address location="http://labbrnts2598a/Walmart.WebGuardian.SOAP/servicewebguardian.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceWebGuardianSoap12" binding="tns:ServiceWebGuardianSoap12">
+      <soap12:address location="http://labbrnts2598a/Walmart.WebGuardian.SOAP/servicewebguardian.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceWebGuardianHttpGet" binding="tns:ServiceWebGuardianHttpGet">
+      <http:address location="http://labbrnts2598a/Walmart.WebGuardian.SOAP/servicewebguardian.asmx" />
+    </wsdl:port>
+    <wsdl:port name="ServiceWebGuardianHttpPost" binding="tns:ServiceWebGuardianHttpPost">
+      <http:address location="http://labbrnts2598a/Walmart.WebGuardian.SOAP/servicewebguardian.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

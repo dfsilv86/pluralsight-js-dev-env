@@ -1,0 +1,64 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="pesquisaFineLine">
+    <modal-breadcrumb title="{{::'fineLineSearch'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+            <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'marketingStruct'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-sistema ng-model="filters.cdSistema" required read-only></dropdown-sistema>
+        </form-field>
+        <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.departamento" ng-required="requiredOptions.departamento" description-width="medium"></lookup-departamento>
+        </form-field>
+        <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-categoria ng-model="filters.cdCategoria" sistema="filters.cdSistema" departamento="filters.cdDepartamento" item-out="filters.categoria" departamento-required="requiredOptions.departamento" description-width="medium"></lookup-categoria>
+        </form-field>
+        <form-field title="{{::'subcategory'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-subcategoria ng-model="filters.cdSubcategoria" sistema="filters.cdSistema" categoria="filters.cdCategoria" categoria-required="requiredOptions.categoria"  departamento="filters.cdDepartamento" departamento-required="requiredOptions.departamento" item-out="filters.categoria" description-width="medium"></lookup-subcategoria>
+        </form-field>
+        <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="cdFineLine" ng-model="filters.cdFineLine" number maxlength="4" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+        </form-field>
+        <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="dsFineLine" ng-model="filters.dsFineLine" maxlength="25" class="form-control input-width-medium" />
+        </form-field>
+    </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>{{::'fineLine'|translate|capitalize}}</th>
+                        <th>{{::'subcategory'|translate|capitalize}}</th>
+                        <th>{{::'category'|translate|capitalize}}</th>
+                        <th>{{::'department'|translate}}</th>
+                        <th>{{::'division'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values" ng-click="select(item)">
+                        <td>{{item|fineLineProfile}}</td>
+                        <td>{{item.subcategoria|subcategoryProfile}}</td>
+                        <td>{{item.subcategoria.categoria|categoryProfile}}</td>
+                        <td>{{item.subcategoria.categoria.departamento|departmentProfile}}</td>
+                        <td>{{item.subcategoria.categoria.departamento.divisao|divisionProfile}}</td>
+                    </tr>
+                    <tr ng-if="!data.values || data.values.length === 0">
+                        <td colspan="5" class="domain">{{::'noSubcategoryFound'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

@@ -1,0 +1,187 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-fnObterIdFornecedorParametroItem_2" author="mperuch">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+			
+			ALTER FUNCTION fnObterIdFornecedorParametroItem (@IdItem BIGINT)
+			RETURNS BIGINT
+			AS
+			BEGIN
+				
+				DECLARE @idItemDetalhe BIGINT
+					,@idFornecedor BIGINT
+					,@idFornecedorParametro BIGINT
+					,@cdV9D BIGINT
+					,@vlTipoReabastecimento INT
+					,@Canal CHAR(1)
+					,@idFornecedorParametroNovo BIGINT
+					,@cdItemDetalhe INT
+					,@cdDepartamento INT
+								
+				DECLARE curItemDetalhe CURSOR LOCAL
+				FOR
+				SELECT ID.idItemDetalhe
+					,ID.cdItem
+					,ID.idFornecedor
+					,ID.idFornecedorParametro
+					,CONVERT(VARCHAR, FR.cdfornecedor) + CONVERT(VARCHAR, DP.cddepartamento) + CONVERT(VARCHAR, ID.cdSequenciaVendor)
+					,ID.vlTipoReabastecimento
+					,DP.cddepartamento
+				FROM ItemDetalhe ID
+				JOIN Departamento DP
+					ON DP.IDDepartamento = ID.IDDepartamento
+				JOIN Fornecedor FR
+					ON FR.IDFornecedor = ID.IDFornecedor
+					AND FR.blAtivo = 1
+					--AND FR.stFornecedor = 'A'
+				WHERE ID.IDItemDetalhe = @IdItem
+
+				-- Ver mais critérios de seleção
+				OPEN curItemDetalhe
+
+				FETCH NEXT
+				FROM curItemDetalhe
+				INTO @idItemDetalhe
+					,@cdItemDetalhe
+					,@idFornecedor
+					,@idFornecedorParametro
+					,@cdV9D
+					,@vlTipoReabastecimento
+					,@cdDepartamento
+
+				SET @idFornecedorParametroNovo = NULL
+				SET @Canal = 'L'
+
+				SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+				FROM FornecedorParametro d
+				WHERE d.IDFornecedor = @idFornecedor
+					AND d.cdV9D = @cdV9D
+					AND d.cdTipo = @Canal
+				
+				IF @idFornecedorParametroNovo IS NULL
+				BEGIN
+					IF @vlTipoReabastecimento IN (20, 22, 40, 42, 43)
+						SET @Canal = 'W'
+
+					IF @vlTipoReabastecimento IN (3, 7, 37, 33)
+						SET @Canal = 'D'
+										
+					SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+					FROM FornecedorParametro d
+					WHERE d.IDFornecedor = @idFornecedor
+						AND d.cdV9D = @cdV9D
+						AND d.cdTipo = @Canal
+				END
+
+				IF @idFornecedorParametroNovo IS NULL
+				BEGIN
+					SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+					FROM FornecedorParametro d
+					WHERE d.IDFornecedor = @idFornecedor
+						AND d.cdV9D = @cdV9D
+				END
+
+				RETURN @idFornecedorParametroNovo
+
+			END
+				
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+				
+			ALTER FUNCTION fnObterIdFornecedorParametroItem (@IdItem BIGINT)
+			RETURNS BIGINT
+			AS
+			BEGIN
+				
+				DECLARE @idItemDetalhe BIGINT
+					,@idFornecedor BIGINT
+					,@idFornecedorParametro BIGINT
+					,@cdV9D BIGINT
+					,@vlTipoReabastecimento INT
+					,@Canal CHAR(1)
+					,@idFornecedorParametroNovo BIGINT
+					,@cdItemDetalhe INT
+					,@cdDepartamento INT
+								
+				DECLARE curItemDetalhe CURSOR LOCAL
+				FOR
+				SELECT ID.idItemDetalhe
+					,ID.cdItem
+					,ID.idFornecedor
+					,ID.idFornecedorParametro
+					,CONVERT(VARCHAR, FR.cdfornecedor) + CONVERT(VARCHAR, DP.cddepartamento) + CONVERT(VARCHAR, ID.cdSequenciaVendor)
+					,ID.vlTipoReabastecimento
+					,DP.cddepartamento
+				FROM ItemDetalhe ID
+				JOIN Departamento DP
+					ON DP.IDDepartamento = ID.IDDepartamento
+				JOIN Fornecedor FR
+					ON FR.IDFornecedor = ID.IDFornecedor
+					AND FR.blAtivo = 1
+					AND FR.stFornecedor = 'A'
+				WHERE ID.IDItemDetalhe = @IdItem
+
+				-- Ver mais critérios de seleção
+				OPEN curItemDetalhe
+
+				FETCH NEXT
+				FROM curItemDetalhe
+				INTO @idItemDetalhe
+					,@cdItemDetalhe
+					,@idFornecedor
+					,@idFornecedorParametro
+					,@cdV9D
+					,@vlTipoReabastecimento
+					,@cdDepartamento
+
+				SET @idFornecedorParametroNovo = NULL
+				SET @Canal = 'L'
+
+				SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+				FROM FornecedorParametro d
+				WHERE d.IDFornecedor = @idFornecedor
+					AND d.cdV9D = @cdV9D
+					AND d.cdTipo = @Canal
+				
+				IF @idFornecedorParametroNovo IS NULL
+				BEGIN
+					IF @vlTipoReabastecimento IN (20, 22, 40, 42, 43)
+						SET @Canal = 'W'
+
+					IF @vlTipoReabastecimento IN (3, 7, 37, 33)
+						SET @Canal = 'D'
+										
+					SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+					FROM FornecedorParametro d
+					WHERE d.IDFornecedor = @idFornecedor
+						AND d.cdV9D = @cdV9D
+						AND d.cdTipo = @Canal
+				END
+
+				IF @idFornecedorParametroNovo IS NULL
+				BEGIN
+					SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+					FROM FornecedorParametro d
+					WHERE d.IDFornecedor = @idFornecedor
+						AND d.cdV9D = @cdV9D
+				END
+
+				RETURN @idFornecedorParametroNovo
+
+			END
+				
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

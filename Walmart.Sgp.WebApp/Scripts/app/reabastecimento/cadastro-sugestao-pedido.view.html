@@ -1,0 +1,106 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateCadastroSugestaoPedidoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="save()" ng-disabled="!canSave()" security-action="SugestaoPedido.AlterarSugestoes"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-default" ng-click="logs()"><i class="glyphicon glyphicon-list-alt" /> &nbsp; {{::'logs'|translate}}</button>
+                        <button class="btn btn-default" ng-click="recalcular()" ng-disabled="!podeRecalcular()" security-action="SugestaoPedido.Recalcular"><i class="glyphicon glyphicon-tags" /> &nbsp; {{::'recalculate'|translate}}</button>
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.loja|storeProfile}}" class="form-control look-alive input-width-xlarge" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'pack'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.qtVendorPackage|number:0}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'fineLine'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.itemDetalheSugestao.fineLine|fineLineProfile}}" class="form-control look-alive input-width-xlarge" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'weight'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.pesoLiquidoOuBruto|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'item'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.itemDetalheSugestao|itemProfile}}" class="form-control look-alive input-width-xlarge" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'shelfLife'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlShelfLife|number:0}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'orderDate'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.dtPedido|amDateFormat:'DD/MM/YYYY'}}" class="form-control look-alive input-width-small" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'originalStock'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlEstoqueOriginal|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'reviewDateOrLeadTimeSource'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.origemDadosCalculo.dsOrigem}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'openOrders'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlTotalPedidosAberto|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'reviewDate'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.cdReviewDate | cdReviewDate}}" class="form-control look-alive input-width-xlarge" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'pipeline'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlPipeline|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'week'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.tpWeek | fixedValue:'tipoSemana'}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'forecastAverage'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlForecastMedio|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'interval'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.tpInterval | fixedValue:'tipoIntervalo'}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'forecastValue'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlForecast|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'nextReviewDate'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.dtProximoReviewDate|amDateFormat:'DD/MM/YYYY'|emptyDefault}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'safeStockValue'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlEstoqueSeguranca|number:0}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'leadTime'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlLeadTime|number:0}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'safeStockAmount'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlEstoqueSegurancaQtd|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'salesForecastInterval'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.dtInicioForecast|amDateFormat:'DD/MM/YYYY'|emptyDefault}}" class="form-control look-alive input-width-small pull-left" readonly="readonly" />
+                        <span class="pull-left" style="margin: 7px 8px 0px">a</span>
+                        <input type="text" value="{{data.item.dtFimForecast|amDateFormat:'DD/MM/YYYY'|emptyDefault}}" class="form-control look-alive input-width-small pull-left" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'suggestedOrder'|translate|capitalize:true}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlSugestaoPedido|number:3}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'leadTimeValue'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlLeadTimeReal|number:0}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'suggestedPackOrWeight'|translate|capitalize:true}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlPackSugerido1|number:0}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'calculationSource'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.cdOrigemCalculo|fixedValue:'tipoOrigemSugestao'}}" class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'stockDaysQty'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" value="{{data.item.vlQtdDiasEstoque|number:3}}" clas class="form-control look-alive input-width-medium" readonly="readonly" />
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'informedStock'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.item.vlEstoque" class="form-control input-width-medium" required ng-disabled="data.item.cdOrigemCalculo != 'S' || !data.item.possuiAlcada || data.item.blReturnSheet" ui-number-mask="3" maxlength="14" ui-negative-number />
+                    </form-field>
+                    <form-field title="{{::'requestedPackOrWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.item.qtdPackCompra" class="form-control input-width-medium" required ng-disabled="(!data.item.blAlterarPercentual && !data.item.blZerarItem) || !data.item.possuiAlcada || data.item.blReturnSheet" ui-number-mask="0" min="0" max="99999" ng-change="quantidadeAlterada()" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

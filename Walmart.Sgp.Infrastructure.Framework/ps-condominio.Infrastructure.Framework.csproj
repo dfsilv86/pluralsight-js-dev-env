@@ -1,0 +1,287 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3D0D3692-E5FA-42A6-85AF-4779F580EEB6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Walmart.Sgp.Infrastructure.Framework</RootNamespace>
+    <AssemblyName>Walmart.Sgp.Infrastructure.Framework</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEV|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEV</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SIT|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\SIT\</OutputPath>
+    <DefineConstants>TRACE;SIT</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\SIT\Walmart.Sgp.Infrastructure.Framework.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\CI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CI;CODE_ANALYSIS</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\CI\Walmart.Sgp.Infrastructure.Framework.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TST\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TST</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\TST\Walmart.Sgp.Infrastructure.Framework.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TSTAUTOMACAO|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TSTAUTOMACAO\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TSTAUTOMACAO</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\TSTAUTOMACAO\Walmart.Sgp.Infrastructure.Framework.XML</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEVCWI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DEVCWI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEV;DEVCWI</DefineConstants>
+    <DocumentationFile>bin\Debug\Walmart.Sgp.Infrastructure.Framework.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PRD|AnyCPU'">
+    <OutputPath>bin\PRD\</OutputPath>
+    <DefineConstants>TRACE;SIT</DefineConstants>
+    <DocumentationFile>bin\SIT\Walmart.Sgp.Infrastructure.Framework.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>TRACE;SIT</DefineConstants>
+    <DocumentationFile>bin\SIT\Walmart.Sgp.Infrastructure.Framework.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Linq.Dynamic, Version=1.0.5840.25917, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Linq.Dynamic.1.0.6\lib\net40\System.Linq.Dynamic.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commons\RangeValue.cs" />
+    <Compile Include="Commons\UserInvalidOperationException.cs" />
+    <Compile Include="Domain\AuditExtensions.cs" />
+    <Compile Include="Domain\AuditFilter.cs" />
+    <Compile Include="Domain\AuditUser.cs" />
+    <Compile Include="Domain\IAuditStrategy.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Globalization\Texts.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Texts.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Net\IMailClient.cs" />
+    <Compile Include="Net\IMailService.cs" />
+    <Compile Include="Net\SmtpService.cs" />
+    <Compile Include="Net\StmpConfiguration.cs" />
+    <Compile Include="Processing\InputItem.cs" />
+    <Compile Include="Processing\IProcessingContext.cs" />
+    <Compile Include="Processing\IProcessOrderServiceGateway.cs" />
+    <Compile Include="Processing\IProcessOrderArgumentGateway.cs" />
+    <Compile Include="Processing\DeserializedCollectionInfo.cs" />
+    <Compile Include="Processing\MemoryProcessingContext.cs" />
+    <Compile Include="Processing\ProcessingContext.cs" />
+    <Compile Include="Processing\ProcessOrderArgument.cs" />
+    <Compile Include="Processing\ProcessOrderArgumentExtensions.cs" />
+    <Compile Include="Processing\ProcessOrderCanBeExecutedSpec.cs" />
+    <Compile Include="Processing\ProcessOrderService.cs" />
+    <Compile Include="Processing\ProcessOrderSummaryModel.cs" />
+    <Compile Include="Processing\ProcessOrderModel.cs" />
+    <Compile Include="Processing\ProcessOrderResult.cs" />
+    <Compile Include="FileVault\FileVaultConfiguration.cs" />
+    <Compile Include="FileVault\FileVaultTicket.cs" />
+    <Compile Include="Domain\IDetalhesArquivo.cs" />
+    <Compile Include="Helpers\AuditRecordHelper.cs" />
+    <Compile Include="Data\EntityTableModelRegistry.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Domain\Acessos\TipoPermissao.cs" />
+    <Compile Include="Domain\AuditKind.cs" />
+    <Compile Include="Domain\AuditRecord.cs" />
+    <Compile Include="Domain\AuditService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Domain\DomainServiceBase.cs" />
+    <Compile Include="Domain\EntityDomainServiceBase.cs" />
+    <Compile Include="Domain\EntityBase.cs" />
+    <Compile Include="Domain\EntityReflectionHelper.cs" />
+    <Compile Include="Domain\FixedValuesBase.cs" />
+    <Compile Include="Domain\FixedValuesHelper.cs" />
+    <Compile Include="Domain\IAggregateRoot.cs" />
+    <Compile Include="Domain\IAuditGateway.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Domain\IAuditService.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Domain\IDataGateway.cs" />
+    <Compile Include="Domain\IDomainService.cs" />
+    <Compile Include="Domain\IEntity.cs" />
+    <Compile Include="Domain\IFixedValue.cs" />
+    <Compile Include="Domain\IPaginated.cs" />
+    <Compile Include="Domain\IPaging.cs" />
+    <Compile Include="Domain\IStampContainer.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="Domain\MemoryDataGateway.cs" />
+    <Compile Include="Domain\Money.cs" />
+    <Compile Include="Domain\Paging.cs" />
+    <Compile Include="Domain\TpOperacao.cs" />
+    <Compile Include="Domain\StampContainerExtensions.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\PluralizingMessageExtensions.cs" />
+    <Compile Include="Globalization\CultureInfoHelper.cs" />
+    <Compile Include="Globalization\GlobalizationHelper.cs" />
+    <Compile Include="Helpers\CalcHelper.cs" />
+    <Compile Include="Helpers\ExceptionHelper.cs" />
+    <Compile Include="IO\Importing\IDataTranslator.cs" />
+    <Compile Include="IO\Importing\IImporter.cs" />
+    <Compile Include="Logging\ConsoleLogStrategy.cs" />
+    <Compile Include="Logging\ILogStrategy.cs" />
+    <Compile Include="Logging\LogSection.cs" />
+    <Compile Include="Logging\LogService.cs" />
+    <Compile Include="Processing\IProcessOrderGateway.cs" />
+    <Compile Include="Processing\IProcessingService.cs" />
+    <Compile Include="Processing\ProcessOrder.cs" />
+    <Compile Include="Processing\ProcessOrderResult_TResult.cs" />
+    <Compile Include="Processing\ProcessOrderState.cs" />
+    <Compile Include="Processing\ExposedParameterAttribute.cs" />
+    <Compile Include="Processing\ProcessException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Processing\ProcessingConfiguration.cs" />
+    <Compile Include="Processing\ProcessNotFinishedException.cs" />
+    <Compile Include="Processing\ProcessOrderSummary.cs" />
+    <Compile Include="Processing\ServiceMethodCallExpressionVisitor.cs" />
+    <Compile Include="Processing\ServiceProcessAttribute.cs" />
+    <Compile Include="Processing\Specs\ProcessOrderSpec.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\UserRoleInfo.cs" />
+    <Compile Include="Runtime\UserMenuInfo.cs" />
+    <Compile Include="Runtime\UserActionInfo.cs" />
+    <Compile Include="Specs\AggregatedSpecResult.cs" />
+    <Compile Include="Specs\AllMustBeEqualSpec.cs" />
+    <Compile Include="Specs\AllMustBeGreaterThanSpec.cs" />
+    <Compile Include="Specs\AllDatesMustBeGreaterThanNowSpec.cs" />
+    <Compile Include="Specs\AllMustBeInformedSpec.cs" />
+    <Compile Include="Specs\AtLeastOneMustBeInformedSpec.cs" />
+    <Compile Include="Specs\DataValidaSpec.cs" />
+    <Compile Include="Specs\EntityMustBeNewSpec.cs" />
+    <Compile Include="Specs\ISpec.cs" />
+    <Compile Include="Specs\AllMustBeInRangeSpec.cs" />
+    <Compile Include="Specs\MustRespectRangeSpec.cs" />
+    <Compile Include="Specs\ItemDeveSerMultisourcingPossivelSpec.cs" />
+    <Compile Include="Specs\MaxLenghtSpec.cs" />
+    <Compile Include="Specs\NotSatisfiedSpecException.cs" />
+    <Compile Include="Specs\NotSpec.cs" />
+    <Compile Include="Specs\PropertiesSpecResult.cs" />
+    <Compile Include="Specs\SpecBase.cs" />
+    <Compile Include="Specs\SpecExtensions.cs" />
+    <Compile Include="Specs\SpecResult.cs" />
+    <Compile Include="Specs\SpecService.cs" />
+    <Compile Include="Specs\ValidMilitaryTimeSpec.cs" />
+    <Compile Include="Text\StringExtensions.cs" />
+    <Compile Include="Runtime\IRuntimeContext.cs" />
+    <Compile Include="Runtime\IRuntimePermission.cs" />
+    <Compile Include="Runtime\IRuntimeUser.cs" />
+    <Compile Include="Runtime\MemoryRuntimeContext.cs" />
+    <Compile Include="Runtime\MemoryRuntimeUser.cs" />
+    <Compile Include="Runtime\RuntimeContext.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Globalization\Texts.resx">
+      <SubType>Designer</SubType>
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Texts.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0-rc3\analyzers\dotnet\cs\Newtonsoft.Json.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0-rc3\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.0-rc3\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\msbuilds\Walmart.Sgp.Build.Resources2JSTask.targets" Condition=" '$(Configuration)' == 'SIT' OR '$(Configuration)' == 'PRD' OR '$(Configuration)' == 'TST' OR '$(Configuration)' == 'CI'" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

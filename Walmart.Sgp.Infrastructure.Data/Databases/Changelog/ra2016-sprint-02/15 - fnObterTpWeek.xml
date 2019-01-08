@@ -1,0 +1,40 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="ra2016-2-fnObterTpWeek" author="edapper">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+			
+			CREATE FUNCTION [dbo].[fnObterTpWeek] (@data DATE) RETURNS INT
+			AS 
+			BEGIN
+
+				DECLARE @cdSemana AS VARCHAR(max) = (SELECT cdSemana FROM SemanaWalMart WHERE @data BETWEEN dtInicial AND dtFinal)
+
+				DECLARE @ultimosDoisDigitos AS INT = CONVERT(INT, RIGHT(@cdSemana, 2))
+
+				IF ((@ultimosDoisDigitos % 2) = 0)
+					RETURN 1
+
+				RETURN 2
+
+			END
+				
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+				
+				DROP FUNCTION [dbo].[fnObterTpWeek]
+				
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

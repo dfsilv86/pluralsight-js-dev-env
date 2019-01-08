@@ -1,0 +1,359 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{78C01029-3668-427A-AA7C-04C8291313FE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Walmart.Sgp.Domain.UnitTests</RootNamespace>
+    <AssemblyName>Walmart.Sgp.Domain.UnitTests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEV|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SIT|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\CI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CI</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TST\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TSTAUTOMACAO|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TSTAUTOMACAO\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEVCWI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DEVCWI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEV;DEVCWI</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PRD|AnyCPU'">
+    <OutputPath>bin\PRD\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Acessos\AlcadaAuditStrategyTest.cs" />
+    <Compile Include="Acessos\AlcadaDetalheServiceTest.cs" />
+    <Compile Include="Acessos\AlcadaServiceTest.cs" />
+    <Compile Include="Acessos\AlcadaTest.cs" />
+    <Compile Include="Acessos\PapelServiceTest.cs" />
+    <Compile Include="Acessos\PermissaoServiceTest.cs" />
+    <Compile Include="Acessos\Specs\AlcadaNaoPodeTerDetalheRepetidoSpecTest.cs" />
+    <Compile Include="Acessos\Specs\AlcadaPodeSerSalvaSpecTest.cs" />
+    <Compile Include="Acessos\Specs\BandeiraDaLojaDeveEstarAtivaSpecTest.cs" />
+    <Compile Include="Acessos\Specs\BandeiraDeveSerValidaParaInclusaoSpecTest.cs" />
+    <Compile Include="Acessos\Specs\LojaDevePossuirBandeiraDefinidaSpecTest.cs" />
+    <Compile Include="Acessos\Specs\UsuarioDevePossuirPermissaoManutencaoSpecTest.cs" />
+    <Compile Include="Acessos\Specs\UsuarioPodeRemoverPermissoesSpecTest.cs" />
+    <Compile Include="Acessos\Specs\PemissaoDeveSerPorBandeiraOuPorLojaSpecTest.cs" />
+    <Compile Include="Acessos\Specs\UsuarioDevePossuirPermissaoNaLojaSpecTest.cs" />
+    <Compile Include="Acessos\Specs\UsuarioDevePossuirPermissoesSpecTest.cs" />
+    <Compile Include="Acessos\Specs\UsuarioPodeTerPermissoesCriadasSpecTest.cs" />
+    <Compile Include="Acessos\UsuarioImporterTest.cs" />
+    <Compile Include="Acessos\UsuarioPermissoesTest.cs" />
+    <Compile Include="Acessos\UsuarioServiceTest.cs" />
+    <Compile Include="Acessos\PapelTest.cs" />
+    <Compile Include="Acessos\UsuarioTest.cs" />
+    <Compile Include="EstruturaMercadologica\DepartamentoTest.cs" />
+    <Compile Include="EstruturaMercadologica\CategoriaTest.cs" />
+    <Compile Include="EstruturaMercadologica\BandeiraDetalheTest.cs" />
+    <Compile Include="EstruturaMercadologica\DepartamentoServiceTest.cs" />
+    <Compile Include="EstruturaMercadologica\CategoriaServiceTest.cs" />
+    <Compile Include="EstruturaMercadologica\CDServiceTest.cs" />
+    <Compile Include="EstruturaMercadologica\RevisaoCustoServiceTest.cs" />
+    <Compile Include="EstruturaMercadologica\LojaDepartamentoSelectorTest.cs" />
+    <Compile Include="EstruturaMercadologica\Specs\SupercenterPermiteApenasArquivosFinaisSpecTest.cs" />
+    <Compile Include="Extensions\UsuarioExtensionsTest.cs" />
+    <Compile Include="FixedValuesAutoTest.cs" />
+    <Compile Include="DomainServiceAutoTest.cs" />
+    <Compile Include="AutoPropertiesAutoTest.cs" />
+    <Compile Include="EstruturaMercadologica\LojaServiceTest.cs" />
+    <Compile Include="EstruturaMercadologica\BandeiraServiceTest.cs" />
+    <Compile Include="Gerenciamento\CodigoVendor9DigitosTest.cs" />
+    <Compile Include="Gerenciamento\ConfiguracaoArquivosInventarioTest.cs" />
+    <Compile Include="Gerenciamento\DistritoServiceTest.cs" />
+    <Compile Include="Gerenciamento\FormatoServiceTest.cs" />
+    <Compile Include="Gerenciamento\FornecedorParametroReviewDateTest.cs" />
+    <Compile Include="Gerenciamento\RegiaoServiceTest.cs" />
+    <Compile Include="Gerenciamento\FornecedorServiceTest.cs" />
+    <Compile Include="Gerenciamento\ParametroSistemaServiceTest.cs" />
+    <Compile Include="Gerenciamento\ParametroServiceTest.cs" />
+    <Compile Include="Gerenciamento\Specs\RegiaoDeveTerDistritosSpecTest.cs" />
+    <Compile Include="Gerenciamento\TipoSemanaTest.cs" />
+    <Compile Include="Gerenciamento\TipoIntervaloTest.cs" />
+    <Compile Include="Inventarios\FechamentoFiscalTest.cs" />
+    <Compile Include="Inventarios\ItemDetalheCDTest.cs" />
+    <Compile Include="Inventarios\Specs\ListaDeItensDevePossuirPercentualCompletoSpecTest.cs" />
+    <Compile Include="Inventarios\InventarioImportacaoServiceTest.cs" />
+    <Compile Include="Inventarios\InventarioServiceTest.cs" />
+    <Compile Include="Inventarios\InventarioStatusTest.cs" />
+    <Compile Include="Inventarios\Specs\ArquivoInventarioDeveSerOMaisRecenteSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\ArquivoInventarioTest.cs" />
+    <Compile Include="Inventarios\Specs\DataArquivoInventarioDeveSerValidaSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\InventarioPodeSerPreparadoSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\DepartamentoDeveSerPerecivelSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\DatasDevemEstarAbertasParaImportacaoInventarioSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\InventarioAgendamentoPodeSerSalvoSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\InventarioAgendamentoPodeSerRemovidoSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\DatasDevemObedecerQuantidadeDiasLimiteExpurgoSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\InventarioNaoPossuiItensInativosDeletadosSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\InventarioNaoPossuiItensVinculadosDeEntradaSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\InventarioPodeSerCanceladoSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\ItemDevePossuirMesmoDepartamentoDoInventarioSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\ItemInventarioDeveSerUnicoSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\ItemNaoDeveSerVinculadoDeEntradaSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\SortimentoDeveSerValidoSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\UsuarioPodeAprovarInventarioSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\UsuarioPodeEditarItemInventarioSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\UsuarioPodeExportarComparacaoEstoqueSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\UsuarioPodeFinalizarInventarioSpecTest.cs" />
+    <Compile Include="Inventarios\Specs\UsuarioPodeVoltarStatusInventarioSpecTest.cs" />
+    <Compile Include="Item\ItemDetalheServiceTest.cs" />
+    <Compile Include="Item\ItemFactoryTest.cs" />
+    <Compile Include="Item\ItemRelacionamentoServiceTest.cs" />
+    <Compile Include="Item\ItemDetalheTest.cs" />
+    <Compile Include="Item\ItensRelacionadosResponseTest.cs" />
+    <Compile Include="Item\RelacionamentoItemPrincipalHistTest.cs" />
+    <Compile Include="Item\RelacionamentoItemPrincipalTest.cs" />
+    <Compile Include="Item\RelacionamentoTransferenciaServiceTest.cs" />
+    <Compile Include="Item\Specs\IntervaloNaoDeveExcederSessentaDiasSpecTest.cs" />
+    <Compile Include="Item\Specs\ItemDetalhePodeEstarEmOutrosRelacionamentosSpecTest.cs" />
+    <Compile Include="Item\Specs\RelacionamentoItemReceituarioPesoPodeSerSalvoSpecTest.cs" />
+    <Compile Include="Item\VinculadoTipoRelacionamentoStrategyTest.cs" />
+    <Compile Include="Item\ReceituarioTipoRelacionamentoStrategyTest.cs" />
+    <Compile Include="Item\ManipuladoTipoRelacionamentoStrategyTest.cs" />
+    <Compile Include="Item\Specs\ItemDetalhePodeSerAdicionadoNoRelacionamentoSpecTest.cs" />
+    <Compile Include="Item\Specs\ItemDetalhePodeSerUtilizadoNoRelacionamentoSpecTest.cs" />
+    <Compile Include="Item\Specs\RelacionamentoItemPodeSerRemovidoSpecTest.cs" />
+    <Compile Include="Item\Specs\RelacionamentoItemPodeSerSalvoSpecTest.cs" />
+    <Compile Include="Item\ValorTipoReabastecimentoTest.cs" />
+    <Compile Include="Movimentacao\CategoriaTipoMovimentacaoTest.cs" />
+    <Compile Include="Movimentacao\EstoqueServiceTest.cs" />
+    <Compile Include="Movimentacao\EstoqueTest.cs" />
+    <Compile Include="Movimentacao\NotaFiscalItemStatusServiceTest.cs" />
+    <Compile Include="Movimentacao\Specs\MtrPodeSerRealizadaSpecTest.cs" />
+    <Compile Include="Movimentacao\TipoMovimentacaoServiceTest.cs" />
+    <Compile Include="Movimentacao\MotivoMovimentacaoServiceTest.cs" />
+    <Compile Include="Movimentacao\NotaFiscalServiceTest.cs" />
+    <Compile Include="Movimentacao\MovimentacaoServiceTest.cs" />
+    <Compile Include="MultisourcingVendor\LogMultisourcingServiceTest.cs" />
+    <Compile Include="MultisourcingVendor\MultisourcingEqualityComparerTest.cs" />
+    <Compile Include="MultisourcingVendor\MultisourcingServiceTest.cs" />
+    <Compile Include="MultisourcingVendor\MultisourcingTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\ItemEntradaIPertenceItemSaidaSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\ItemSaidaPertenceCDSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\ItemEntradaPertenceFornecedorSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\ItemEntradaModalidadeXDockSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\ListaDeItensNaoPodeRepetirVendorSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\ListaDeItensNaoPodeTerItemCemPorcentoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirItemDetalheSemVinculoCompraCasadaSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirCDExistenteSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirApenasItensDiferentesSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingNaoDevePossuirVendorWalmartSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingNaoDevePossuirVendorRepetidoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingPercentualDevePossuirValorSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirPercentualMultiploCincoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirPercentualInferiorACemSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirSARFornecedorValidoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingPossuiCanalValidoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirFornecedorValidoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirItemEntradaValidoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\MultisourcingDevePossuirItemSaidaValidoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\PercentuaisDevemSerMultiploDeCincoSpecTest.cs" />
+    <Compile Include="MultisourcingVendor\Specs\PercentualItemSaidaCDSpecTest.cs" />
+    <Compile Include="Movimentacao\Specs\EstoquePodeSerAjustadoSpecTest.cs" />
+    <Compile Include="Processos\LojaProcessosCargaTest.cs" />
+    <Compile Include="Processos\ProcessoCargaTest.cs" />
+    <Compile Include="Processos\ProcessoServiceTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reabastecimento\AlterarSugestaoResponseExtensionsTest.cs" />
+    <Compile Include="Reabastecimento\AutorizaPedidoServiceTest.cs" />
+    <Compile Include="Reabastecimento\CompraCasadaServiceTest.cs" />
+    <Compile Include="Gerenciamento\FornecedorParametroServiceTest.cs" />
+    <Compile Include="Reabastecimento\GradeSugestaoServiceTest.cs" />
+    <Compile Include="Reabastecimento\LojaCdParametroServiceTest.cs" />
+    <Compile Include="Reabastecimento\RelacaoItemLojaCDConsolidadoTest.cs" />
+    <Compile Include="Reabastecimento\RelacaoItemLojaCDServiceTest.cs" />
+    <Compile Include="Reabastecimento\RelacaoItemLojaCDTest.cs" />
+    <Compile Include="Reabastecimento\ReturnSheetTest.cs" />
+    <Compile Include="Reabastecimento\Roteirizacao\RoteiroLojaTest.cs" />
+    <Compile Include="Reabastecimento\Roteirizacao\RoteiroPedidoServiceTest.cs" />
+    <Compile Include="Reabastecimento\Roteirizacao\RoteiroServiceTest.cs" />
+    <Compile Include="Reabastecimento\Roteirizacao\RoteiroTest.cs" />
+    <Compile Include="Reabastecimento\Specs\AlcadaDevePermitirSugestaoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\AlteracaoSugestaoDeveSerPermitidaSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\FornecedorItemEntradaNaoPodeSerInativoOuDeletadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\ItemEntradaDevePossuirTipoReabastecimentoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\ItemEntradaVinculadoXrefPrimeDeveSerStapleSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\ItemSaidaDeveSerValidoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\LojaDeveSerAtendidaPeloCDSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\CDAtivoDeveExistirSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\LojaAtivaDeveExistirSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\MTR\ItemSaidaNaoPodeSerTransferenciaSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\MTR\ItemEntradaNaoPodeSerTransferenciaSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemSaidaNaoPodeTerItemEntradaVinculadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoLojaCDPossuemCadastroItemControleEstoqueSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoLojaNaoDevePossuirCadastroSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemSaidaDevePossuirTraitSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemEntradaDevePossuirTraitSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoVendorItemSaidaNaoPodeSerNullSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoVendorItemSaidaNaoPodeSerInativoOuDeletadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoVendorItemEntradaNaoPodeSerNullSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoVendorItemEntradaNaoPodeSerInativoOuDeletadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemXrefDeveSerPrimeSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemSaidaNaoPodeSerInativoOuDeletadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemPrimeXREFDevePossuirItemSecundarioStapleSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemEntradaNaoPodeSerInativoOuDeletadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoItemEntradaNaoPodeSerFilhoCompraCasadaSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CargaMassiva\VinculoDevePossuirRelacionamentoSGPSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\ItensNaoDevemTerSugestaoPedidoPendenteSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\QtdPaisDeveSerUmSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\QtdFilhosDeveSerNoMinimoDoisSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\CustoUnitarioItensFilhoDevemSerIguaisSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\ReturnSheetCannotHavePastDatesSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\ReturnSheetDevePossuirPeriodosValidosSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SomaVendorPackFilhosIgualPaiSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SugestaoPedidoCDDataCancelValidaSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SugestaoPedidoCDDataEnvioValidaSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SugestaoPedidoCDQtdPackCompraValidoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SugestaoReturnSheetNaoPodeTerAutorizacaoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SugestaoReturnSheetNaoPodeTerExportacaoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SugestoesReturnSheetNaoPodeSerNullSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\TipoRAItensDeveSerIgualAoPaiSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\TraitItensFilhoDevemSerIguaisAoPaiSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\UsuarioPodeAlterarSugestaoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SomenteUmItemEntradaPorItemDeSaidaPodeSerFinalizadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\VendorRoteiroDeveConterItensDSDSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\ValorEstoqueInformadoDeveSerValidoSpecTest.cs" />
+    <Compile Include="Reabastecimento\SugestaoPedidoCDServiceTest.cs" />
+    <Compile Include="Reabastecimento\SugestaoPedidoCDTest.cs" />
+    <Compile Include="Reabastecimento\SugestaoPedidoModelTest.cs" />
+    <Compile Include="Reabastecimento\SugestaoPedidoServiceTest.cs" />
+    <Compile Include="Reabastecimento\ReturnSheetItemLojaEqualityComparerTest.cs" />
+    <Compile Include="Reabastecimento\ReturnSheetItemLojaServiceTest.cs" />
+    <Compile Include="Reabastecimento\ReturnSheetItemPrincipalServiceTest.cs" />
+    <Compile Include="Reabastecimento\ReturnSheetServiceTest.cs" />
+    <Compile Include="Reabastecimento\Specs\LojaDeveSerSelecionadaSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\PrecoVendaDeveSerInformadoSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\SugestaoReturnPodeSalvarSpecTest.cs" />
+    <Compile Include="Reabastecimento\Specs\ValidaQtdSolicitadaXUnidadeCompraSpecTest.cs" />
+    <Compile Include="Reabastecimento\SugestaoPedidoTest.cs" />
+    <Compile Include="Reabastecimento\SugestaoReturnSheetServiceTest.cs" />
+    <Compile Include="Reabastecimento\SugestaoReturnSheetTest.cs" />
+    <Compile Include="Specs\RegistroDeveSerSelecionadoSpecTest.cs" />
+    <Compile Include="TeamCityService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Walmart.Sgp.Domain\ps-condominio.Domain.csproj">
+      <Project>{99965c62-48a7-4b64-b3a5-13e8138f087c}</Project>
+      <Name>ps-condominio.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Walmart.Sgp.Infrastructure.Data\Walmart.Sgp.Infrastructure.Data.csproj">
+      <Project>{20d8c6fa-065e-41bb-814c-ddfaac7d406d}</Project>
+      <Name>Walmart.Sgp.Infrastructure.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Walmart.Sgp.Infrastructure.Framework\Walmart.Sgp.Infrastructure.Framework.csproj">
+      <Project>{3d0d3692-e5fa-42a6-85af-4779f580eeb6}</Project>
+      <Name>Walmart.Sgp.Infrastructure.Framework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Walmart.Sgp.Infrastructure.IO\Walmart.Sgp.Infrastructure.IO.csproj">
+      <Project>{bf71769e-5c8f-4eb5-a492-c112cced7c4e}</Project>
+      <Name>Walmart.Sgp.Infrastructure.IO</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

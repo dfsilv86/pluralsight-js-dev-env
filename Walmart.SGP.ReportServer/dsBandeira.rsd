@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@UsuarioCorrente">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@Sistema">
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>Declare @countPermissoes INT
+SET @countPermissoes = 0
+
+SET @countPermissoes = (SELECT
+							COUNT(BAN.IDBandeira)
+						FROM
+							Bandeira			BAN WITH (NOLOCK)
+						INNER JOIN
+							Loja				LJ  WITH (NOLOCK)
+						ON
+							LJ.IDBandeira		= BAN.IDBandeira
+						AND	LJ.cdSistema		= BAN.cdSistema
+
+						LEFT JOIN
+							PermissaoBandeira	PBA  WITH (NOLOCK)
+						ON
+							PBA.IDBandeira		= BAN.IDBandeira
+						INNER JOIN	
+							Permissao			PER	WITH (NOLOCK)
+						ON
+							PER.IDPermissao	= PBA.IDPermissao
+						AND	PER.IDUsuario		= @UsuarioCorrente
+						WHERE 
+							BAN.cdSistema		= @Sistema)
+
+IF @countPermissoes &gt; 0
+	BEGIN
+		SELECT NULL as IDBandeira, 'Todas' as dsBandeira	
+		UNION
+		SELECT
+			BAN.IDBandeira
+		,	BAN.dsBandeira
+		FROM
+			Bandeira			BAN WITH (NOLOCK)
+		INNER JOIN
+			Loja				LJ  WITH (NOLOCK)
+		ON
+			LJ.IDBandeira		= BAN.IDBandeira
+		AND	LJ.cdSistema		= BAN.cdSistema
+
+		LEFT JOIN
+			PermissaoBandeira	PBA  WITH (NOLOCK)
+		ON
+			PBA.IDBandeira		= BAN.IDBandeira
+		LEFT JOIN
+			PermissaoLoja		PLJ  WITH (NOLOCK)
+		ON
+			PLJ.IDLoja			= LJ.IDLoja
+		INNER JOIN	
+			Permissao			PER	WITH (NOLOCK)
+		ON
+			PER.IDPermissao	= PBA.IDPermissao
+		AND	PER.IDUsuario		= @UsuarioCorrente
+
+		WHERE 
+			BAN.cdSistema		= @Sistema
+		GROUP BY
+			BAN.IDBandeira	
+		,	BAN.dsBandeira 	 
+		ORDER BY
+			IDBandeira
+	END
+ELSE
+	BEGIN
+		SELECT NULL as IDBandeira, 'Todas' as dsBandeira	
+		UNION
+		SELECT
+			BAN.IDBandeira
+		,	BAN.dsBandeira
+		FROM
+			Bandeira			BAN WITH (NOLOCK)
+		INNER JOIN
+			Loja				LJ  WITH (NOLOCK)
+		ON
+			LJ.IDBandeira		= BAN.IDBandeira
+		AND	LJ.cdSistema		= BAN.cdSistema
+
+		INNER JOIN
+			PermissaoLoja		PLJ  WITH (NOLOCK)
+		ON
+			PLJ.IDLoja			= LJ.IDLoja
+		INNER JOIN	
+			Permissao			PER	WITH (NOLOCK)
+		ON
+			PER.IDPermissao		= PLJ.IDPermissao
+		AND	PER.IDUsuario		= @UsuarioCorrente
+
+		WHERE 
+			BAN.cdSistema		= @Sistema
+		GROUP BY
+			BAN.IDBandeira	
+		,	BAN.dsBandeira 
+		ORDER BY
+			IDBandeira
+	END</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IDBandeira">
+        <DataField>IDBandeira</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="dsBandeira">
+        <DataField>dsBandeira</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

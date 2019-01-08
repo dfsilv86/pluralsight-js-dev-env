@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <DataSetParameters>
+        <DataSetParameter Name="@IDCategoria">
+          <DefaultValue>=Nothing</DefaultValue>
+          <ReadOnly>false</ReadOnly>
+          <Nullable>true</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Int32</rd:DbType>
+        </DataSetParameter>
+        <DataSetParameter Name="@IDDepartamento">
+          <DefaultValue />
+          <ReadOnly>false</ReadOnly>
+          <Nullable>false</Nullable>
+          <OmitFromQuery>false</OmitFromQuery>
+          <rd:DbType>Object</rd:DbType>
+        </DataSetParameter>
+      </DataSetParameters>
+      <CommandText>SELECT NULL as IDSubcategoria, 'Todas' as dsSubcategoria, 1 as cdSistema
+UNION 
+SELECT IDSubcategoria, 
+CONVERT(VARCHAR, cdSubcategoria) + ' - ' + dsSubcategoria  AS  dsSubcategoria
+, cdSistema 
+FROM Subcategoria 
+WHERE 
+	(@IDCategoria IS NULL OR IDCategoria = @IDCategoria)
+	AND (@IDDepartamento IS NULL OR IDDepartamento = @IDDepartamento)
+ORDER BY IDSubcategoria</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IDSubcategoria">
+        <DataField>IDSubcategoria</DataField>
+        <rd:TypeName>System.Int64</rd:TypeName>
+      </Field>
+      <Field Name="dsSubcategoria">
+        <DataField>dsSubcategoria</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="cdSistema">
+        <DataField>cdSistema</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

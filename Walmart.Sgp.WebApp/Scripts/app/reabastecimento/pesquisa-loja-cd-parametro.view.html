@@ -1,0 +1,73 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaLojaCdParametroName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required disabled></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" show-select="true"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'storeCode'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <input type="text" name="cdLoja" ng-model="filters.cdLoja" ui-number-mask="0" ui-hide-group-sep maxlength="4" class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'storeName'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <input type="text" name="nmLoja" ng-model="filters.nmLoja" maxlength="25" class="form-control input-width-xxlarge" />
+                    </form-field>
+                    <form-field title="{{::'replenishmentType'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-reabastecimento ng-model="filters.tpReabastecimento" required />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier cd-cd" ng-click="orderBy('cdCD')">{{::'cdCode'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdCD"></sort-indicator></th>
+                            <th ng-click="orderBy('nmNome')">{{::'cdName'|translate|capitalize}} <sort-indicator ng-model="data.values" name="nmNome"></sort-indicator></th>
+                            <th class="identifier cd-cd-cd-loja" ng-click="orderBy('cdLoja')">{{::'storeCode'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdLoja"></sort-indicator></th>
+                            <th ng-click="orderBy('nmLoja')">{{::'storeName'|translate|capitalize}} <sort-indicator ng-model="data.values" name="nmLoja"></sort-indicator></th>
+                            <th ng-click="orderBy('dsDepartamento')">{{::'department'|translate|capitalize}} <sort-indicator ng-model="data.values" name="dsDepartamento"></sort-indicator></th>
+                            <th class="domain cd-review-date" ng-click="orderBy('cdReviewDate')">{{::'reviewDateSdpStore'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdReviewDate"></sort-indicator></th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="identifier cd-cd">{{item.cd.cdCD}}</td>
+                            <td>{{item.cd.nmNome}}</td>
+                            <td class="identifier cd-cd-cd-loja">{{item.loja.cdLoja}}</td>
+                            <td>{{item.loja.nmLoja}}</td>
+                            <td>{{item.departamento.dsDepartamento}}</td>
+                            <td class="domain cd-review-date">{{item.reviewDateCd.cdReviewDate|cdReviewDate}}</td>
+                            <td class="action">
+                                <edit-button ng-click="detail(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="7" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

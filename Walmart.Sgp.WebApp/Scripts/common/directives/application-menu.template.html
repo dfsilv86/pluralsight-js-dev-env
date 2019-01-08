@@ -1,0 +1,27 @@
+﻿<ul class="application-menu">
+    <li class="no-menus-in-web-guardian-notice" ng-if="!menus || menus.length == 0">
+        {{::'noMenusInWebGuardianNotice'|translate}}
+    </li>
+    <li class="dropdown" ng-repeat="menuItem in menus">
+        <!-- Dropdown -->
+        <a class="dropdown-toggle" data-toggle="dropdown" ng-if="!menuItem.route" ng-click="openMenu()">
+            {{::menuItem.name | translate}} 
+            <i class="icon-caret-down small"></i>
+        </a>
+        <ul class="dropdown-menu">
+            <li ng-class="{'dropdown-submenu': child.availableChildren.length > 0}" ng-repeat="child in menuItem.availableChildren">
+                <a href=".{{::child.route}}">
+                    {{::child.name | translate}}
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li ng-repeat="child2 in child.availableChildren">
+                        <a href=".{{::child2.route}}">
+                            {{::child2.name | translate}}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>

@@ -1,0 +1,68 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'statePesquisaSubcategoriaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStruct'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field-placeholder></form-field-placeholder>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" item-out="filters.departamento" sistema="filters.cdSistema" description-width="large" required></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-categoria ng-model="filters.cdCategoria" sistema="filters.cdSistema" departamento="filters.cdDepartamento" item-out="filters.categoria" description-width="medium" required></lookup-categoria>
+                    </form-field>
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <input type="text" name="code" number ui-number-mask="0" ui-hide-group-sep maxlength="20" ng-model="filters.code" class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="10">
+                        <input type="text" name="description" ng-model="filters.description" class="form-control input-width-xxlarge" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier">{{::'code'|translate|capitalize}}</th>
+                            <th>{{::'description'|translate|capitalize}}</th>
+                            <th>{{::'category'|translate|capitalize}}</th>
+                            <th>{{::'department'|translate|capitalize}}</th>
+                            <th>{{::'division'|translate|capitalize}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="identifier">{{item.cdSubcategoria}}</td>
+                            <td>{{item.dsSubcategoria}}</td>
+                            <td>{{item.categoria|categoryProfile}}</td>
+                            <td>{{item.categoria.departamento|departmentProfile}}</td>
+                            <td>{{item.categoria.departamento.divisao|divisionProfile}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="5" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

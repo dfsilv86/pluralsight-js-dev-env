@@ -1,0 +1,5 @@
+﻿<select ui-select2 class="dropdown full-width-fix" name="{{::dropdownName}}">    
+    <option value="" selected ng-if="showAll && !isRestricted">{{::'all2'|translate}}</option>
+    <option value="" selected ng-if="showSelect && !isRestricted">{{::'select'|translate}}</option>    
+    <option ng-repeat="item in data.values" value="{{::item.idBandeira}}">{{::item.dsBandeira}}</option>
+</select>

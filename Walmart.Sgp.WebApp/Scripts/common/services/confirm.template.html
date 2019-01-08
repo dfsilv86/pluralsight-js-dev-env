@@ -1,0 +1,10 @@
+﻿<div class="confirm-container">
+    <p>{{::message}}</p>
+	<ng-include src="messageTemplateUrl"></ng-include>
+    <div class="form-group actions">
+        <div class="col-md-12 align-right">
+            <button class="btn btn-success" ng-click="yes()"><i class="glyphicon glyphicon-check" /> &nbsp; {{::'yes'|translate}}</button>
+            <button class="btn btn-danger" ng-click="no()"><i class="glyphicon glyphicon-remove" /> &nbsp; {{::'no'|translate}}</button>
+        </div>
+    </div>
+</div>

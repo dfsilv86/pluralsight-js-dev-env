@@ -1,0 +1,699 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="log-relacao-item-loja-cd-VW_ConsistenciaVendorNoveDigitos-AdicionaCampoNomeVendor" author="mperuch">
+		<sql stripComments="false" endDelimiter="~">
+			<![CDATA[
+				/*
+				=======================================================================================================================
+				View...................: VW_ConsistenciaVendorNoveDigitos
+				Autor..................: Evandro Henrique Dapper (CWI)
+				Data de criação........: 29/07/2016
+				Objetivo...............: Listar os itens vinculados ao código de 9 dígitos do vendor consistindo se os itens seguem as 
+										 regras definidas por padrão para o fluxo adequado de pedidos, sinalizando os itens que possuam 
+										 alguma inconsistência
+				Parâmetros.............: 
+				Exemplo de uso.........: 
+				=======================================================================================================================
+				HISTÓRICO DE ALTERAÇÃO
+
+				Alterado por...........: Rafael de Souza Bueno (CWI)
+				Data Alteração.........: 06/10/2016
+				Descrição da alteração.: Itens inativos e deletados foram desconsiderados do relatório
+				=======================================================================================================================
+				*/
+				ALTER VIEW [dbo].[VW_ConsistenciaVendorNoveDigitos]
+				AS
+				WITH Itens
+				AS (
+					SELECT fp.IDFornecedor
+						,fp.idDepartamento
+						,fp.cdV9D
+						,fp.cdStatusVendor
+						,f.nmFornecedor
+						,ISNULL(CONVERT(VARCHAR, IT.cdItem), '-') cdItem
+						,ISNULL(CONVERT(VARCHAR, IT.cdUPC), '-') cdUPC
+						,ISNULL(IT.dsItem, '-') dsItem
+						,ISNULL(CONVERT(VARCHAR, IT.vlTipoReabastecimento), '-') vlTipoReabastecimento
+						,ISNULL(IT.tpStatus, '-') tpStatus
+						,CASE 
+							WHEN IT.vlTipoReabastecimento IN (
+									7
+									,37
+									,97
+									)
+								THEN 'DSD'
+							WHEN IT.vlTipoReabastecimento IN (
+									3
+									,33
+									)
+								THEN 'XDock'
+							WHEN IT.vlTipoReabastecimento IN (
+									20
+									,40
+									,22
+									,42
+									,43
+									,81
+									)
+								THEN 'STAPLE'
+							ELSE '-'
+							END dsTipoReabastecimento
+						,CASE 
+							WHEN IT.idItemDetalhe IS NULL
+								THEN '-'
+							WHEN COALESCE(IT.tpvinculado, IT.tpManipulado, IT.tpReceituario) IS NOT NULL
+								AND SUBSTRING(CONVERT(VARCHAR, IT.cdUPC), 1, 3) <> '789'
+								THEN 'Com Relacionamento'
+							ELSE 'Sem Relacionamento'
+							END Relacionamento
+					FROM FornecedorParametro FP
+					INNER JOIN Fornecedor F ON F.IDFornecedor = FP.IDFornecedor
+					LEFT JOIN ItemDetalhe IT ON IT.idFornecedorParametro = FP.IDFornecedorParametro
+					WHERE IT.tpStatus = 'A'
+					)
+					,Totais
+				AS (
+					SELECT cdv9d
+						,SUM(CASE 
+								WHEN vlTipoReabastecimento IN (
+										7
+										,37
+										,97
+										)
+									THEN 1
+								ELSE 0
+								END) qtDSD
+						,SUM(CASE 
+								WHEN vlTipoReabastecimento IN (
+										3
+										,33
+										)
+									THEN 1
+								ELSE 0
+								END) qtXDock
+						,SUM(CASE 
+								WHEN vlTipoReabastecimento IN (
+										20
+										,40
+										,22
+										,42
+										,43
+										,81
+										)
+									THEN 1
+								ELSE 0
+								END) qtStaple
+						,SUM(CASE 
+								WHEN Relacionamento = 'Com Relacionamento'
+									THEN 1
+								ELSE 0
+								END) qtComRelacionamento
+						,SUM(CASE 
+								WHEN Relacionamento = 'Sem Relacionamento'
+									THEN 1
+								ELSE 0
+								END) qtSemRelacionamento
+						,SUM(CASE 
+								WHEN tpStatus = 'A'
+									THEN 1
+								ELSE 0
+								END) qtItensAtivos
+					FROM Itens
+					GROUP BY cdv9d
+					)
+					,ItensValidados
+				AS (
+					SELECT I.*
+						,CASE 
+							WHEN I.cdItem = '-'
+								THEN '-'
+							WHEN T.qtItensAtivos = 0
+								THEN 'Sem itens ativos no cadastro.'
+							WHEN I.vlTipoReabastecimento IN (
+									7
+									,37
+									,97
+									)
+								AND T.qtXDock >= T.qtDSD
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND NOT EXISTS (
+															SELECT 1
+															FROM Itens IT2
+															WHERE IT2.cdV9D = IT.cdv9d
+																AND IT2.vlTipoReabastecimento NOT IN (
+																	3
+																	,33
+																	)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para Direto Loja/Staple e ' + I.Relacionamento)
+							WHEN I.vlTipoReabastecimento IN (
+									3
+									,33
+									)
+								AND T.qtDSD >= T.qtXDock
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND NOT EXISTS (
+															SELECT 1
+															FROM Itens IT2
+															WHERE IT2.cdV9D = IT.cdv9d
+																AND IT2.vlTipoReabastecimento NOT IN (
+																	7
+																	,37
+																	,97
+																	)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para XDock/Staple e ' + I.Relacionamento)
+							WHEN I.Relacionamento = 'Sem Relacionamento'
+								AND T.qtSemRelacionamento < T.qtComRelacionamento
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND (
+															(
+																IT.vlTipoReabastecimento IN (
+																	3
+																	,33
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	7
+																	,37
+																	,97
+																	)
+																)
+															OR (
+																IT.vlTipoReabastecimento IN (
+																	7
+																	,37
+																	,97
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	3
+																	,33
+																	)
+																)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para ' + CASE 
+											WHEN I.vlTipoReabastecimento IN (
+													3
+													,33
+													)
+												THEN 'XDock'
+											ELSE 'Direto Loja'
+											END + '/Staple e ' + I.Relacionamento)
+							WHEN I.Relacionamento = 'Com Relacionamento'
+								AND T.qtComRelacionamento <= T.qtSemRelacionamento
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND (
+															(
+																IT.vlTipoReabastecimento IN (
+																	3
+																	,33
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	7
+																	,37
+																	,97
+																	)
+																)
+															OR (
+																IT.vlTipoReabastecimento IN (
+																	7
+																	,37
+																	,97
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	3
+																	,33
+																	)
+																)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para ' + CASE 
+											WHEN I.vlTipoReabastecimento IN (
+													3
+													,33
+													)
+												THEN 'XDock'
+											ELSE 'Direto Loja'
+											END + '/Staple e ' + I.Relacionamento)
+							ELSE 'OK, Nenhuma ação necessária.'
+							END Acao
+					FROM Itens I
+					JOIN Totais T ON T.cdV9D = I.cdV9D
+					)
+				SELECT nmFornecedor
+					,idDepartamento
+					,cdV9D
+					,CASE 
+						WHEN cdStatusVendor = 'A'
+							THEN 'Ativo'
+						WHEN cdStatusVendor = 'D'
+							THEN 'Deletado'
+						ELSE 'Inativo'
+						END StatusVendor
+					,cdItem
+					,cdUPC
+					,dsItem
+					,vlTipoReabastecimento
+					,CASE 
+						WHEN tpStatus = 'A'
+							THEN 'Ativo'
+						WHEN tpStatus = 'D'
+							THEN 'Deletado'
+						WHEN tpStatus = 'I'
+							THEN 'Inativo'
+						ELSE '-'
+						END StatusItem
+					,dsTipoReabastecimento
+					,Relacionamento
+					,Acao
+					,CASE 
+						WHEN SUBSTRING(Acao, 1, 2) = 'OK'
+							THEN 1
+						WHEN SUBSTRING(Acao, 1, 5) = 'Mover'
+							THEN 2
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento NOT IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Sem'
+							THEN 3
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento NOT IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Com'
+							THEN 4
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Sem'
+							THEN 5
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Com'
+							THEN 6
+						ELSE 0
+						END cdAcao
+				FROM ItensValidados
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="~">
+				<![CDATA[ 
+				/*
+				=======================================================================================================================
+				View...................: VW_ConsistenciaVendorNoveDigitos
+				Autor..................: Evandro Henrique Dapper (CWI)
+				Data de criação........: 29/07/2016
+				Objetivo...............: Listar os itens vinculados ao código de 9 dígitos do vendor consistindo se os itens seguem as 
+										 regras definidas por padrão para o fluxo adequado de pedidos, sinalizando os itens que possuam 
+										 alguma inconsistência
+				Parâmetros.............: 
+				Exemplo de uso.........: 
+				=======================================================================================================================
+				HISTÓRICO DE ALTERAÇÃO
+
+				Alterado por...........:
+				Data Alteração.........:
+				Descrição da alteração.:
+				=======================================================================================================================
+				*/
+				ALTER VIEW [dbo].[VW_ConsistenciaVendorNoveDigitos]
+				AS
+				WITH Itens
+				AS (
+					SELECT fp.IDFornecedor
+						,fp.idDepartamento
+						,fp.cdV9D
+						,fp.cdStatusVendor
+						,ISNULL(CONVERT(VARCHAR, IT.cdItem), '-') cdItem
+						,ISNULL(CONVERT(VARCHAR, IT.cdUPC), '-') cdUPC
+						,ISNULL(IT.dsItem, '-') dsItem
+						,ISNULL(CONVERT(VARCHAR, IT.vlTipoReabastecimento), '-') vlTipoReabastecimento
+						,ISNULL(IT.tpStatus, '-') tpStatus
+						,CASE 
+							WHEN IT.vlTipoReabastecimento IN (
+									7
+									,37
+									,97
+									)
+								THEN 'DSD'
+							WHEN IT.vlTipoReabastecimento IN (
+									3
+									,33
+									)
+								THEN 'XDock'
+							WHEN IT.vlTipoReabastecimento IN (
+									20
+									,40
+									,22
+									,42
+									,43
+									,81
+									)
+								THEN 'STAPLE'
+							ELSE '-'
+							END dsTipoReabastecimento
+						,CASE 
+							WHEN IT.idItemDetalhe IS NULL
+								THEN '-'
+							WHEN COALESCE(IT.tpvinculado, IT.tpManipulado, IT.tpReceituario) IS NOT NULL
+								AND SUBSTRING(CONVERT(VARCHAR, IT.cdUPC), 1, 3) <> '789'
+								THEN 'Com Relacionamento'
+							ELSE 'Sem Relacionamento'
+							END Relacionamento
+					FROM FornecedorParametro FP
+					LEFT JOIN ItemDetalhe IT ON IT.idFornecedorParametro = FP.IDFornecedorParametro
+					WHERE IT.tpStatus = 'A'
+					)
+					,Totais
+				AS (
+					SELECT cdv9d
+						,SUM(CASE 
+								WHEN vlTipoReabastecimento IN (
+										7
+										,37
+										,97
+										)
+									THEN 1
+								ELSE 0
+								END) qtDSD
+						,SUM(CASE 
+								WHEN vlTipoReabastecimento IN (
+										3
+										,33
+										)
+									THEN 1
+								ELSE 0
+								END) qtXDock
+						,SUM(CASE 
+								WHEN vlTipoReabastecimento IN (
+										20
+										,40
+										,22
+										,42
+										,43
+										,81
+										)
+									THEN 1
+								ELSE 0
+								END) qtStaple
+						,SUM(CASE 
+								WHEN Relacionamento = 'Com Relacionamento'
+									THEN 1
+								ELSE 0
+								END) qtComRelacionamento
+						,SUM(CASE 
+								WHEN Relacionamento = 'Sem Relacionamento'
+									THEN 1
+								ELSE 0
+								END) qtSemRelacionamento
+						,SUM(CASE 
+								WHEN tpStatus = 'A'
+									THEN 1
+								ELSE 0
+								END) qtItensAtivos
+					FROM Itens
+					GROUP BY cdv9d
+					)
+					,ItensValidados
+				AS (
+					SELECT I.*
+						,CASE 
+							WHEN I.cdItem = '-'
+								THEN '-'
+							WHEN T.qtItensAtivos = 0
+								THEN 'Sem itens ativos no cadastro.'
+							WHEN I.vlTipoReabastecimento IN (
+									7
+									,37
+									,97
+									)
+								AND T.qtXDock >= T.qtDSD
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND NOT EXISTS (
+															SELECT 1
+															FROM Itens IT2
+															WHERE IT2.cdV9D = IT.cdv9d
+																AND IT2.vlTipoReabastecimento NOT IN (
+																	3
+																	,33
+																	)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para Direto Loja/Staple e ' + I.Relacionamento)
+							WHEN I.vlTipoReabastecimento IN (
+									3
+									,33
+									)
+								AND T.qtDSD >= T.qtXDock
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND NOT EXISTS (
+															SELECT 1
+															FROM Itens IT2
+															WHERE IT2.cdV9D = IT.cdv9d
+																AND IT2.vlTipoReabastecimento NOT IN (
+																	7
+																	,37
+																	,97
+																	)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para XDock/Staple e ' + I.Relacionamento)
+							WHEN I.Relacionamento = 'Sem Relacionamento'
+								AND T.qtSemRelacionamento < T.qtComRelacionamento
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND (
+															(
+																IT.vlTipoReabastecimento IN (
+																	3
+																	,33
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	7
+																	,37
+																	,97
+																	)
+																)
+															OR (
+																IT.vlTipoReabastecimento IN (
+																	7
+																	,37
+																	,97
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	3
+																	,33
+																	)
+																)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para ' + CASE 
+											WHEN I.vlTipoReabastecimento IN (
+													3
+													,33
+													)
+												THEN 'XDock'
+											ELSE 'Direto Loja'
+											END + '/Staple e ' + I.Relacionamento)
+							WHEN I.Relacionamento = 'Com Relacionamento'
+								AND T.qtComRelacionamento <= T.qtSemRelacionamento
+								THEN ISNULL((
+											'Mover Item para Sequencial ' + STUFF((
+													SELECT DISTINCT ' ou ' + CONVERT(VARCHAR, IT.cdV9D)
+													FROM Itens IT
+													WHERE IT.IDFornecedor = I.IDFornecedor
+														AND IT.idDepartamento = I.idDepartamento
+														AND IT.tpStatus = 'A'
+														AND IT.Relacionamento = I.Relacionamento
+														AND IT.cdStatusVendor = 'A'
+														AND IT.cdV9D <> I.cdV9D
+														AND (
+															(
+																IT.vlTipoReabastecimento IN (
+																	3
+																	,33
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	7
+																	,37
+																	,97
+																	)
+																)
+															OR (
+																IT.vlTipoReabastecimento IN (
+																	7
+																	,37
+																	,97
+																	)
+																AND I.vlTipoReabastecimento NOT IN (
+																	3
+																	,33
+																	)
+																)
+															)
+													FOR XML PATH('')
+													), 1, 4, '') + ' a depender das condições comerciais.'
+											), 'Criar sequencial para ' + CASE 
+											WHEN I.vlTipoReabastecimento IN (
+													3
+													,33
+													)
+												THEN 'XDock'
+											ELSE 'Direto Loja'
+											END + '/Staple e ' + I.Relacionamento)
+							ELSE 'OK, Nenhuma ação necessária.'
+							END Acao
+					FROM Itens I
+					JOIN Totais T ON T.cdV9D = I.cdV9D
+					)
+				SELECT idDepartamento
+					,cdV9D
+					,CASE 
+						WHEN cdStatusVendor = 'A'
+							THEN 'Ativo'
+						WHEN cdStatusVendor = 'D'
+							THEN 'Deletado'
+						ELSE 'Inativo'
+						END StatusVendor
+					,cdItem
+					,cdUPC
+					,dsItem
+					,vlTipoReabastecimento
+					,CASE 
+						WHEN tpStatus = 'A'
+							THEN 'Ativo'
+						WHEN tpStatus = 'D'
+							THEN 'Deletado'
+						WHEN tpStatus = 'I'
+							THEN 'Inativo'
+						ELSE '-'
+						END StatusItem
+					,dsTipoReabastecimento
+					,Relacionamento
+					,Acao
+					,CASE 
+						WHEN SUBSTRING(Acao, 1, 2) = 'OK'
+							THEN 1
+						WHEN SUBSTRING(Acao, 1, 5) = 'Mover'
+							THEN 2
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento NOT IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Sem'
+							THEN 3
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento NOT IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Com'
+							THEN 4
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Sem'
+							THEN 5
+						WHEN SUBSTRING(Acao, 1, 5) = 'Criar'
+							AND vlTipoReabastecimento IN (
+								3
+								,33
+								)
+							AND SUBSTRING(Relacionamento, 1, 3) = 'Com'
+							THEN 6
+						ELSE 0
+						END cdAcao
+				FROM ItensValidados
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,67 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="modalDetalheConsultaReturnSheetRA">
+    <modal-breadcrumb title="{{::'returnSheetDetail'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group form-group-without-actions">
+
+        <form-field title="{{::'exported'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.blExportado|fixedValue:'tipoSimNao'|translate|capitalize}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'event'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.returnSheet.descricao}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'eventPeriod'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.returnSheet.dhInicioEvento | date:'dd/MM/yyyy'}} - {{sugestaoReturnSheet.returnSheet.dhFinalEvento | date:'dd/MM/yyyy'}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'activePeriodReturnSheet'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.returnSheet.dhInicioReturn | date:'dd/MM/yyyy'}} - {{sugestaoReturnSheet.returnSheet.dhFinalReturn | date:'dd/MM/yyyy'}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'vendorNineDigitsCode'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-vendor-nove-digitos ng-model="filters.cdV9D" sistema="1" description-width="medium" item-out="filters.vendor" ng-disabled="true"></lookup-vendor-nove-digitos>
+        </form-field>
+        <form-field title="{{::'cost'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.vlCustoContabilItemVenda | number:2}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'inputItemCode'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-item ng-model="sugestaoReturnSheet.itemDetalheEntrada.cdItem" sistema="1" description-width="medium" ng-disabled="true"></lookup-item>
+        </form-field>
+        <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-loja ng-model="sugestaoReturnSheet.loja.cdLoja" bandeira="filters.bandeira" sistema="1" description-width="medium" ng-disabled="true"></lookup-loja>
+        </form-field>
+        <form-field title="{{::'priceSale'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.precoVenda | number:2}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'pack'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.qtVendorPackageItemCompra}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'stock'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.estoqueItemVenda | number:2}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'raType'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.itemDetalheEntrada.vlTipoReabastecimento|fixedValue:'valorTipoReabastecimento'|translate}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'weight'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.vlPesoLiquidoItemCompra}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'storeQtd'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.qtdLoja}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'itemSubtotalInBoxes'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.subtotal}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'raQtd'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.qtdRA}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'channel'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.fornecedorParametro.cdTipo}}" ng-disabled="true" class="form-control" />
+        </form-field>
+        <form-field title="{{::'outputItemCode'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-item ng-model="sugestaoReturnSheet.itemDetalheSaida.cdItem" sistema="1" description-width="medium" ng-disabled="true"></lookup-item>
+        </form-field>
+        <form-field title="{{::'lastUpdateStore'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" style="max-width:100%" value="{{sugestaoReturnSheet.dhAtualizacao|date:'dd/MM/yyyy - HH:mm'}} // {{sugestaoReturnSheet.usuarioAtualizacao.fullName}}" ng-disabled="true" class="form-control input-width-xxlarge" ng-if="sugestaoReturnSheet.dhAtualizacao != null && sugestaoReturnSheet.usuarioAtualizacao != null" />
+            <input type="text" style="max-width:100%" value="" ng-disabled="true" class="form-control input-width-xxlarge" ng-if="sugestaoReturnSheet.dhAtualizacao == null || sugestaoReturnSheet.usuarioAtualizacao == null" />
+        </form-field>
+        <form-field title="{{::'buyingUnit'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" value="{{sugestaoReturnSheet.itemDetalheEntrada.tpCaixaFornecedor|fixedValue:'tipoCaixaFornecedorShort'|translate|capitalize}}" ng-disabled="true" class="form-control" />
+        </form-field>
+    </div>
+</form>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <CommandText>SELECT 'A' AS cdSituacao, 'Ativo' AS dsSituacao
+UNION
+SELECT 'I' AS cdSituacao, 'Inativo' AS dsSituacao
+UNION
+SELECT 'D' AS cdSituacao, 'Excluído' AS dsSituacao</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="cdSituacao">
+        <DataField>cdSituacao</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="dsSituacao">
+        <DataField>dsSituacao</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

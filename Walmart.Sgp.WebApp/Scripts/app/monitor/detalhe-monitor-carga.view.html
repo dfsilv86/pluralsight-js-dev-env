@@ -1,0 +1,57 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateDetalheMonitorCargaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalheMonitorCarga">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.bandeira.cdSistema" disabled></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="data.bandeira.idBandeira" sistema="data.bandeira.cdSistema" disabled></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="data.loja.cdLoja" bandeira="data.bandeira.idBandeira" sistema="data.bandeira.cdSistema" description-width="large" ng-disabled="true"></lookup-loja>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="descricao-carga">{{::'loads'|translate|capitalize}}</th>
+                            <th class="domain symbol">{{::'status'|translate|capitalize}}</th>
+                            <th class="date time">{{::'begin'|translate|capitalize}}</th>
+                            <th class="date time">{{::'end'|translate|capitalize}}</th>
+                            <th class="triple number">{{::'estimatedTimeOfExecution'|translate|capitalize}}</th>
+                            <th class="mensagem-carga">{{::'observation'|translate|capitalize}}</th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.cargas && data.cargas.length > 0">
+                        <tr ng-repeat="item in data.cargas">
+                            <td class="descricao-carga">{{item.nome}}</td>
+                            <td class="domain symbol"><processo-carga-status ng-model="item.status"></processo-carga-status></td>
+                            <td class="date time">{{item.dataInicioExecucao|amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</td>
+                            <td class="date time">{{item.dataFimExecucao|amDateFormat:'DD/MM/YYYY HH:mm:ss'}}</td>
+                            <td class="triple number">{{item.prazoExecucaoEstimadoEmDias}} {{(item.prazoExecucaoEstimadoEmDias === 1 ? 'day':'days')|translate|lowercase}}</td>
+                            <td class="mensagem-carga">{{item.erro.descricao}}<br />{{item.observacao}}</td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.cargas || data.cargas.length === 0">
+                        <tr>
+                            <td colspan="6" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </widget>
+    </div>
+</div>
+
+

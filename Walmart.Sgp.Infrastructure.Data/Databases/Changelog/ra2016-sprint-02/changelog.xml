@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+  <!-- TABELAS -->
+  <include file="1 - AlcadaDetalhe.xml" relativeToChangelogFile="true"/>
+  <include file="2 - AlcadaDetalheLog.xml" relativeToChangelogFile="true"/>
+  <include file="3 - AlcadaLog.xml" relativeToChangelogFile="true"/>
+  <include file="4 - ItemDetalhe.xml" relativeToChangelogFile="true"/>
+  <include file="5 - Loja.xml" relativeToChangelogFile="true"/>
+  <include file="6 - RegiaoAdministrativa.xml" relativeToChangelogFile="true"/>
+  <include file="7 - SugestaoPedido.xml" relativeToChangelogFile="true"/>
+  <include file="8 - PR_GeraSugestaoManual.xml" relativeToChangelogFile="true"/>
+  <include file="9 - PR_RelItemVisivelNaoVisivelInterferir.xml" relativeToChangelogFile="true"/>
+  <include file="10 - PRC_ATENDEPEDIDOMINIMO.xml" relativeToChangelogFile="true"/>
+  <include file="11 - PRC_ATENDEPEDIDOMINIMO_XDoc.xml" relativeToChangelogFile="true"/>
+  <include file="12 - CdDepartamento_AtualizacaoRelacionamento.xml" relativeToChangelogFile="true"/>
+  <include file="13 - PR_AtualizaFornecedorParametroItem.xml" relativeToChangelogFile="true"/>
+  <include file="14 - AtualizacaoRelacionamentoItem.xml" relativeToChangelogFile="true"/>
+  <include file="15 - fnObterTpWeek.xml" relativeToChangelogFile="true"/>
+  <include file="16 - PR_GeraSugestaoPedidoCD.xml" relativeToChangelogFile="true"/>
+  <include file="17 - fnReabSugestaoPedidoItensStaple.xml" relativeToChangelogFile="true"/>
+  <include file="18 - fnReabSugestaoPedidoItensDSD.xml" relativeToChangelogFile="true"/>
+  <include file="19 - fnReabSugestaoPedidoItensDiretoSaida.xml" relativeToChangelogFile="true"/>
+  <include file="20 - fnReabSugestaoPedidoItensCross.xml" relativeToChangelogFile="true"/>
+  <include file="21 - PR_RelItemVisivelNaoVisivelInterferir_2.xml" relativeToChangelogFile="true"/>
+  <include file="22 - PR_RelItemVisivelNaoVisivelInterferir_3.xml" relativeToChangelogFile="true"/>
+  <include file="23 - PRC_ATENDEPEDIDOMINIMO.2.xml" relativeToChangelogFile="true"/>
+  <include file="24 - PR_RelItemVisivelNaoVisivelInterferir.4.xml" relativeToChangelogFile="true"/>
+  <include file="25 - fnObterIdFornecedorParametroItem.xml" relativeToChangelogFile="true"/>
+  <include file="26 - PR_RelItemVisivelNaoVisivelInterferir.5.xml" relativeToChangelogFile="true"/>
+  <include file="27 - PR_RelItemVisivelNaoVisivelInterferir.6.xml" relativeToChangelogFile="true"/>
+  <include file="28 - fnObterIdFornecedorParametroItem.2.xml" relativeToChangelogFile="true"/>
+  <include file="29 - PR_RelItemVisivelNaoVisivelInterferir.7.xml" relativeToChangelogFile="true"/>
+  <include file="30 - PR_RelItemVisivelNaoVisivelInterferir.8.xml" relativeToChangelogFile="true"/>
+  <include file="31 - PR_RelItemVisivelNaoVisivelInterferir.9.xml" relativeToChangelogFile="true"/>
+  <include file="32 - PRC_ATENDEPEDIDOMINIMO_XDoc.2.xml" relativeToChangelogFile="true"/>
+  <include file="33 - PRC_ATENDEPEDIDOMINIMO.3.xml" relativeToChangelogFile="true"/>
+  <include file="34 - PR_RelItemVisivelNaoVisivelInterferir.10.xml" relativeToChangelogFile="true"/>
+  <include file="35 - PR_AtualizaRelacaoItemLojaCD_Inclusao_Colunas_AtualizacaoRelacionamentoItem.xml" relativeToChangelogFile="true"/>
+  <include file="36 - PR_RelItemVisivelNaoVisivelInterferir.11.xml" relativeToChangelogFile="true"/>
+  <include file="37 - SugestaoPedido_Alteracao_Tipo_Dados_Colunas.xml" relativeToChangelogFile="true"/>
+  <include file="38 - SUGESTAOPEDIDO_PRE-Criacao.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

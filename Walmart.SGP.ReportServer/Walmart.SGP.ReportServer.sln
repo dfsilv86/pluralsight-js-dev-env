@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{F14B399A-7131-4C87-9E4B-1186C45EF12D}") = "Walmart.SGP.ReportServer", "Walmart.SGP.ReportServer.rptproj", "{4DAA2B5E-7927-4A05-8F35-63F8A9955DEF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		DEV|Default = DEV|Default
+		SIT|Default = SIT|Default
+		UAT|Default = UAT|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DAA2B5E-7927-4A05-8F35-63F8A9955DEF}.DEV|Default.ActiveCfg = DEV
+		{4DAA2B5E-7927-4A05-8F35-63F8A9955DEF}.DEV|Default.Deploy.0 = DEV
+		{4DAA2B5E-7927-4A05-8F35-63F8A9955DEF}.SIT|Default.ActiveCfg = SIT
+		{4DAA2B5E-7927-4A05-8F35-63F8A9955DEF}.SIT|Default.Deploy.0 = SIT-DEPLOY
+		{4DAA2B5E-7927-4A05-8F35-63F8A9955DEF}.UAT|Default.ActiveCfg = UAT
+		{4DAA2B5E-7927-4A05-8F35-63F8A9955DEF}.UAT|Default.Deploy.0 = UAT
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

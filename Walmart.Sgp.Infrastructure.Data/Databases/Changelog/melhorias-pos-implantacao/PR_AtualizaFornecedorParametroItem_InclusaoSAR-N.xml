@@ -1,0 +1,336 @@
+<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="melhorias-pos-implantacao_PR_AtualizaFornecedorParametroItem_InclusaoSAR-N" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[  
+				ALTER PROCEDURE [dbo].[PR_AtualizaFornecedorParametroItem]
+				AS
+				BEGIN
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+					DECLARE @idItemDetalhe BIGINT
+						,@idFornecedor BIGINT
+						,@idFornecedorParametro BIGINT
+						,@cdV9D BIGINT
+						,@vlTipoReabastecimento INT
+						,@Canal CHAR(1)
+						,@idFornecedorParametroNovo BIGINT
+						,@cdItemDetalhe INT
+						,@cdLoja INT
+						,@Observacao VARCHAR(100)
+						,@LogDataInicio DATETIME
+						,@qtdRegistros INT
+						,@cdDepartamento INT
+
+					SET @LogDataInicio = GETDATE()
+					SET @qtdRegistros = 0
+
+					TRUNCATE TABLE AtualizacaoRelacionamento
+
+					DECLARE curItemDetalhe CURSOR LOCAL
+					FOR
+					SELECT ID.idItemDetalhe
+						,ID.cdItem
+						,ID.idFornecedor
+						,ID.idFornecedorParametro
+						,CONVERT(VARCHAR, FR.cdfornecedor) + CONVERT(VARCHAR, DP.cddepartamento) + CONVERT(VARCHAR, ID.cdSequenciaVendor)
+						,ID.vlTipoReabastecimento
+						,DP.cddepartamento
+					FROM ItemDetalhe ID
+					JOIN Departamento DP ON DP.IDDepartamento = ID.IDDepartamento
+					JOIN Fornecedor FR ON FR.IDFornecedor = ID.IDFornecedor
+					WHERE ID.blAtivo = 1
+
+					-- Ver mais critérios de seleção
+					OPEN curItemDetalhe
+
+					FETCH NEXT
+					FROM curItemDetalhe
+					INTO @idItemDetalhe
+						,@cdItemDetalhe
+						,@idFornecedor
+						,@idFornecedorParametro
+						,@cdV9D
+						,@vlTipoReabastecimento
+						,@cdDepartamento
+
+					WHILE @@FETCH_STATUS = 0
+					BEGIN
+						SET @idFornecedorParametroNovo = NULL
+						SET @Canal = 'L'
+
+						SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+						FROM FornecedorParametro d
+						WHERE d.IDFornecedor = @idFornecedor
+							AND d.cdV9D = @cdV9D
+							AND d.cdStatusVendor = 'A'
+							AND d.cdTipo = @Canal
+							AND d.tpStoreApprovalRequired IN (
+								'Y'
+								,'R'
+								,'N'
+								)
+
+						IF @idFornecedorParametroNovo IS NULL
+						BEGIN
+							IF @vlTipoReabastecimento IN (
+									20
+									,22
+									,40
+									,42
+									,43
+									)
+								SET @Canal = 'W'
+
+							IF @vlTipoReabastecimento IN (
+									3
+									,7
+									,37
+									,33
+									)
+								SET @Canal = 'D'
+
+							SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+							FROM FornecedorParametro d
+							WHERE d.IDFornecedor = @idFornecedor
+								AND d.cdV9D = @cdV9D
+								AND d.cdStatusVendor = 'A'
+								AND d.cdTipo = @Canal
+								AND d.tpStoreApprovalRequired IN (
+									'Y'
+									,'R'
+									,'N'
+									)
+						END
+
+						UPDATE ItemDetalhe
+						SET ItemDetalhe.IDFornecedorParametro = @idFornecedorParametroNovo
+						WHERE idItemDetalhe = @idItemDetalhe
+
+						IF @IdFornecedorParametroNovo IS NULL
+							SET @Observacao = 'Não existe fornecedor apto a fornecer este item'
+						ELSE
+							SET @Observacao = 'Registro atualizado'
+
+						SET @qtdRegistros += 1
+
+						IF ISNULL(@idFornecedorParametro, '0') <> ISNULL(@IdFornecedorParametroNovo, '1')
+							INSERT INTO AtualizacaoRelacionamento (
+								cdItem
+								,cdLoja
+								,cdV9DAnteriro
+								,cdTipoAnteriro
+								,MotivoAtualizacao
+								,cdDepartamento
+								)
+							VALUES (
+								@cdItemDetalhe
+								,@cdLoja
+								,@cdV9D
+								,@Canal
+								,@Observacao
+								,@cdDepartamento
+								)
+
+						FETCH NEXT
+						FROM curItemDetalhe
+						INTO @idItemDetalhe
+							,@cdItemDetalhe
+							,@idFornecedor
+							,@idFornecedorParametro
+							,@cdV9D
+							,@vlTipoReabastecimento
+							,@cdDepartamento
+					END
+
+					CLOSE curItemDetalhe
+
+					DEALLOCATE curItemDetalhe
+
+					INSERT INTO LogExecucao (
+						IDProcesso
+						,DataInicio
+						,DataTermino
+						,QtdRegistros
+						,QtdRegistrosProcessados
+						,IdUltimoRegistroProcessado
+						,dsDescricaoExecucao
+						)
+					VALUES (
+						(
+							SELECT IdProcesso
+							FROM LogTipoProcesso WITH (NOLOCK)
+							WHERE Descricao = 'PR_AtualizaFornecedorParametroItem'
+							)
+						,@LogDataInicio
+						,GETDATE()
+						,@qtdRegistros
+						,@qtdRegistros
+						,NULL
+						,'Atualizado o idFornecedorParametro dos registros da tabela ItemDetalhe'
+						)
+				END
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+					ALTER PROCEDURE [dbo].[PR_AtualizaFornecedorParametroItem]
+					AS
+					BEGIN
+						SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+						DECLARE @idItemDetalhe BIGINT
+							,@idFornecedor BIGINT
+							,@idFornecedorParametro BIGINT
+							,@cdV9D BIGINT
+							,@vlTipoReabastecimento INT
+							,@Canal CHAR(1)
+							,@idFornecedorParametroNovo BIGINT
+							,@cdItemDetalhe INT
+							,@cdLoja INT
+							,@Observacao VARCHAR(100)
+							,@LogDataInicio DATETIME
+							,@qtdRegistros INT
+							,@cdDepartamento INT
+
+						SET @LogDataInicio = GETDATE()
+						SET @qtdRegistros = 0
+
+						TRUNCATE TABLE AtualizacaoRelacionamento
+
+						DECLARE curItemDetalhe CURSOR LOCAL
+						FOR
+						SELECT ID.idItemDetalhe
+							,ID.cdItem
+							,ID.idFornecedor
+							,ID.idFornecedorParametro
+							,CONVERT(VARCHAR, FR.cdfornecedor) + CONVERT(VARCHAR, DP.cddepartamento) + CONVERT(VARCHAR, ID.cdSequenciaVendor)
+							,ID.vlTipoReabastecimento
+							,DP.cddepartamento
+						FROM ItemDetalhe ID
+						JOIN Departamento DP
+							ON DP.IDDepartamento = ID.IDDepartamento
+						JOIN Fornecedor FR
+							ON FR.IDFornecedor = ID.IDFornecedor
+						WHERE ID.blAtivo = 1
+
+						-- Ver mais critérios de seleção
+						OPEN curItemDetalhe
+
+						FETCH NEXT
+						FROM curItemDetalhe
+						INTO @idItemDetalhe
+							,@cdItemDetalhe
+							,@idFornecedor
+							,@idFornecedorParametro
+							,@cdV9D
+							,@vlTipoReabastecimento
+							,@cdDepartamento
+
+						WHILE @@FETCH_STATUS = 0
+						BEGIN
+							SET @idFornecedorParametroNovo = NULL
+							SET @Canal = 'L'
+
+							SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+							FROM FornecedorParametro d
+							WHERE d.IDFornecedor = @idFornecedor
+								AND d.cdV9D = @cdV9D
+								AND d.cdStatusVendor = 'A'
+								AND d.cdTipo = @Canal
+								AND d.tpStoreApprovalRequired in ('Y','R')
+
+							IF @idFornecedorParametroNovo IS NULL
+							BEGIN
+								IF @vlTipoReabastecimento IN (20, 22, 40, 42, 43)
+									SET @Canal = 'W'
+
+								IF @vlTipoReabastecimento IN (3, 7, 37, 33)
+									SET @Canal = 'D'
+
+								SELECT @idFornecedorParametroNovo = IDFornecedorParametro
+								FROM FornecedorParametro d
+								WHERE d.IDFornecedor = @idFornecedor
+									AND d.cdV9D = @cdV9D
+									AND d.cdStatusVendor = 'A'
+									AND d.cdTipo = @Canal
+									AND d.tpStoreApprovalRequired in ('Y','R')
+							END
+
+							UPDATE ItemDetalhe
+							SET ItemDetalhe.IDFornecedorParametro = @idFornecedorParametroNovo
+							WHERE idItemDetalhe = @idItemDetalhe
+
+							IF @IdFornecedorParametroNovo IS NULL
+								SET @Observacao = 'Não existe fornecedor apto a fornecer este item'
+							ELSE
+								SET @Observacao = 'Registro atualizado'
+
+							SET @qtdRegistros += 1
+
+							IF ISNULL(@idFornecedorParametro, '0') <> ISNULL(@IdFornecedorParametroNovo, '1')
+								INSERT INTO AtualizacaoRelacionamento (
+									cdItem
+									,cdLoja
+									,cdV9DAnteriro
+									,cdTipoAnteriro
+									,MotivoAtualizacao
+									,cdDepartamento)
+								VALUES (
+									@cdItemDetalhe
+									,@cdLoja
+									,@cdV9D
+									,@Canal
+									,@Observacao
+									,@cdDepartamento)
+
+							FETCH NEXT
+							FROM curItemDetalhe
+							INTO @idItemDetalhe
+								,@cdItemDetalhe
+								,@idFornecedor
+								,@idFornecedorParametro
+								,@cdV9D
+								,@vlTipoReabastecimento
+								,@cdDepartamento
+						END
+
+						CLOSE curItemDetalhe
+
+						DEALLOCATE curItemDetalhe
+
+						INSERT INTO LogExecucao (
+							IDProcesso
+							,DataInicio
+							,DataTermino
+							,QtdRegistros
+							,QtdRegistrosProcessados
+							,IdUltimoRegistroProcessado
+							,dsDescricaoExecucao
+							)
+						VALUES (
+							(
+								SELECT IdProcesso
+								FROM LogTipoProcesso WITH (NOLOCK)
+								WHERE Descricao = 'PR_AtualizaFornecedorParametroItem'
+								)
+							,@LogDataInicio
+							,GETDATE()
+							,@qtdRegistros
+							,@qtdRegistros
+							,NULL
+							,'Atualizado o idFornecedorParametro dos registros da tabela ItemDetalhe'
+							)
+					END
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

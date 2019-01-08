@@ -1,0 +1,87 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateRevisaoAjusteCustoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" required></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.loja" description-width="large"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.departamento" description-width="large"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'itemCode2'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" ng-model="filters.cdItem" ui-number-mask="0" maxlength="10" class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'itemDescription'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" ng-model="filters.dsItem" maxlength="50" class="form-control" />
+                    </form-field>
+                    <form-field title="{{::'status'|translate|capitalize}}" line-width="12" grid-width="3">
+                        <dropdown-status-revisao-custo ng-model="filters.idStatus"></dropdown-status-revisao-custo>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <!-- Grid -->
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <table class="table complex table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th>{{::'store'|translate}}</th>
+                            <th>{{::'department'|translate}}</th>
+                            <th>{{::'item'|translate}}</th>
+                            <th class="date">{{::'dateNewCost'|translate|capitalize}}</th>
+                            <th class="currency">{{::'costRequested'|translate|capitalize}}</th>
+                            <th>{{::'reasonRequest'|translate|capitalize}}</th>
+                            <th class="date">{{::'requestDate'|translate|capitalize}}</th>
+                            <th class="identifier">{{::'requester'|translate}}</th>
+                            <th class="domain">{{::'status'|translate}}</th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td>{{item.loja|storeProfile}}</td>
+                            <td>{{item.itemDetalhe.departamento|departmentProfile}}</td>
+                            <td>{{item.itemDetalhe|productProfile}}</td>
+                            <td class="date">{{item.dtSolicitacao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="currency">{{item.vlCustoSolicitado|money:'BRL':2}}</td>
+                            <td>{{item.motivoRevisaoCusto.dsMotivo}}</td>
+                            <td class="date">{{item.dtCriacao|amDateFormat:'DD/MM/YYYY'|coalesce:'-'}}</td>
+                            <td class="identifier">{{item.usuarioSolicitante.userName}}</td>
+                            <td class="domain">{{item.statusRevisaoCusto.dsStatus}}</td>
+                            <td class="action">
+                                <edit-button ng-click="select(item)"></edit-button>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="10" class="domain">{{::'noData'|translate}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

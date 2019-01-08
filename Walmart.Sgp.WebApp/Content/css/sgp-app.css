@@ -1,0 +1,300 @@
+﻿td.action button, td.domain button {
+    margin: -4px 0;
+    padding: 3px 5px;
+}
+
+    td.action button:hover, td.domain button:hover {
+        background: rgba(0,0,0,0.05);
+        border: solid 1px rgba(0,0,0,0.13);
+        border-top-color: rgba(255,255,255,0.27);
+        border-left-color: rgba(255,255,255,0.27);
+    }
+
+    td.action button:focus, td.domain button:focus {
+        background: rgba(0,0,0,0.10);
+        border: solid 1px rgba(0,0,0,0.13);
+        border-top-color: rgba(255,255,255,0.27);
+        border-left-color: rgba(255,255,255,0.27);
+    }
+
+/* ====================== Configuracoes especificas do SGP ========================= */
+
+table.table.simple th.identifier.cd-cd {
+    width: 110px;
+}
+
+table.table.simple th.identifier.cd-cd-cd-loja {
+    width: 120px;
+}
+
+table.table.simple th.number.percentual-divergencia {
+    width: 120px;
+}
+
+table.table.simple th.domain.unidade-medida {
+    width: 120px;
+}
+
+table.table.simple th.domain.cd-review-date {
+    width: 190px;
+}
+
+table.table.simple th.domain.parametro-vendor {
+    width: 130px;
+}
+
+table.table.simple th.identifier.cd-vendor-9d {
+    width: 140px;
+}
+
+table.table.simple th.number.rendimento-derivado {
+    width: 120px;
+}
+
+table.table.simple th.number.peso-kg {
+    width: 120px;
+}
+
+table.table.complex th.identifier.correcao-nota-fiscal-cd-algo, table.table.complex td.identifier.correcao-nota-fiscal-cd-algo {
+    width: 40px;
+}
+
+table.table.complex th.domain.unidade-medida {
+    width: 120px;
+}
+
+table.table.complex th.domain.relacao-item-loja {
+    width: 260px;
+}
+
+table.table.complex th.domain.atributo-item {
+    width: 100px;
+}
+
+table.table.complex th.domain.relacionamento-item-loja-tipo-reabastecimento {
+    width: 160px;
+}
+
+table.table.complex th.domain.parametro-item-status {
+    width: 120px;
+}
+
+.detalhe-inventario-descricao {
+    width: 160px;
+}
+
+/* === indicadores de processo === */
+
+.processo-carga-status {
+    font-size: 18px !important;
+    height: 18px;
+    overflow: hidden;
+}
+
+table.table.complex .processo-carga-status {
+    font-size: 18px !important;
+    margin: -3px;
+}
+
+.processo-carga-status-NaoIniciado {
+    color: gray;
+}
+
+    .processo-carga-status-NaoIniciado:before {
+        content: "\e017";
+    }
+
+.processo-carga-status-EmAndamento {
+    color: #337ab7;
+}
+
+    .processo-carga-status-EmAndamento:before {
+        content: "\e029";
+    }
+
+.processo-carga-status-Concluido {
+    color: #5cb85c;
+}
+
+    .processo-carga-status-Concluido:before {
+        content: "\e084";
+    }
+
+.processo-carga-status-Erro {
+    color: #f0ad4e;
+}
+
+    .processo-carga-status-Erro:before {
+        content: "\e090";
+    }
+
+.descricao-carga {
+    width: 260px;
+}
+
+/*.mensagem-carga {
+    width: 260px;
+}*/
+
+/* ====== com scroll ======*/
+
+div.correcao-nota-fiscal, div.pesquisa-return-sheet, div.sugestao-pedido-cd {
+    overflow-x: auto;
+    width: 100%;
+    padding-top: 1px;
+}
+
+/* ====== pesquisa return sheet ======*/
+table.pesquisa-return-sheet td, table.pesquisa-return-sheet th {
+    font-size: 8pt;
+}
+
+table.pesquisa-return-sheet input[type="text"] {
+    height: 22px;
+    margin: -3px 0 !important;
+    font-size: 8pt !important;
+}
+
+/* ====== sugestao pedido cd ======*/
+table.sugestao-pedido-cd > tbody > tr > td, table.sugestao-pedido-cd > thead > tr > th {
+    font-size: 8pt;
+}
+
+    table.sugestao-pedido-cd > tbody > tr > td > input[type="text"], table.sugestao-pedido-cd > tbody > tr > td > .input-group > input[type="text"] {
+        font-size: 8pt;
+    }
+
+    table.sugestao-pedido-cd > tbody > tr > td > input[type="text"] {
+        height: 22px;
+        margin: -3px 0 !important;
+        width: 75px;
+    }
+
+    table.sugestao-pedido-cd > tbody > tr > td > .input-group {
+        margin: -3px 0 !important;
+    }
+
+        table.sugestao-pedido-cd > tbody > tr > td > .input-group, table.sugestao-pedido-cd > tbody > tr > td > .input-group > input[type="text"], table.sugestao-pedido-cd > tbody > tr > td > .input-group > span > button {
+            height: 22px;
+        }
+
+            table.sugestao-pedido-cd > tbody > tr > td > .input-group > span > button {
+                padding-top: 3px;
+                background: #34A7C8;
+            }
+
+            table.sugestao-pedido-cd > tbody > tr > td > .input-group > input[type="text"][required="required"] {
+                background: #DCE8F1;
+            }
+
+table.sugestao-pedido-cd > tbody > tr.invalid-data-envio > td > .input-group > input[type="text"] {
+    background: #FFE0E0;
+}
+
+table.sugestao-pedido-cd > tbody > tr > td > .input-group > button {
+    color: #ffffff;
+    background-color: #2f96b4;
+    border: solid 1px rgba(0,0,0,0.25);
+    height: 22px;
+    width: 42px;
+}
+
+table.sugestao-pedido-cd > tbody > tr > td, table.sugestao-pedido-cd > thead > tr > th {
+    width: auto !important;
+}
+
+    table.sugestao-pedido-cd > tbody > tr > td.action, table.sugestao-pedido-cd > thead > tr > th.action {
+        width: 26px !important;
+    }
+
+/* ====== correcao nota fiscal ======*/
+
+div.correcao-nota-fiscal {
+    overflow-x: auto;
+}
+
+table.correcao-nota-fiscal td, table.correcao-nota-fiscal th {
+    font-size: 8pt;
+}
+
+table.correcao-nota-fiscal td {
+    white-space: nowrap;
+}
+
+table.correcao-nota-fiscal {
+    width: 1450px;
+}
+
+    table.correcao-nota-fiscal th.number, table.correcao-nota-fiscal th.domain {
+        min-width: 80px;
+    }
+
+    table.correcao-nota-fiscal input[type="checkbox"] {
+        height: 17px;
+        margin: 0 !important;
+    }
+
+    table.correcao-nota-fiscal input[type="text"] {
+        height: 22px;
+        margin: -3px 0 !important;
+        font-size: 8pt !important;
+    }
+
+    table.correcao-nota-fiscal input[type="text"] {
+        height: 22px;
+        margin: -3px 0 !important;
+        font-size: 8pt !important;
+    }
+
+table.extrato-produto th, table.extrato-produto td {
+    white-space: nowrap;
+}
+
+/*tr.sugestao-pedido-red td {
+    background-color: #d6a8a7 !important;
+}
+
+tr.sugestao-pedido-red:hover td {
+    background-color: #cc9e9d !important;
+}*/
+
+tr.sugestao-pedido-sem-vendas-ultima-semana /*:nth-child(odd)*/ td, tr.sugestao-pedido-estoque-zero /*:nth-child(odd)*/ td {
+    background-color: #e6b8b7 !important;
+}
+
+tr.sugestao-pedido-sem-vendas-ultima-semana /*:nth-child(odd)*/ :hover td, tr.sugestao-pedido-estoque-zero /*:nth-child(odd)*/ :hover td {
+    background-color: #dcaead !important;
+}
+
+tr.sugestao-pedido-return-sheet td {
+    background-color: #80FF80 !important;
+}
+
+tr.sugestao-pedido-return-sheet:hover td {
+    background-color: #8AFF8A !important;
+}
+
+/* ============== detalhe pedido roteirizado ================ */
+
+table.detalhe-pedido-roteirizado > thead > tr > th, table.detalhe-pedido-roteirizado > tbody > tr > td,
+table.pesquisa-roteiro > thead > tr > th, table.pesquisa-roteiro > tbody > tr > td {
+    width: auto;
+}
+
+    table.detalhe-pedido-roteirizado > tbody > tr > td.number.valor-em-caixa-ra {
+        padding: 1px 2px;
+    }
+
+        table.detalhe-pedido-roteirizado > tbody > tr > td.number.valor-em-caixa-ra > input.number {
+            width: 100% !important;
+            margin: 0;
+        }
+
+tr.sugestao-pedido-grade-sugestao-fechada td.esconde-quando-grade-fechada, tr.sugestao-pedido-manual td.esconde-quando-manual {
+    text-align: center;
+}
+
+div.sugestao-pedido { /* isto ja esta presente no PESS em outra linha, cuidado ao fazer merge */
+    overflow-x: scroll;
+    padding-top: 1px;
+}

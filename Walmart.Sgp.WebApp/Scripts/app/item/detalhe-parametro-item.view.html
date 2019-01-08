@@ -1,0 +1,83 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateDetalheParametroProdutoName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="detalhesCusto">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'code'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.cdItem}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'itemStatus'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.tpStatus|enum:'tipoStatusItem'|translate}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'description'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.dsItem}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.cdSistema" disabled></dropdown-sistema>
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'supplierCode'|translate|capitalize}} ({{::'nineDigits'|translate|capitalize}})" line-width="6">
+                        <input type="text" value="{{data.fornecedorParametro.cdV9D}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'supplierName'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.fornecedor.nmFornecedor}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'measurementUnit'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-unidade-medida ng-model="data.tpUnidadeMedida" disabled></dropdown-unidade-medida>
+                    </form-field>
+                    <form-field title="{{::'grossWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.vlModulo|number:2}}" class="form-control look-alive" number ui-number min="0" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'pack'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.qtVendorPackage}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'supplyKind'|translate|capitalize}}" line-width="6">
+                        <input type="text" name="tipoReabastecimento" value="{{ data.vlTipoReabastecimento }} - {{ data.vlTipoReabastecimento|enum:'tipoReabastecimento'|translate|capitalize }}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'shelfLife'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.vlShelfLife}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'itemTransfer'|translate|capitalize}}" line-width="6">
+                        <checkbox ng-model="data.blItemTransferencia" readonly disabled label="{{::'itemTransfer'|translate|capitalize}}" show-label="false"></checkbox>
+                    </form-field>
+                    <form-field title="{{::'conversionFactor'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.vlFatorConversao|number:2}}" class="form-control look-alive" number ui-number min="0" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'catchWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.tpIndPesoReal}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'vendorPackFormat'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{::data.tpCaixaFornecedor|fixedValue:'tipoCaixaFornecedorFixoVariavel'|translate|capitalize}}" readonly="readonly" class="form-control look-alive" />
+                    </form-field>
+                    <form-field title="{{::'vendorPackNetWeight'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-if="data.vlPesoLiquido != null" value="{{data.vlPesoLiquido|number:2}}" class="form-control look-alive" readonly="readonly" />
+                        <input type="text" ng-if="data.vlPesoLiquido == null" value="{{data.vlPesoLiquido}}" class="form-control look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'warehouseAlignment'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.tpAlinhamentoCD}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'warehouseArea'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.areaCD.dsAreaCD}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'purchaseArea'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.regiaoCompra.dsRegiaoCompra}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                    <form-field title="{{::'minimumWarehouseLife'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.tempoMinimoCD}}" class="form-control input-width-xxlarge look-alive" readonly="readonly" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+
+
+
+

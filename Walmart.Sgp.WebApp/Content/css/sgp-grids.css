@@ -1,0 +1,219 @@
+﻿/* ================ Padronizacao grid ================== */
+
+td.number, td.currency {
+    text-align: right;
+}
+
+th.number, th.currency {
+    text-align: center;
+}
+
+td.identifier, td.domain, td.date, td.action, td.time {
+    text-align: center;
+}
+
+th.identifier, th.domain, th.date, th.action, th.time {
+    text-align: center;
+}
+
+th.action, td.action {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 0 !important;
+    width: 26px !important;
+    max-width: 26px !important;
+    text-align: center;
+}
+
+    th.action.double, td.action.double {
+        width: 48px !important;
+        max-width: 48px !important;
+    }
+
+    th.action.triple, td.action.triple {
+        width: 70px !important;
+        max-width: 70px !important;
+    }
+
+    th.action > button, td.action > button {
+        padding-right: 0;
+        padding-left: 5px;
+    }
+
+        th.action > button:last-child, td.action > button:last-child {
+            padding-right: 5px;
+        }
+
+td.domain > input, td.domain > select, td.domain > .select2-container {
+    margin: -4px;
+}
+
+td.identifier, th.identifier {
+    width: 90px;
+}
+
+    td.identifier.double, th.identifier.double {
+        width: 150px;
+    }
+
+td.number, th.number {
+    width: 60px;
+}
+
+    td.number.double, th.number.double {
+        width: 120px;
+    }
+
+    td.number.triple, th.number.triple {
+        width: 180px;
+    }
+
+td.currency, th.currency {
+    width: 90px;
+}
+
+    td.currency.double, th.currency.double {
+        width: 120px;
+    }
+
+td.date, th.date, td.time, th.time {
+    width: 100px;
+}
+
+    td.date.double, th.date.double, td.time.double, th.time.double {
+        width: 150px;
+    }
+
+    td.date.time, th.date.time {
+        width: 140px;
+    }
+
+        td.date.time.double, th.date.time.double {
+            width: 240px;
+        }
+
+td.domain, th.domain {
+    width: 90px;
+}
+
+    td.domain.symbol, th.domain.symbol {
+        width: 60px;
+    }
+
+    td.domain.message, th.domain.message {
+        width: auto;
+    }
+
+    td.domain.symbol.double, th.domain.symbol.double {
+        width: 150px;
+    }
+
+tfoot tr td .form-control {
+    cursor: default;
+    padding: 3px;
+}
+
+table.simple tr td .form-control {
+    margin: -5px -4px -4px;
+    height: 24px;
+}
+
+/* ----------------------------------------- COMPLEX ---------------------------------- */
+
+table.table.complex * {
+    font-size: 8pt !important;
+}
+
+table.table.complex td.domain .semaphore {
+    font-size: 13pt !important;
+}
+
+table.table.complex td {
+    padding-left: 2px;
+    padding-right: 2px;
+    padding-top: 6px;
+}
+
+    table.table.complex td.domain > input, table.table.complex td.number > input, table.table.complex td.domain > select, table.table.complex td.domain > .select2-container {
+        /*margin-top: -7px;*/
+        margin: -3px 0;
+    }
+
+table.table.complex input {
+    height: 22px;
+}
+
+table.table.complex th {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+    table.table.complex td.identifier, table.table.complex th.identifier {
+        width: 80px;
+    }
+
+    table.table.complex td.number, table.table.complex th.number {
+        width: 50px;
+    }
+
+        table.table.complex td.number.double, table.table.complex th.number.double {
+            width: 70px;
+        }
+
+        table.table.complex td.number.triple, table.table.complex th.number.triple {
+            width: 90px;
+        }
+
+    table.table.complex td.currency, table.table.complex th.currency {
+        width: 80px;
+    }
+
+    table.table.complex td.date, table.table.complex th.date {
+        width: 55px;
+    }
+
+        table.table.complex td.date.double, table.table.complex th.date.double {
+            width: 70px;
+        }
+
+        table.table.complex td.date.time, table.table.complex th.date.time {
+            width: 110px;
+        }
+
+    table.table.complex td.domain, table.table.complex th.domain {
+        width: 60px;
+    }
+
+        table.table.complex td.domain.symbol, table.table.complex th.domain.symbol {
+            width: 40px;
+        }
+
+        table.table.complex td.domain.double, table.table.complex th.domain.double {
+            width: 90px;
+        }
+
+        table.table.complex td.domain.triple, table.table.complex th.domain.triple {
+            width: 120px;
+        }
+
+        table.table.complex td.domain.message, table.table.complex th.domain.message {
+            width: auto;
+        }
+
+        table.table.complex td.domain.progress-indicator {
+            padding: 3px;
+            width: 107px;
+        }
+
+        table.table.complex td.domain > .select2-container .select2-choice {
+            height: 22px;
+        }
+
+            table.table.complex td.domain > .select2-container .select2-choice .select2-chosen {
+                line-height: 20px;
+            }
+
+            table.table.complex td.domain > .select2-container .select2-choice .select2-arrow b {
+                margin-top: -4px;
+            }
+/* ===================================================== */

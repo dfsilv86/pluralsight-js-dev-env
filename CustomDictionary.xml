@@ -1,0 +1,41 @@
+<Dictionary>
+    <Words>
+        <Recognized>
+            <Word>Orderer</Word>
+            <Word>HttpContext</Word>
+            <Word>Reais</Word>
+            <Word>Login</Word>
+            <Word>Logout</Word>
+            <Word>Permission</Word>
+            <Word>MVC</Word>
+            <Word>Api</Word>
+            <Word>Db</Word>
+            <Word>App_Start</Word>
+            <Word>username</Word>
+            <Word>Specs</Word>
+            <Word>Walmart</Word>
+            <Word>Sgp</Word>
+            <Word>Passwd</Word>
+            <Word>CWI</Word>
+            <Word>Wlmslp</Word>        
+    </Recognized>
+        <Deprecated>
+            <Term PreferredAlternate="Login">LogOn</Term>
+        </Deprecated>
+        <Compound>
+            <Term CompoundAlternate="username">UserName</Term>
+        </Compound>
+    </Words>
+    <Acronyms>
+        <CasingExceptions>
+            <Acronym>UserName</Acronym>
+            <Acronym>CWI</Acronym>
+            <Acronym>ds</Acronym>
+            <Acronym>ID</Acronym>
+            <Acronym>dh</Acronym>
+            <Acronym>Nm</Acronym>
+            <Acronym>Ds</Acronym>
+            <Acronym>Wlmslp</Acronym>
+        </CasingExceptions>
+    </Acronyms>
+</Dictionary>

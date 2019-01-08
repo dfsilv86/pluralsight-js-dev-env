@@ -1,0 +1,341 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="hotfix-3-3-2-PRC_CONSOLIDAPEDIDOMINIMO_4" author="dzanell">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[ 
+
+ALTER PROCEDURE [dbo].[PRC_CONSOLIDAPEDIDOMINIMO] @DataPedido DATE
+	,@Particao INT
+AS
+BEGIN
+	DECLARE @IDLoja INT
+		,@IDFornecedorParametro BIGINT
+		,@IdDiv INT
+		,@cdLojaInicial INT
+		,@cdLojaFinal INT
+		,@LogDataInicio DATETIME
+		,@qtdRegistros INT
+
+	SET @LogDataInicio = GETDATE()
+	SET @qtdRegistros = 0
+
+	IF @DataPedido IS NULL
+		SET @DataPedido = CONVERT(DATE, GETDATE())
+
+	IF @Particao = 1
+	BEGIN
+		EXEC PRC_ATENDEPEDIDOMINIMO_XDoc @DataPedido
+			,NULL
+			,NULL
+			,1
+			,0
+
+		INSERT INTO LogExecucao (
+			IDProcesso
+			,DataInicio
+			,DataTermino
+			,QtdRegistros
+			,QtdRegistrosProcessados
+			,IdUltimoRegistroProcessado
+			,dsDescricaoExecucao
+			)
+		VALUES (
+			(
+				SELECT IdProcesso
+				FROM LogTipoProcesso WITH (NOLOCK)
+				WHERE Descricao = 'PRC_ATENDEPEDIDOMINIMO_XDoc'
+				)
+			,@LogDataInicio
+			,GETDATE()
+			,@qtdRegistros
+			,@qtdRegistros
+			,NULL
+			,'Atualizado o blAtendePedidoMinimo dos registros XDoc da tabela SugestaoPedido'
+			)
+	END
+
+	-- Defini Particoes para execucao em paralelo da consolidacao
+	SELECT @IdDiv = CEILING(CAST(COUNT(*) AS DECIMAL) / 20)
+	FROM Loja L WITH (NOLOCK)
+	WHERE L.blCalculaSugestao = 1;
+
+	WITH Lojas
+	AS (
+		SELECT L.cdLoja
+			,ROW_NUMBER() OVER (
+				ORDER BY L.cdLoja
+				) AS Row
+		FROM Loja L WITH (NOLOCK)
+		WHERE L.blCalculaSugestao = 1
+		)
+	SELECT @cdLojaInicial = MIN(L.cdLoja)
+		,@cdLojaFinal = MAX(L.cdLoja)
+	FROM Lojas L WITH (NOLOCK)
+	WHERE L.Row BETWEEN (@IdDiv * (@Particao - 1)) + 1
+			AND @IdDiv * @Particao
+
+	IF OBJECT_ID('Tempdb..#TmpFornecedorParametroLoja') IS NOT NULL 
+	BEGIN
+		DROP TABLE #TmpFornecedorParametroLoja;
+	END
+
+	CREATE TABLE #TmpFornecedorParametroLoja ( IDFornecedorParametro BIGINT, IDLoja INT, PRIMARY KEY (IDFornecedorParametro, IDLoja) );
+
+	INSERT INTO #TmpFornecedorParametroLoja
+	SELECT SP.IDFornecedorParametro, SP.IdLoja
+	  FROM SugestaoPedido SP WITH (NOLOCK)
+	       INNER JOIN Loja L WITH (NOLOCK)
+		           ON L.IDLoja = SP.IdLoja
+	       INNER JOIN CD WITH (NOLOCK)
+		           ON CD.IDCD = SP.idCD
+	 WHERE SP.dtPedido = @DataPedido
+	   AND L.cdLoja BETWEEN @cdLojaInicial
+	   AND @cdLojaFinal
+	   AND (
+			SP.vlTipoReabastecimento IN (7, 37)
+			OR (
+				CD.blConvertido = 1
+				AND SP.vlTipoReabastecimento = 97
+				)
+			)
+	 GROUP BY SP.IDLoja, SP.IDFornecedorParametro
+	 ORDER BY SP.IdLoja, SP.IDFornecedorParametro;
+
+	-- Fim Definicao Particao
+	DECLARE VendorsPorLoja CURSOR LOCAL STATIC READ_ONLY FORWARD_ONLY
+	FOR
+	SELECT IDLoja, IDFornecedorParametro FROM #TmpFornecedorParametroLoja;
+
+	SET @LogDataInicio = GETDATE()
+
+	OPEN VendorsPorLoja
+
+	FETCH NEXT
+	FROM VendorsPorLoja
+	INTO @IDLoja
+		,@IDFornecedorParametro
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--
+		EXEC PRC_ATENDEPEDIDOMINIMO @IDLoja
+			,@IDFornecedorParametro
+			,@DataPedido
+			,1
+			,0
+
+		FETCH NEXT
+		FROM VendorsPorLoja
+		INTO @IDLoja
+			,@IDFornecedorParametro
+	END
+
+	CLOSE VendorsPorLoja
+
+	DEALLOCATE VendorsPorLoja
+	
+	INSERT INTO LogExecucao (
+		IDProcesso
+		,DataInicio
+		,DataTermino
+		,QtdRegistros
+		,QtdRegistrosProcessados
+		,IdUltimoRegistroProcessado
+		,dsDescricaoExecucao
+		)
+	VALUES (
+		(
+			SELECT IdProcesso
+			FROM LogTipoProcesso WITH (NOLOCK)
+			WHERE Descricao = 'PRC_ATENDEPEDIDOMINIMO'
+			)
+		,@LogDataInicio
+		,GETDATE()
+		,@qtdRegistros
+		,@qtdRegistros
+		,NULL
+		,'Atualizado o blAtendePedidoMinimo dos registros DSD da tabela SugestaoPedido para a loja ' + CONVERT(VARCHAR, @cdLojaInicial) + ' até a loja ' + CONVERT(VARCHAR, @cdLojaFinal)
+		)
+
+	IF OBJECT_ID('Tempdb..#TmpFornecedorParametroLoja') IS NOT NULL 
+	BEGIN
+		DROP TABLE #TmpFornecedorParametroLoja;
+	END
+
+END
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+
+ALTER PROCEDURE [dbo].[PRC_CONSOLIDAPEDIDOMINIMO] @DataPedido DATE
+	,@Particao INT
+AS
+BEGIN
+	DECLARE @IDLoja INT
+		,@IDFornecedorParametro BIGINT
+		,@IdDiv INT
+		,@cdLojaInicial INT
+		,@cdLojaFinal INT
+		,@LogDataInicio DATETIME
+		,@qtdRegistros INT
+
+	SET @LogDataInicio = GETDATE()
+	SET @qtdRegistros = 0
+
+	IF @DataPedido IS NULL
+		SET @DataPedido = CONVERT(DATE, GETDATE())
+
+	IF @Particao = 1
+	BEGIN
+		EXEC PRC_ATENDEPEDIDOMINIMO_XDoc @DataPedido
+			,NULL
+			,NULL
+			,1
+			,0
+
+		INSERT INTO LogExecucao (
+			IDProcesso
+			,DataInicio
+			,DataTermino
+			,QtdRegistros
+			,QtdRegistrosProcessados
+			,IdUltimoRegistroProcessado
+			,dsDescricaoExecucao
+			)
+		VALUES (
+			(
+				SELECT IdProcesso
+				FROM LogTipoProcesso WITH (NOLOCK)
+				WHERE Descricao = 'PRC_ATENDEPEDIDOMINIMO_XDoc'
+				)
+			,@LogDataInicio
+			,GETDATE()
+			,@qtdRegistros
+			,@qtdRegistros
+			,NULL
+			,'Atualizado o blAtendePedidoMinimo dos registros XDoc da tabela SugestaoPedido'
+			)
+	END
+
+	-- Defini Particoes para execucao em paralelo da consolidacao
+	SELECT @IdDiv = CEILING(CAST(COUNT(*) AS DECIMAL) / 20)
+	FROM Loja L WITH (NOLOCK)
+	WHERE L.blCalculaSugestao = 1;
+
+	WITH Lojas
+	AS (
+		SELECT L.cdLoja
+			,ROW_NUMBER() OVER (
+				ORDER BY L.cdLoja
+				) AS Row
+		FROM Loja L WITH (NOLOCK)
+		WHERE L.blCalculaSugestao = 1
+		)
+	SELECT @cdLojaInicial = MIN(L.cdLoja)
+		,@cdLojaFinal = MAX(L.cdLoja)
+	FROM Lojas L WITH (NOLOCK)
+	WHERE L.Row BETWEEN (@IdDiv * (@Particao - 1)) + 1
+			AND @IdDiv * @Particao
+
+	IF OBJECT_ID('Tempdb..#TmpFornecedorParametroLoja') IS NOT NULL 
+	BEGIN
+		DROP TABLE #TmpFornecedorParametroLoja;
+	END
+
+	CREATE TABLE #TmpFornecedorParametroLoja ( IDFornecedorParametro BIGINT, IDLoja INT, PRIMARY KEY (IDFornecedorParametro, IDLoja) );
+
+	INSERT INTO #TmpFornecedorParametroLoja
+	SELECT SP.IDFornecedorParametro, SP.IdLoja
+	  FROM SugestaoPedido SP WITH (NOLOCK)
+	       INNER JOIN Loja L WITH (NOLOCK)
+		           ON L.IDLoja = SP.IdLoja
+	       INNER JOIN CD WITH (NOLOCK)
+		           ON CD.IDCD = SP.idCD
+	 WHERE SP.dtPedido = @DataPedido
+	   AND L.cdLoja BETWEEN @cdLojaInicial
+	   AND @cdLojaFinal
+	   AND (
+			SP.vlTipoReabastecimento IN (7, 37)
+			OR (
+				CD.blConvertido = 1
+				AND SP.vlTipoReabastecimento = 97
+				)
+			)
+	 GROUP BY SP.IDLoja, SP.IDFornecedorParametro
+	 ORDER BY SP.IdLoja, SP.IDFornecedorParametro;
+
+	-- Fim Definicao Particao
+	DECLARE VendorsPorLoja CURSOR LOCAL STATIC READ_ONLY FORWARD_ONLY
+	FOR
+	SELECT * FROM #TmpFornecedorParametroLoja;
+
+	SET @LogDataInicio = GETDATE()
+
+	OPEN VendorsPorLoja
+
+	FETCH NEXT
+	FROM VendorsPorLoja
+	INTO @IDLoja
+		,@IDFornecedorParametro
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		--
+		EXEC PRC_ATENDEPEDIDOMINIMO @IDLoja
+			,@IDFornecedorParametro
+			,@DataPedido
+			,1
+			,0
+
+		FETCH NEXT
+		FROM VendorsPorLoja
+		INTO @IDLoja
+			,@IDFornecedorParametro
+	END
+
+	CLOSE VendorsPorLoja
+
+	DEALLOCATE VendorsPorLoja
+	
+	INSERT INTO LogExecucao (
+		IDProcesso
+		,DataInicio
+		,DataTermino
+		,QtdRegistros
+		,QtdRegistrosProcessados
+		,IdUltimoRegistroProcessado
+		,dsDescricaoExecucao
+		)
+	VALUES (
+		(
+			SELECT IdProcesso
+			FROM LogTipoProcesso WITH (NOLOCK)
+			WHERE Descricao = 'PRC_ATENDEPEDIDOMINIMO'
+			)
+		,@LogDataInicio
+		,GETDATE()
+		,@qtdRegistros
+		,@qtdRegistros
+		,NULL
+		,'Atualizado o blAtendePedidoMinimo dos registros DSD da tabela SugestaoPedido para a loja ' + CONVERT(VARCHAR, @cdLojaInicial) + ' até a loja ' + CONVERT(VARCHAR, @cdLojaFinal)
+		)
+
+	IF OBJECT_ID('Tempdb..#TmpFornecedorParametroLoja') IS NOT NULL 
+	BEGIN
+		DROP TABLE #TmpFornecedorParametroLoja;
+	END
+
+END
+				]]>
+			</sql>
+		</rollback>
+	</changeSet>
+</databaseChangeLog>
+

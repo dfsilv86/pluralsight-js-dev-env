@@ -1,0 +1,8 @@
+﻿<div>
+    <form-field ng-if="!sistema || sistema == sistemas.supercenter" title="{{::'department'|translate|capitalize}}" line-width="{{::lineWidth}}" grid-width="{{::gridWidth}}">
+        <lookup-departamento ng-model="vm.departamento" sistema="sistema" item-out="vm.departamentoItem" description-width="{{ ::descriptionWidth }}"></lookup-departamento>        
+    </form-field>
+    <form-field ng-if="sistema == sistemas.samsClub" title="{{::'category'|translate|capitalize}}" line-width="{{::lineWidth}}" grid-width="{{::gridWidth}}">
+        <lookup-categoria ng-model="vm.categoria" sistema="sistema" item-out="vm.categoriaItem" description-width="{{ ::descriptionWidth }}"></lookup-categoria>
+    </form-field>    
+</div>

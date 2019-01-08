@@ -1,0 +1,32 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'salesAbc'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-default" ng-click="exportIt()"><i class="glyphicon glyphicon-save-file" /> &nbsp; {{::'export'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field-placeholder></form-field-placeholder>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.bandeira" required></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" bandeira="filters.idBandeira" sistema="filters.cdSistema" item-out="filters.loja" description-width="large" required></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.departamento" description-width="large"></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'period'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <daterangepicker name-start="startDate" name-end="endDate" date-start="filters.periodo.startValue" date-end="filters.periodo.endValue" required></daterangepicker>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

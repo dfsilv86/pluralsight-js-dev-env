@@ -1,0 +1,5 @@
+﻿<div ui-select2="select2Options" class="dropdown full-width-fix" name="{{::dropdownName}}">    
+    <option value="" selected ng-if="showAll">{{::'all2'|translate}}</option>
+    <option value="" selected ng-if="showSelect">{{::'select'|translate}}</option>    
+    <option ng-repeat="item in data.values" value="{{::item.id}}">{{::(item.fullName||'(Sem nome)')}} ({{::item.userName}})</option>
+</div>

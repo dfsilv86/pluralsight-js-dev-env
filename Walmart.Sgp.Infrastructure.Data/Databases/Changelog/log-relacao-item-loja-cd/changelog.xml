@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+  
+  <include file="RelacaoItemLojaCD_Objeto_Recriado.xml" relativeToChangelogFile="true"/>
+  <include file="AtualizacaoRelacionamentoItem-Inclusao_Colunas.xml" relativeToChangelogFile="true"/>
+  <include file="LogTipoProcesso-Inclusao_Registros.xml" relativeToChangelogFile="true"/>
+  <include file="PR_RegistraLogRelacaoItemLojaCD-Criacao.xml" relativeToChangelogFile="true"/>
+  <include file="PR_AtualizaRelacaoItemLojaCD-Implementacao_Log.xml" relativeToChangelogFile="true"/>
+  <include file="PRC_ValidarCadastroCompraCasada-Implementacao_Log.xml" relativeToChangelogFile="true"/>
+  <include file="VW_ConsistenciaVendorNoveDigitos-Desconsiderar_Itens_Inativos_Deletados.xml" relativeToChangelogFile="true"/>
+  <include file="PR_AtualizaRelacaoItemLojaCD-Equalizacao_Regras_Vendor_Primario.xml" relativeToChangelogFile="true"/>
+  <include file="VW_ConsistenciaVendorNoveDigitos-AdicionaCampoNomeVendor.xml" relativeToChangelogFile="true"/>
+  <include file="fnEVendorWalmart-Criacao.xml" relativeToChangelogFile="true"/>
+  <include file="PRC_CorrigirRelacionamentosMultisourcing-Inclusao_Novas_Regras.xml" relativeToChangelogFile="true"/>
+  <include file="PR_AtualizaRelacaoItemLojaCD-Correcao_Regra_XREF_Nao_Existente.xml" relativeToChangelogFile="true"/>
+  <include file="PR_AtualizaRelacaoItemLojaCD-Remocao_Regra_Desnecessaria.xml" relativeToChangelogFile="true"/>
+  <include file="fnItemAtendeRegrasVendorPrimario-Criacao.xml" relativeToChangelogFile="true"/>
+  <include file="fnItemAtendeRegrasVendorPrimario-Correcao_Regra.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>

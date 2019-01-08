@@ -1,0 +1,56 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="manageProcesses">
+    <modal-breadcrumb title="{{::'viewLogs'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button ng-click="refresh()" class="btn btn-primary">
+                <span class="glyphicon glyphicon-refresh"></span> &nbsp; {{::'refresh'|translate}}
+            </button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'processName'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" class="form-control look-alive input-width-large" value="{{'process' + data.processName|translate}}" readonly="readonly" />
+        </form-field>
+        <form-field title="{{::'ticket'|translate}}" line-width="6" grid-width="12">
+            <input type="text" class="form-control look-alive input-width-large" value="{{data.ticket}}" readonly="readonly" />
+        </form-field>
+        <form-field title="{{::'createdBy'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-usuario ng-model="data.createdUser.userName" usuario="data.createdUserId" ng-disabled="true" item-out="data.createdUser"></lookup-usuario>
+        </form-field>
+   </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table complex table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th>{{::'operation'|translate}}</th>
+                        <th>{{::'date'|translate}}</th>
+                        <th>{{::'processState'|translate}}</th>
+                        <th>{{::'currentProgress'|translate}}</th>
+                        <th>{{::'message'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values">
+                        <td>{{item.cdAuditKind|fixedValue:'auditKind'}}</td>
+                        <td>{{item.dhAuditStamp|amDateFormat:'DD/MM/YYYY hh:mm:ss'}}</td>
+                        <td>{{item.entity.state|enum:'processOrderState'|translate}}</td>
+                        <td>{{item.entity.currentProgressPercentage|number:0}}%</td>
+                        <td>{{item.entity.message}}</td>
+                    </tr>
+                    <tr ng-if="!data.values || data.values.length === 0">
+                        <td colspan="5" class="domain">{{::'noData'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.values" page-method="searchLogs" settings="data.paging"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

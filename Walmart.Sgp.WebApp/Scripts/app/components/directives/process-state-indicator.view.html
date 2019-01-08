@@ -1,0 +1,6 @@
+﻿<div class="progress progress-striped" ng-class="{'active':order.state == 'Created' || order.state == 'Queued' || order.state == 'IsExecuting'}">
+    <div class="progress-bar"
+         ng-class="{'progress-bar-warning':order.state == 'Error'||order.state == 'Failed','progress-bar-success':order.state == 'Finished'||order.state == 'ResultsAvailable'||order.state == 'IsExecuting','progress-bar-info':order.state == 'Created' || order.state == 'Queued'}"
+         ng-style="{'width':order.state == 'IsExecuting' ? order.currentProgressPercentage||0 : 100 + '%'}">
+    </div>
+</div>

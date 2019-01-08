@@ -1,0 +1,30 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateImportacaoAutomaticaName'|translate|capitalize}}" has has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="storeImport">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="importar()" security-action="Inventario.ImportarAutomaticoLoja"><i class="glyphicon glyphicon-import" /> &nbsp; {{::'import'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="data.idBandeira" sistema="data.cdSistema" item-out="temp.bandeira"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="data.cdLoja" bandeira="data.idBandeira" sistema="data.cdSistema" item-out="temp.loja" description-width="large" required></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento ng-model="data.cdDepartamento" sistema="data.cdSistema" description-width="large" item-out="temp.departamento" required></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'date'|translate|capitalize}}" line-width="6">
+                        <input type="text" readonly value="{{data.dataInventario|amDateFormat:'DD/MM/YYYY'|emptyDefault}}" maxlength="10" class="form-control input-width-small" />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

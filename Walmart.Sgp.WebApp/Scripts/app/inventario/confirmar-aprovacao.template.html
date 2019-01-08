@@ -1,0 +1,7 @@
+﻿<div>
+    <h3> {{ ::'areYouSureYouWantToApproveInventories'|translate }}</h3>
+    <p ng-if="vm.irregularidades && vm.irregularidades.length"><b>{{ ::'itItsRecommendedToFixProblemsBeforeApprovingThisInventory'|translate }}</b></p>	
+	<ul>
+		<li ng-repeat="msg in vm.irregularidades">{{ ::msg }}</li>
+	</ul>
+</div>

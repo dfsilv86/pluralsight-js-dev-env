@@ -1,0 +1,6 @@
+﻿<div class="crumbs">
+    <ul id="breadcrumbs" class="breadcrumb">
+        <li><span class="crumb-icon-fix"><i class="icon-home"></span></i><a ui-sref="home" title="Home">Home</a></li>
+        <li ng-repeat="item in stack"><span class="crumb-icon-fix"><i class="icon-list-alt"></i></span><a ng-click="goBackToIndex($index)" title="{{::item.title}}">{{::item.title}}</a></li>
+    </ul>
+</div>

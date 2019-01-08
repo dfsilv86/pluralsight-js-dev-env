@@ -1,0 +1,8 @@
+﻿<label class="checkbox">
+    <div class="checker" ng-class="{'disabled':(ngDisabled || isDisabled) && !(ngReadonly || isReadonly)}">
+        <span ng-class="{'checked':ngModel}">
+            <input type="checkbox" class="uniform" name="{{::name||id}}" id="{{::id}}" ng-model="ngModel" ng-disabled="ngDisabled || isDisabled" ng-false-value="false" ng-true-value="true" />
+        </span>
+    </div>
+    <span ng-style="labelVisibility">{{::label}}</span>  
+</label>

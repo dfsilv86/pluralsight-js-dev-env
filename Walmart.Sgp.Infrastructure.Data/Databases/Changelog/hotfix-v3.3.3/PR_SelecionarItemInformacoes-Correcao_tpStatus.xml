@@ -1,0 +1,153 @@
+﻿<databaseChangeLog
+		xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+		xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd
+		http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+	<changeSet id="hotfix-v3.3.3-PR_SelecionarItemInformacoes-Correcao_tpStatus" author="rafaelbueno">
+		<sql stripComments="false" endDelimiter="">
+			<![CDATA[
+				ALTER PROCEDURE [dbo].[PR_SelecionarItemInformacoes] @cdItem BIGINT = NULL
+					,@idBandeira INT = NULL
+				AS
+				BEGIN
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+					SELECT IDE.IDItemDetalhe
+						,IDE.cdItem
+						,IDE.dsItem AS Descricao
+						,CONVERT(VARCHAR, DP.cdDepartamento) + ' - ' + DP.dsDepartamento AS Departamento
+						,CONVERT(VARCHAR, CT.cdCategoria) + ' - ' + CT.dsCategoria AS Categoria
+						,CONVERT(VARCHAR, SB.cdSubcategoria) + ' - ' + SB.dsSubcategoria AS Subcategoria
+						,CONVERT(VARCHAR, FN.cdFineLine) + ' - ' + FN.dsFineLine AS Fineline
+						,CONVERT(VARCHAR, DV.cdDivisao) + ' - ' + DV.dsDivisao AS Divisao
+						,CASE 
+							WHEN IDE.tpUnidadeMedida = 'U'
+								THEN 'Unidade'
+							WHEN IDE.tpUnidadeMedida = 'Q'
+								THEN 'KG'
+							ELSE ''
+							END UnidadeMedida
+						,IDE.tpUnidadeMedida
+						,IDE.cdPLU
+						,IDE.cdUPC
+						,IDE.dsHostItem Descricao2
+						,BD.dsBandeira Bandeira
+						,convert(NUMERIC(12, 3), ide.vlFatorConversao) FatorConversao
+						,CASE 
+							WHEN tpStatus = 'A'
+								THEN 'Ativo'
+							WHEN tpStatus = 'I'
+								THEN 'Inativo'
+							WHEN tpStatus = 'D'
+								THEN 'Excluído'
+							END STATUS
+						,FM.dsFormato
+						,ISNULL(IDE.blItemTransferencia, '0') AS blItemTransferencia
+						,IDE.tpIndPesoReal
+						,IDE.tpCaixaFornecedor
+						,IDE.vlPesoLiquido
+						,IDE.tpAlinhamentoCD
+						,IDE.tempoMinimoCD
+						,ACD.dsAreaCD
+						,RC.dsRegiaoCompra
+					FROM ItemDetalhe IDE
+					INNER JOIN Departamento DP ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+						AND IDE.IDDepartamento = DP.IDDepartamento
+					INNER JOIN Categoria CT ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+						AND CT.IDCategoria = IDE.IDCategoria
+					INNER JOIN Fineline FN ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+						AND IDE.IDFineline = FN.IDFineLine
+					INNER JOIN Subcategoria SB ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+						AND IDE.IDSubcategoria = SB.IDSubcategoria
+					INNER JOIN Divisao DV ON DV.IDDivisao = DP.IDDivisao
+					INNER JOIN Bandeira BD ON BD.cdSistema = IDE.cdSistema
+					INNER JOIN Formato FM ON FM.IDFormato = BD.IDFormato
+						AND FM.cdSistema = IDE.cdSistema
+					LEFT JOIN AreaCD ACD ON ACD.idAreaCD = IDE.idAreaCD
+					LEFT JOIN RegiaoCompra RC ON RC.idRegiaoCompra = IDE.idRegiaoCompra
+					WHERE IDE.cdItem = @cdItem
+						AND BD.IDBandeira = @idBandeira
+				END
+
+			]]>
+		</sql>
+		<rollback>
+			<sql stripComments="false" endDelimiter="">
+				<![CDATA[ 
+				ALTER PROCEDURE [dbo].[PR_SelecionarItemInformacoes] @cdItem BIGINT = NULL
+					,@idBandeira INT = NULL
+				AS
+				BEGIN
+					SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+
+					SELECT IDE.IDItemDetalhe
+						,IDE.cdItem
+						,IDE.dsItem AS Descricao
+						,CONVERT(VARCHAR, DP.cdDepartamento) + ' - ' + DP.dsDepartamento AS Departamento
+						,CONVERT(VARCHAR, CT.cdCategoria) + ' - ' + CT.dsCategoria AS Categoria
+						,CONVERT(VARCHAR, SB.cdSubcategoria) + ' - ' + SB.dsSubcategoria AS Subcategoria
+						,CONVERT(VARCHAR, FN.cdFineLine) + ' - ' + FN.dsFineLine AS Fineline
+						,CONVERT(VARCHAR, DV.cdDivisao) + ' - ' + DV.dsDivisao AS Divisao
+						,CASE 
+							WHEN IDE.tpUnidadeMedida = 'U'
+								THEN 'Unidade'
+							WHEN IDE.tpUnidadeMedida = 'Q'
+								THEN 'KG'
+							ELSE ''
+							END UnidadeMedida
+						,IDE.tpUnidadeMedida
+						,IDE.cdPLU
+						,IDE.cdUPC
+						,IDE.dsHostItem Descricao2
+						,BD.dsBandeira Bandeira
+						,convert(NUMERIC(12, 3), ide.vlFatorConversao) FatorConversao
+						,CASE 
+							WHEN tpStatus = 'A'
+								THEN 'Ativo'
+							WHEN tpStatus = 'I'
+								THEN 'Inativo'
+							END STATUS
+						,FM.dsFormato
+						,ISNULL(IDE.blItemTransferencia, '0') AS blItemTransferencia
+						,IDE.tpIndPesoReal
+						,IDE.tpCaixaFornecedor
+						,IDE.vlPesoLiquido
+						,IDE.tpAlinhamentoCD
+						,IDE.tempoMinimoCD
+						,ACD.dsAreaCD
+						,RC.dsRegiaoCompra
+					FROM ItemDetalhe IDE
+					INNER JOIN Departamento DP
+						ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+							AND IDE.IDDepartamento = DP.IDDepartamento
+					INNER JOIN Categoria CT
+						ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+							AND CT.IDCategoria = IDE.IDCategoria
+					INNER JOIN Fineline FN
+						ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+							AND IDE.IDFineline = FN.IDFineLine
+					INNER JOIN Subcategoria SB
+						ON IDE.IDItemDetalhe = IDE.IDItemDetalhe
+							AND IDE.IDSubcategoria = SB.IDSubcategoria
+					INNER JOIN Divisao DV
+						ON DV.IDDivisao = DP.IDDivisao
+					INNER JOIN Bandeira BD
+						ON BD.cdSistema = IDE.cdSistema
+					INNER JOIN Formato FM
+						ON FM.IDFormato = BD.IDFormato
+							AND FM.cdSistema = IDE.cdSistema
+					LEFT JOIN AreaCD ACD
+						ON ACD.idAreaCD = IDE.idAreaCD
+					LEFT JOIN RegiaoCompra RC
+						ON RC.idRegiaoCompra = IDE.idRegiaoCompra
+					WHERE IDE.cdItem = @cdItem
+						AND BD.IDBandeira = @idBandeira
+				END
+
+				]]>
+			</sql>
+		</rollback>		
+	</changeSet>
+</databaseChangeLog>

@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<SharedDataSet xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2010/01/shareddatasetdefinition">
+  <DataSet Name="">
+    <Query>
+      <DataSourceReference>dsSGP</DataSourceReference>
+      <CommandText>SELECT NULL as  IDCD, 'Item DSD' as nmNome, -1 as cdCD
+UNION 
+SELECT 
+	IDCD,
+	CONVERT(VARCHAR, cdCD) + ' - ' + ISNULL(nmNome, '') AS dsCD,
+	cdCD
+FROM CD
+ORDER BY cdCD</CommandText>
+    </Query>
+    <Fields>
+      <Field Name="IDCD">
+        <DataField>IDCD</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+      <Field Name="nmNome">
+        <DataField>nmNome</DataField>
+        <rd:TypeName>System.String</rd:TypeName>
+      </Field>
+      <Field Name="cdCD">
+        <DataField>cdCD</DataField>
+        <rd:TypeName>System.Int32</rd:TypeName>
+      </Field>
+    </Fields>
+  </DataSet>
+</SharedDataSet>

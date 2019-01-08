@@ -1,0 +1,137 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::(permissao.isNew?'stateCadastroPermissaoNewName':'stateCadastroPermissaoEditName')|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="save()" security-action="Permissao.Salvar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-danger" ng-disabled="permissao.id == null" 
+                                mwl-confirm
+                                title="{{::'confirmRemoveTitle'|translate }}"
+                                message="{{::'confirmRemoveMessage'|translate }}"
+                                on-confirm="remove()"
+                                security-action="Permissao.Remover">
+                            <i class="glyphicon glyphicon-remove" /> &nbsp; {{::'remove'|translate}}</button>
+                        <button class="btn btn-default"
+                                mwl-confirm
+                                title="{{::'confirmBackTitle'|translate }}"
+                                message="{{::'confirmBackMessage'|translate }}"
+                                on-confirm="back()"
+                                is-disabled="!hasChanges()"
+                                ng-click="backWithoutChanges()">
+                            <i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'user'|translate}}" line-width="6" grid-width="12">
+                        <lookup-usuario ng-model="permissao.usuario.userName" item-out="permissao.usuario" usuario="permissao.usuario.id" ng-disabled="!permissao.isNew"></lookup-usuario>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+
+        <widget title="{{::'linkingTheChains'|translate|capitalize}}" has-box="true">
+            <form name="detail" class="form-horizontal row-border" novalidate="novalidate">
+                <div class="form-group">
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" permite-busca-sem-sistema="true" item-out="filters.bandeira" show-select="true"></dropdown-bandeira>
+                    </form-field>
+                    &nbsp;
+                    <button class="btn btn-primary"
+                            ng-click="adicionarBandeira()"
+                            ng-disabled="!podeAdicionarBandeira()">
+                        <i class="glyphicon glyphicon-plus" />
+                    </button>
+                    <button class="btn btn-danger"
+                            ng-click="removerBandeira()"
+                            ng-disabled="!podeRemoverBandeira()">
+                        <i class="glyphicon glyphicon-minus" />
+                    </button>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="action"><input type="checkbox" ng-model="filters.todasBandeirasSelecionado" ng-click="marcarTodasBandeiras()" ng-checked="permissao.bandeiras.all('selecionado', true)" /></th>
+                                <th>{{::'chain'|translate|capitalize}}</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="permissao.bandeiras.length > 0">
+                            <tr ng-repeat="permissaoBandeira in permissao.bandeiras">
+                                <td class="action"><input type="checkbox" ng-model="permissaoBandeira.selecionado" /></td>
+                                <td>{{permissaoBandeira.bandeira.dsBandeira}}</td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="permissao.bandeiras.length === 0">
+                            <tr>
+                                <td colspan="2" class="domain">{{::'noData'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </widget>
+
+        <widget title="{{::'linkingTheStores'|translate|capitalize}}" has-box="true">
+            <form name="detail" class="form-horizontal row-border" novalidate="novalidate">
+                <div class="form-group">
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="filters.cdLoja" sistema="filters.cdSistema" item-out="filters.loja" description-width="large" ignore-bandeira="true"></lookup-loja>
+                    </form-field>
+                    &nbsp;
+                    <button class="btn btn-primary"
+                            ng-click="adicionarLoja()"
+                            ng-disabled="!podeAdicionarLoja()">
+                        <i class="glyphicon glyphicon-plus" />
+                    </button>
+                    <button class="btn btn-danger"
+                            ng-click="removerLoja()"
+                            ng-disabled="!podeRemoverLoja()">
+                        <i class="glyphicon glyphicon-minus" />
+                    </button>
+                </div>
+                <div class="form-inline">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="action"><input type="checkbox" ng-model="filters.todasLojasSelecionado" ng-click="marcarTodasLojas()" ng-checked="permissao.lojas.all('selecionado', true)" /></th>
+                                <th class="identifier">{{::'code'|translate|capitalize}}</th>
+                                <th>{{::'store'|translate|capitalize}}</th>
+                                <th>{{::'chain'|translate|capitalize}}</th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="permissao.lojas.length > 0">
+                            <tr ng-repeat="permissaoLoja in permissao.lojas">
+                                <td class="action"><input type="checkbox" ng-model="permissaoLoja.selecionado" /></td>
+                                <td class="identifier">{{permissaoLoja.loja.cdLoja}}</td>
+                                <td>{{permissaoLoja.loja.nmLoja}}</td>
+                                <td>{{permissaoLoja.loja.bandeira.dsBandeira}}</td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="permissao.lojas.length === 0">
+                            <tr>
+                                <td colspan="4" class="domain">{{::'noData'|translate}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </widget>
+
+        <widget has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="filtroPesquisa">
+                <div class="form-group">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <input id="chkRecebeNotificaoOperacoes" type="checkbox" ng-model="permissao.blRecebeNotificaoOperacoes" />
+                        <label for="chkRecebeNotificaoOperacoes">{{::'receiveNotificationOperations'|translate}}</label>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <input id="chkRecebeNotificaoFinanceiro" type="checkbox" ng-model="permissao.blRecebeNotificaoFinanceiro" />
+                        <label for="chkRecebeNotificaoFinanceiro">{{::'receiveNotificationFinances'|translate}}</label>
+                    </div>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>

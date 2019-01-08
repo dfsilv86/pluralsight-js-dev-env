@@ -1,0 +1,27 @@
+﻿<div class="row">
+    <modal-breadcrumb title="{{::'mtrDetail'|translate|capitalize}}"></modal-breadcrumb>
+    <!-- TODO: montar/ajustar componentes de layout para este caso -->
+    <div class="form-vertical" style="padding: 15px 50px;">
+        <div class="form-group">
+            <label>{{::'sourceDepartment'|translate|capitalize}}</label>
+            <input type="text" name="sourceDepartment" value="{{ deptoOrigem }}" class="form-control input-width-xxlarge" disabled />
+        </div>
+
+        <div class="form-group">
+            <label>{{::'sourceItem'|translate|capitalize}}</label>
+            <input type="text" name="sourceItem" value="{{ itemOrigem }}" class="form-control input-width-xxlarge" disabled />
+        </div>
+
+        <div class="form-group">
+            <label>{{::'destDepartment'|translate|capitalize}}</label>
+            <input type="text" name="destDepartment" value="{{ deptoDestino }}" class=" form-control input-width-xxlarge" disabled />
+        </div>
+
+        <div class="form-group">
+            <label>{{::'destItem'|translate|capitalize}}</label>
+            <input type="text" name="destItem" value="{{ itemDestino }}" class=" form-control input-width-xxlarge" disabled />
+        </div>
+    </div>
+</div>
+
+

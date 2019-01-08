@@ -1,0 +1,5 @@
+﻿<select ui-select2 class="dropdown full-width-fix" name="{{::dropdownName}}">
+    <option value="" selected>{{::'all'|translate}}</option>
+    <option ng-repeat="item in data.values" value="{{::item.value
+}}">{{::item.description}}</option>
+</select>

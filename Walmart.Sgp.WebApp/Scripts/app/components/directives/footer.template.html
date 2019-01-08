@@ -1,0 +1,9 @@
+﻿<div class="footer" ng-if="footer.show">
+    <div class="notice">2016 © Walmart - {{::'appName'|translate}} - <a class="app-version" ng-click="toggleShortVersion()">v{{::footer.appVersion}}</a></div>
+
+    <div class="actions">
+        <a ng-click="viewProcessingManager()"><span class="glyphicon glyphicon-cog"></span>&nbsp;{{::'processing'|translate}}</a>
+        <a ng-click="lock()"><span class="glyphicon glyphicon-lock"></span>&nbsp;{{::'doLockScreen'|translate}}</a>
+        <scroll-top-button type="link"></scroll-top-button>
+    </div>
+</div>

@@ -1,0 +1,90 @@
+﻿@model Walmart.Sgp.WebApp.Models.SpaConfigModel
+@using Walmart.Sgp.WebApp.App_Start
+@using Walmart.Sgp.Infrastructure.Framework.Globalization
+@using Walmart.Sgp.Infrastructure.Web.Extensions
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@Texts.AppTitle</title>
+    <base href="@ViewBag.BaseHref" />
+    <meta name="description" content="SGP" />
+    <style type="text/css" id="__temp_styles__">
+        @Html.RenderFile("~/Content/css/loader.min.css")
+    </style>
+</head>
+<body>
+    <div id="__startingup__">
+        <div id="__label__">@Texts.LoadingApplication</div>
+        <div class="progress progress-striped active">
+            <div class="progress-bar progress-bar-success" id="__startup_value__"></div>
+        </div>
+    </div>
+    <header class="ng-cloak"></header>
+
+    <footer class="ng-cloak"></footer>
+
+    <div id="container" class="sidebar-closed ng-cloak loading">
+        <div id="content">
+            <div class="container">
+                <ui-view></ui-view>
+            </div>
+        </div>
+    </div>
+
+    <process-notification-area></process-notification-area>
+
+    <lock-screen></lock-screen>
+
+    <loader class="in-use"></loader>
+    <toaster-container toaster-options="{'close-button': true, 'position-class': 'toast-default-position', 'time-out': 10000, 'limit': 1, 'tap-to-dismiss':false}"></toaster-container>
+
+    @Views.Precache()
+
+    @Styles.Render("~/Content/css/bootstrap/bootstrap-css")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "35%";</script>
+    @Styles.Render("~/Content/css/theme/plugins/plugins-css")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "45%";</script>
+    @Styles.Render("~/Content/css/theme/theme-css")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "55%";</script>
+    @Styles.Render("~/Content/css/plugins-css")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "65%";</script>
+    @Styles.Render("~/Content/css/sgp-css")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "75%";</script>
+    @Scripts.Render("~/Scripts/angular-js")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "80%";</script>
+    @Scripts.Render("~/Scripts/angular-plugins-js")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "90%";</script>
+    @Scripts.Render("~/Scripts/sgp-js")
+    <script type="text/javascript">document.getElementById("__startup_value__").style.width = "95%";</script>
+
+    <script type="text/javascript" defer="defer">
+        (function () {
+            'use strict';
+            angular.module('SGP').constant('SpaConfig',
+                {
+                    apiHost: '@Model.ApiHost',
+                    appVersion: '@Model.AppVersion',
+                    reportViewerUrl: '@Model.ReportViewerUrl',
+                    enableConsole: @(Model.EnableConsole == true ? "true" : "false"),
+                    notifyOfConsoleErrors: @(Model.NotifyOfConsoleErrors == true ? "true" : "false"),
+                    showConsoleErrorsAsToast: @(Model.ShowConsoleErrorsAsToast == true ? "true" : "false"),
+                    logDiagnosticMessagesToConsole: @(Model.LogDiagnosticMessagesToConsole == true ? "true" : "false"),
+                    activityTimeout: @(Model.ActivityTimeout)
+                });
+            angular.element(document).ready(function () {
+                document.getElementById("__startup_value__").style.width = "100%";
+
+                window.setTimeout(function () {
+                    angular.bootstrap(document.body, ['SGP'], { strictDi: true });
+                    var strtp = document.getElementById("__startingup__");
+                    strtp.parentNode.removeChild(strtp);
+                    var stltp = document.getElementById("__temp_styles__");
+                    stltp.parentNode.removeChild(stltp);
+                }, 100);
+            });
+        })();
+    </script>
+</body>
+</html>

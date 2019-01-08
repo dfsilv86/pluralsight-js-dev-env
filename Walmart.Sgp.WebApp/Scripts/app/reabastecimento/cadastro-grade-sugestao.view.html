@@ -1,0 +1,85 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::(!emEdicao?'stateCadastroGradeSugestaoNewName':'stateCadastroGradeSugestaoEditName')|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="manutencao">
+                <div class="form-group actions">
+                    <div class="col-md-12">                        
+                        <button class="btn btn-primary" ng-click="save()" security-action="GradeSugestao.Atualizar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                        <button class="btn btn-danger"
+                                mwl-confirm
+                                title="{{::'confirmRemoveTitle'|translate }}"
+                                message="{{::'confirmRemoveMessage'|translate }}"
+                                on-confirm="remove()"
+                                ng-disabled="!emEdicao"
+                                security-action="GradeSugestao.Remover">
+                            <i class="glyphicon glyphicon-remove" /> &nbsp; {{::'remove'|translate}}
+                        </button>                        
+                        <button class="btn btn-success" ng-click="add()" ng-disabled="emEdicao" security-action="GradeSugestao.Criar"><i class="glyphicon glyphicon-plus" /> &nbsp; {{::'add'|translate}}</button>
+                        <button class="btn btn-default" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>                        
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'initialTime'|translate|capitalize}}" line-width="6">
+                        <time-picker ng-model="data.vlHoraInicial" lesser-than="{{data.vlHoraFinal}}" required name="vlHoraInicial"></time-picker>
+                    </form-field>
+                    <form-field title="{{::'finalTime'|translate|capitalize}}" line-width="6">
+                        <time-picker ng-model="data.vlHoraFinal" greater-than="{{data.vlHoraInicial}}" required name="vlHoraFinal"></time-picker>
+                    </form-field>
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.cdSistema" required disabled name="cdSistema" item-out="complementos.sistema" ng-disabled="emEdicao"></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="data.idBandeira" sistema="data.cdSistema" required name="chain" item-out="complementos.bandeira" ng-disabled="emEdicao"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="data.loja.cdLoja" bandeira="data.idBandeira" sistema="data.cdSistema" item-out="complementos.loja" description-width="large" required name="store" ng-disabled="emEdicao"></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-departamento modo-pereciveis="restrito" ng-model="data.departamento.cdDepartamento" sistema="data.cdSistema" description-width="large" item-out="complementos.departamento" required name="cdDepartamento" ng-disabled="emEdicao"></lookup-departamento>
+                    </form-field>
+                </div>
+                <div class="form-inline" ng-if="!emEdicao">
+                    <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                        <thead>
+                            <tr>
+                                <th>{{::'system'|translate|capitalize}}</th>
+                                <th>{{::'chain'|translate|capitalize}}</th>
+                                <th>{{::'department'|translate|capitalize}}</th>
+                                <th>{{::'store'|translate}}</th>
+                                <th class="action"></th>
+                            </tr>
+                        </thead>
+                        <tbody ng-if="sugestoesAdicionadas.values && sugestoesAdicionadas.values.length > 0">
+                            <tr ng-repeat="item in sugestoesAdicionadas.values">
+                                <td>{{item.sistema.text}}</td>
+                                <td>{{item.bandeira.dsBandeira}}</td>
+                                <td>{{item.departamento.dsDepartamento}}</td>
+                                <td>{{item.loja.nmLoja}}</td>
+                                <td class="action">
+                                    <remove-button ng-click="removeAddedItem(item)"></remove-button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody ng-if="!sugestoesAdicionadas.values || sugestoesAdicionadas.values.length === 0">
+                            <tr>
+                                <td colspan="5" class="domain">{{ ::'noData'|translate|capitalize}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="row">
+                        <div class="table-footer">
+                            <div class="col-md-12">
+                                <grid-pager ng-model="sugestoesAdicionadas.values" page-method="search" settings="sugestoesAdicionadas.paging"></grid-pager>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+
+
+
+

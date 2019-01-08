@@ -1,0 +1,80 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="pesquisaItem">
+    <modal-breadcrumb title="{{::'itemSearch'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+            <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'marketingStruct'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-sistema ng-model="filters.cdSistema" required read-only ng-disabled="lockDepartamento"></dropdown-sistema>
+        </form-field>
+        <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.departamento" description-width="medium" ng-disabled="lockDepartamento" modo-pereciveis="{{::data.modoPereciveis}}"></lookup-departamento>
+        </form-field>
+        <form-field title="{{::'category'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-categoria ng-model="filters.cdCategoria" sistema="filters.cdSistema" item-out="filters.categoria" departamento="filters.cdDepartamento" description-width="medium"></lookup-categoria>
+        </form-field>
+        <form-field title="{{::'fineline'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-fine-line ng-model="filters.cdFineline" sistema="filters.cdSistema" departamento="filters.cdDepartamento" categoria="filters.cdCategoria" subcategoria="filters.cdSubcategoria" item-out="filters.fineline" description-width="medium"></lookup-fine-line>
+        </form-field>
+        <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="cdItem" ng-model="filters.cdItem" number maxlength="10" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+        </form-field>
+        <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="dsItem" ng-model="filters.dsItem" maxlength="25" class="form-control input-width-medium" />
+        </form-field>
+        <form-field title="{{::'plu'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="cdPlu" ng-model="filters.cdPlu" number maxlength="10" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+        </form-field>
+        <form-field title="{{::'itemStatus'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-status-item-host name="itemStatus" ng-model="filters.tpStatus" ng-disabled="data.bloquearStatus"></dropdown-status-item-host>
+        </form-field>
+    </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table complex table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="identifier" ng-click="sortBy('cdItem')">{{::'code'|translate|capitalize}} <sort-indicator ng-model="data.values" name="cdItem"></sort-indicator></th>
+                        <th style="width:160px;" ng-click="sortBy('dsItem')">{{::'description'|translate|capitalize}}<sort-indicator ng-model="data.values" name="dsItem"></sort-indicator></th>
+                        <th class="identifier" ng-click="sortBy('cdupc')">{{::'upc'|translate}} <sort-indicator ng-model="data.values" name="cdupc"></sort-indicator></th>
+                        <th class="identifier" ng-click="sortBy('cdplu')">{{::'plu'|translate}} <sort-indicator ng-model="data.values" name="cdplu"></sort-indicator></th>
+                        <th class="double domain" ng-click="sortBy('tipoItem')">{{::'type'|translate}} <sort-indicator ng-model="data.values" name="tipoItem"></sort-indicator></th>
+                        <th class="domain" ng-click="sortBy('tpVinculado')">{{::'attached'|translate}} <sort-indicator ng-model="data.values" name="tpVinculado"></sort-indicator></th>
+                        <th class="domain" ng-click="sortBy('tpReceituario')">{{::'recipes'|translate}} <sort-indicator ng-model="data.values" name="tpReceituario"></sort-indicator></th>
+                        <th class="domain" ng-click="sortBy('tpManipulado')">{{::'manipulated'|translate}} <sort-indicator ng-model="data.values" name="tpManipulado"></sort-indicator></th>
+                        <th class="domain" ng-click="sortBy('tpUnidadeMedida')">{{::'measurementUnit'|translate}} <sort-indicator ng-model="data.values" name="tpUnidadeMedida"></sort-indicator></th>
+                        <th class="domain">{{::'status'|translate}}</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values" ng-click="select(item)">
+                        <td class="identifier">{{item.cdItem}}</td>
+                        <td>{{item.dsItem}}</td>                        
+                        <td class="identifier">{{item.cdupc}}</td>
+                        <td class="identifier">{{item.cdplu}}</td>
+                        <td class="double domain">{{item.tipoItem|enum:'enTipoItem'|translate|capitalize}}</td>
+                        <td class="domain">{{item.tpVinculado|enum:'enTpVinculado'|translate|capitalize|emptyDefault}}</td>
+                        <td class="domain">{{item.tpReceituario|enum:'enTpReceituario'|translate|capitalize|emptyDefault}}</td>
+                        <td class="domain">{{item.tpManipulado|enum:'enTpManipulado'|translate|capitalize|emptyDefault}}</td>
+                        <td class="domain">{{item.tpUnidadeMedida|enum:'tpUnidadeMedida'|translate}}</td>
+                        <td class="domain">{{item.tpStatus|enum:'enTpStatusItemHost'|translate|capitalize}}</td>                        
+                    </tr>
+                    <tr ng-if="!data.values || data.values.length === 0">
+                        <td colspan="10" class="domain">{{::'noItemFound'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

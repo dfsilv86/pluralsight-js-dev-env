@@ -1,0 +1,9 @@
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\bin\DEVCWI\Walmart.Sgp.Infrastructure.Framework.dll
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\bin\DEVCWI\Walmart.Sgp.Infrastructure.Framework.pdb
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\bin\DEVCWI\Walmart.Sgp.Infrastructure.Framework.XML
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\bin\DEVCWI\System.Linq.Dynamic.dll
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\obj\DEVCWI\Walmart.Sgp.Infrastructure.Framework.csprojResolveAssemblyReference.cache
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\obj\DEVCWI\Walmart.Sgp.Infrastructure.Framework.Globalization.Texts.resources
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\obj\DEVCWI\Walmart.Sgp.Infrastructure.Framework.csproj.GenerateResource.Cache
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\obj\DEVCWI\Walmart.Sgp.Infrastructure.Framework.dll
+C:\Users\David\Desktop\fonte sgp\walmart-sgp-reescrita-master-0e3b52644c7cb978d32d42bdbda2d075009d3e0f\src\Walmart.Sgp.Infrastructure.Framework\obj\DEVCWI\Walmart.Sgp.Infrastructure.Framework.pdb

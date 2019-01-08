@@ -1,0 +1,46 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateEstoqueAjusteName'|translate|capitalize}}" h has-b has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="ajusteEstoque">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="confirm()" security-action="Estoque.Ajustar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'confirm'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-sistema ng-model="data.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="data.idBandeira" sistema="data.cdSistema"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'store'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-loja ng-model="data.cdLoja" bandeira="data.idBandeira" sistema="data.cdSistema" item-out="data.loja" description-width="large" required></lookup-loja>
+                    </form-field>
+                    <form-field title="{{::'itemCode'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <lookup-item ng-model="data.cdItem" sistema="data.cdSistema" item-out="data.itemDetalhe" description-width="large" required name="itemCode"></lookup-item>
+                    </form-field>
+                    <form-field title="{{::'adjustmentReason'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-motivo-movimentacao ng-model="data.motivoAjuste.id" required name="adjustmentReason" ng-disabled="data.loja == null || data.itemDetalhe == null"></dropdown-motivo-movimentacao>
+                    </form-field>
+                    <form-field title="{{::'adjustmentType'|translate|capitalize}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-movimentacao ng-model="data.tipoAjuste.id" categoria="1" required name="adjustmentType"></dropdown-tipo-movimentacao>
+                    </form-field>
+
+                    <form-field title="{{::'quantity'|translate|capitalize}}" line-width="6" grid-width="12">
+                        <input type="text" ng-model="data.qtEstoqueFisico" number ui-number-mask="3" maxlength="10" min="0.001" class="form-control input-width-xxlarge" required name="quantity" />
+                    </form-field>
+                    <form-field title="{{::'breakDateCorrection'|translate|capitalize}}" line-width="6" grid-width="12" ng-if="data.datasDeQuebra != null">
+                        <select ui-select2 class="dropdown full-width-fix" name="breakDateCorrection" ng-model="data.dhAtualizacao" required>
+                            <option value="" selected>{{::'select'|translate}}</option>
+                            <option ng-repeat="item in data.datasDeQuebra" value="{{::item.toISOString()}}">
+                                {{::item|date:'dd/MM/yyyy' }}
+                            </option>
+                        </select>
+                    </form-field>
+                </div>
+            </form>
+        </widget>        
+    </div>
+</div>

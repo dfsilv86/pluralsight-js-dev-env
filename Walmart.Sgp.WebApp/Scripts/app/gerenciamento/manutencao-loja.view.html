@@ -1,0 +1,109 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateManutencaoLojaEditName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="manutencao">
+                <div class="form-group actions">
+                    <div class="col-md-6">
+                        <button class="btn btn-primary"
+                                ng-click="save()"
+                                ng-disabled="manutencao.$pristine"
+                                security-action="Loja.AlterarLoja">
+                            <i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-default pull-right" ng-click="back()"><i class="glyphicon glyphicon-arrow-left" /> &nbsp; {{::'back'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'storeFormat'|translate}}" line-width="6" grid-width="8">
+                        <dropdown-formato ng-model="filters.idFormato" required sistema="data.cdSistema" item-out="temp.formato" show-select="true"></dropdown-formato>
+                    </form-field>
+                    <form-field title="{{::'chain'|translate}}" line-width="6" grid-width="8">
+                        <dropdown-bandeira ng-model="data.idBandeira" required sistema="data.cdSistema" formato="filters.idFormato" item-out="temp.bandeira" show-select="true"></dropdown-bandeira>
+                    </form-field>
+                    <form-field title="{{::'region'|translate}}" line-width="6" grid-width="8">
+                        <dropdown-regiao ng-model="filters.idRegiao" required bandeira="data.idBandeira" item-out="temp.regiao" show-select="true"></dropdown-regiao>
+                    </form-field>
+                    <form-field title="{{::'district'|translate}}" line-width="6" grid-width="8">
+                        <dropdown-distrito ng-model="data.idDistrito" required regiao="filters.idRegiao" show-select="true" item-out="temp.distrito"></dropdown-distrito>
+                    </form-field>
+                    <form-field title="{{::'code'|translate}}" line-width="6">
+                        <input type="text" ng-model="data.cdLoja" readonly class="form-control input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'description'|translate}}" line-width="6">
+                        <input type="text" ng-model="data.nmLoja" readonly class="form-control input-width-medium" />
+                    </form-field>
+                    <form-field title="{{::'address'|translate}}" line-width="6">
+                        <input type="text" ng-model="data.dsEndereco" readonly class="form-control input-width-large" />
+                    </form-field>
+                    <form-field title="{{::'city'|translate}}" line-width="6">
+                        <input type="text" ng-model="data.dsCidade" readonly class="form-control input-width-medium" />
+                    </form-field>
+                    <form-field title="{{::'ftpServerAddress'|translate}}" line-width="6">
+                        <input type="text" name="ftpServerAddress" ng-model="data.dsServidorSmartEndereco" class="form-control input-width-large" maxlength="50" />
+                    </form-field>
+                    <form-field title="{{::'ftpServerDirectory'|translate}}" line-width="6">
+                        <input type="text" name="ftpServerDirectory" ng-model="data.dsServidorSmartDiretorio" class="form-control input-width-large" maxlength="50" />
+                    </form-field>
+                    <form-field title="{{::'userName'|translate}}" line-width="6">
+                        <input type="text" name="userName" ng-model="data.dsServidorSmartNomeUsuario" class="form-control input-width-large" maxlength="50" />
+                    </form-field>
+                    <form-field title="{{::'password'|translate}}" line-width="6">
+                        <input type="text" name="password" ng-model="data.dsServidorSmartSenha" class="form-control input-width-large" maxlength="50" />
+                    </form-field>
+                    <form-field title="{{::'inventoryFileKind'|translate}}" line-width="6" grid-width="8">
+                        <dropdown-tipo-arquivo-inventario required ng-model="data.tipoArquivoInventario" show-select="true" ng-disabled="data.cdSistema == 1"></dropdown-tipo-arquivo-inventario>
+                    </form-field>
+                    <form-field title="{{::'conversionDate'|translate}}" line-width="6">
+                        <input type="text" class="form-control input-width-small" readonly maxlength="50" value="{{data.dataConversao|amDateFormat:'DD/MM/YYYY'|emptyDefault}}" />
+                    </form-field>
+                    <form-field title="{{::'calculatesSuggestion'|translate}}" line-width="6">
+                        <label class="radio-inline">
+                            <div class="radio">
+                                <span ng-class="{'checked':!!data.blCalculaSugestao}">
+                                    <input type="radio" class="uniform" id="blCalculaSugestaoSim" ng-value="true" ng-model="data.blCalculaSugestao" />
+                                </span>
+                            </div>
+                            {{::'yes'|translate}}
+                        </label>
+                        <label class="radio-inline">
+                            <div class="radio">
+                                <span ng-class="{'checked':!data.blCalculaSugestao}">
+                                    <input type="radio" class="uniform" id="blCalculaSugestaoNao" ng-value="false" ng-model="data.blCalculaSugestao" />
+                                </span>
+                            </div>
+                            {{::'no'|translate}}
+                        </label>
+                    </form-field>
+                    <form-field title="{{::'placesOrder'|translate}}" line-width="6">
+                        <label class="radio-inline">
+                            <div class="radio">
+                                <span ng-class="{'checked':!!data.blEmitePedido}">
+                                    <input type="radio" class="uniform" id="blEmitePedidoSim" ng-value="true" ng-model="data.blEmitePedido" />
+                                </span>
+                            </div>
+                            {{::'yes'|translate}}
+                        </label>
+                        <label class="radio-inline">
+                            <div class="radio">
+                                <span ng-class="{'checked':!data.blEmitePedido}">
+                                    <input type="radio" class="uniform" id="blEmitePedidoNao" ng-value="false" ng-model="data.blEmitePedido" />
+                                </span>
+                            </div>
+                            {{::'no'|translate}}
+                        </label>
+                    </form-field>
+                    <form-field title="{{::'storeUserResponsible'|translate}}" line-width="6" grid-width="12">
+                        <lookup-usuario ng-model="temp.userName" item-out="temp.user" usuario="data.cdUsuarioResponsavelLoja"></lookup-usuario>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+
+
+
+

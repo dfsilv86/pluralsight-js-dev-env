@@ -1,0 +1,85 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateMultiSourcingName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="itensMultisourcing">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+                        <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+                        <button class="btn btn-default" ng-click="toImport()" security-action="Multisourcing.ImportarMultisourcing"><i class="glyphicon glyphicon-import" /> &nbsp; {{::'import'|translate}}</button>
+                        <button class="btn btn-default" ng-click="toExport()"><i class="glyphicon glyphicon-save-file" /> &nbsp; {{::'export'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'marketingStructure'|translate|capitalize}}" grid-width="2">
+                        <dropdown-sistema name="marketingStructure" ng-model="filters.cdSistema" required></dropdown-sistema>
+                    </form-field>
+                    <form-field title="{{::'department'|translate|capitalize}}">
+                        <lookup-departamento name="department" ng-model="filters.cdDepartamento" max-width="2" sistema="filters.cdSistema" item-out="filters.departamento" required></lookup-departamento>
+                    </form-field>
+                    <form-field title="{{::'stockControlItem'|translate|capitalize}}">
+                        <lookup-item-saida name="sellItemSearch" ng-model="filters.cdOldNumber" departamento="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.item"></lookup-item-saida>
+                    </form-field>
+                    <form-field title="{{::'cd'|translate|capitalize}}">
+                        <dropdown-cd name="cd" ng-model="filters.idCD" maxlength="4" item-out="filters.cd" class="input-width-small" show-all></dropdown-cd>
+                    </form-field>
+                    <form-field title="{{::'multivendorPossible'|translate|capitalize}}">
+                        <select ui-select2 class="dropdown input-width-small" data-placeholder="Sim" ng-model="filters.filtroMS" name="multivendorPossible">
+                            <option></option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                            <option value="2">Todos</option>
+                        </select>
+                    </form-field>
+                    <form-field title="{{::'hasSetup'|translate|capitalize}}">
+                        <select ui-select2 class="dropdown input-width-small" data-placeholder="Sim" ng-model="filters.filtroCadastro" name="possuiCadastro">
+                            <option></option>
+                            <option value="1">Sim</option>
+                            <option value="0">Não</option>
+                            <option value="2">Todos</option>
+                        </select>
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+        <widget has-box="no-padding">
+            <div class="form-inline">
+                <!-- TODO: componente de grid -->
+                <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                    <thead>
+                        <tr>
+                            <th class="identifier double" ng-click="orderBy('cdItem')">{{::'stockControlItem'|translate}} <sort-indicator ng-model="data.values" name="cdItem"></sort-indicator></th>
+                            <th ng-click="orderBy('dsItem')">{{::'itemDescription'|translate}} <sort-indicator ng-model="data.values" name="dsItem"></sort-indicator></th>
+                            <th class="identifier" ng-click="orderBy('cdCD')">{{::'cd'|translate}} <sort-indicator ng-model="data.values" name="cdCD"></sort-indicator></th>
+                            <th class="domain symbol double" ng-click="orderBy('QtdItensEntrada')">{{::'multivendorPossible'|translate}} <sort-indicator ng-model="data.values" name="QtdItensEntrada"></sort-indicator></th>
+                            <th class="domain symbol double" ng-click="orderBy('QtdMultisourcing')">{{::'hasSetup'|translate|capitalize}} <sort-indicator ng-model="data.values" name="QtdMultisourcing"></sort-indicator></th>
+                            <th class="action"></th>
+                        </tr>
+                    </thead>
+                    <tbody ng-if="data.values && data.values.length > 0">
+                        <tr ng-repeat="item in data.values">
+                            <td class="identifier double">{{item.cdItem}}</td>
+                            <td>{{item.dsItem}}</td>
+                            <td class="identifier">{{item.cdCD}}</td>
+                            <td class="domain symbol double"><semaphore ng-model="item.multivendor"></semaphore></td>
+                            <td class="domain symbol double"><semaphore ng-model="item.possuiCadastro"></semaphore></td>
+                            <td class="action"><edit-button ng-click="edit(item)"></edit-button></td>
+                        </tr>
+                    </tbody>
+                    <tbody ng-if="!data.values || data.values.length === 0">
+                        <tr>
+                            <td colspan="6" class="domain">{{::'noData'|translate|capitalize}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="table-footer">
+                        <div class="col-md-12">
+                            <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</div>

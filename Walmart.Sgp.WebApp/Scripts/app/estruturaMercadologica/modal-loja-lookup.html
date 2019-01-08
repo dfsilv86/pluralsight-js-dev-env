@@ -1,0 +1,62 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="pesquisaLoja">
+    <modal-breadcrumb title="{{::'storeSearch'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+            <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'marketingStruct'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-sistema ng-model="filters.cdSistema" required></dropdown-sistema>
+        </form-field>
+        <form-field title="{{::'chain'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-bandeira ng-model="filters.idBandeira" sistema="filters.cdSistema" required></dropdown-bandeira>
+        </form-field>
+        <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" name="cdLoja" ng-model="filters.cdLoja" number maxlength="4" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+        </form-field>
+        <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="10">
+            <input type="text" name="nmLoja" ng-model="filters.nmLoja" maxlength="25" class="form-control input-width-medium" />
+        </form-field>
+    </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="identifier">{{::'code'|translate}}</th>
+                        <th>{{::'name'|translate}}</th>
+                        <th>{{::'chain'|translate}}</th>
+                        <th>{{::'city'|translate}}</th>
+                        <th class="domain">{{::'inventFileType'|translate|capitalize}}</th>
+                        <th class="domain">{{::'calculatesSuggestion'|translate|capitalize}}</th>
+                        <th class="domain">{{::'placesOrder'|translate|capitalize}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values" ng-click="select(item)">
+                        <td class="identifier">{{item.cdLoja}}</td>
+                        <td>{{item.nmLoja}}</td>
+                        <td>{{item.bandeira|chainProfile}}</td>
+                        <td>{{item.dsCidade}}</td>
+                        <td class="domain">{{item.tipoArquivoInventario|enum:'enTipoArquivoInventario'|translate}}</td>
+                        <td class="domain"><semaphore ng-model="item.blCalculaSugestao"></semaphore></td>
+                        <td class="domain"><semaphore ng-model="item.blEmitePedido"></semaphore></td>
+                    </tr>
+                    <tr ng-if="!data.values || data.values.length === 0">
+                        <td colspan="7" class="domain">{{::'noStoreFound'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

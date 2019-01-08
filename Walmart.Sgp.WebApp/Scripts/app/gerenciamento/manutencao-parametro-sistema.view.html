@@ -1,0 +1,71 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <widget title="{{::'stateManutencaoParametroSistemaName'|translate|capitalize}}" has-box="true">
+            <form class="form-horizontal row-border" novalidate="novalidate" name="manutencao">
+                <div class="form-group actions">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary" ng-click="save()" security-action="Parametro.Salvar"><i class="glyphicon glyphicon-save" /> &nbsp; {{::'save'|translate}}</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'mainAdministrator'|translate|capitalize}}" line-width="12">
+                        <lookup-usuario ng-model="data.usuarioAdministrador.userName" item-out="data.usuarioAdministrador" name="mainAdministrator" usuario="data.cdUsuarioAdministrador" ng-disabled="!data.podeAtualizarUsuarioAdministrador" required></lookup-usuario>
+                    </form-field>
+                    <form-field title="{{::'divergencePurchaseCost'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <div class="input-group">
+                            <input type="text" ng-model="data.pcDivergenciaCustoCompra" name="divergencePurchaseCost" ui-number-mask="2" maxlength="5" value="{{data.pcDivergenciaCustoCompra|number:2}}" class="form-control input-full-width number" required/>
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </form-field>
+                    <form-field title="{{::'percentageItemsToAudit'|translate|capitalize}}" line-width="6" grid-width="6">
+                        <div class="input-group">
+                            <input type="text" ng-model="data.percentualAuditoria" name="percentageItemsToAudit" ui-number-mask="0" ui-hide-group-sep maxlength="3" class="form-control input-full-width number" required/>
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </form-field>
+                </div>
+                <div class="form-group" title="{{::'inventoryImport'|translate|capitalize}}">
+                    <form-field title="{{::'ftpServerAddress'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.dsServidorSmartEndereco" name="ftpServerAddress" class="form-control look-alive input-width-xlarge" required/>
+                    </form-field>
+                    <form-field title="{{::'directoryStructure'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.dsServidorSmartDiretorio" name="directoryStructure" class="form-control look-alive input-width-xlarge" required/>
+                    </form-field>
+                    <form-field title="{{::'userName'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.dsServidorSmartNomeUsuario" class="form-control look-alive" />
+                    </form-field>
+                    <form-field title="{{::'password'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.dsServidorSmartSenha" class="form-control look-alive" />
+                    </form-field>
+                    <form-field title="{{::'inventoryFileType'|translate|capitalize}}" line-width="12">
+                        <select ui-select2 ng-model="data.tpArquivoInventario" name="inventoryFileType" class="dropdown input-width-small" data-placeholder="Selecione..." required>
+                            <option ng-repeat="item in data.opcoesTipoArquivoInventario" value="{{::item.tpArquivoInventario}}">{{::item.dsTipoArquivoInventario}}</option>
+                        </select>
+                    </form-field>
+                    <form-field title="{{::'sugestionDaysQuantity'|translate|capitalize}}" line-width="12">
+                        <input type="text" ng-model="data.qtdDiasSugestaoInventario" ui-number-mask="0" ui-hide-group-sep maxlength="4" class="form-control look-alive input-width-small" />
+                    </form-field>
+                    <form-field title="{{::'daysToShelveRetailInventory'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.qtdDiasArquivoInventarioVarejo" name="daysToShelveRetailInventory" ui-number-mask="0" ui-hide-group-sep maxlength="4" class="form-control look-alive input-width-small" required/>
+                    </form-field>
+                    <form-field title="{{::'daysToShelveWholesaleInventory'|translate|capitalize}}" line-width="6">
+                        <input type="text" ng-model="data.qtdDiasArquivoInventarioAtacado" name="daysToShelveWholesaleInventory" ui-number-mask="0" ui-hide-group-sep maxlength="4" class="form-control look-alive input-width-small" required/>
+                    </form-field>
+                </div>
+                <div class="form-group">
+                    <form-field title="{{::'updateDateTime'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.dhAlteracao|amDateFormat:'DD/MM/YYYY HH:mm:ss'|coalesce:'-'}}" class="form-control look-alive" disabled />
+                    </form-field>
+                    <form-field title="{{::'updateUser'|translate|capitalize}}" line-width="6">
+                        <input type="text" value="{{data.usuarioAlteracao|userProfile}}" class="form-control look-alive" disabled />
+                    </form-field>
+                </div>
+            </form>
+        </widget>
+    </div>
+</div>
+
+
+
+
+

@@ -1,0 +1,56 @@
+﻿<form class="form-horizontal row-border" novalidate="novalidate" name="pesquisaCategoria">
+    <modal-breadcrumb title="{{::'categorySearch'|translate|capitalize}}"></modal-breadcrumb>
+    <div class="form-group actions">
+        <div class="col-md-12">
+            <button class="btn btn-primary" ng-click="search(1)"><i class="glyphicon glyphicon-search" /> &nbsp; {{::'search'|translate}}</button>
+            <button class="btn btn-default" ng-click="clear()"><i class="glyphicon glyphicon-erase" /> &nbsp; {{::'clear'|translate}}</button>
+        </div>
+    </div>
+    <div class="form-group">
+        <form-field title="{{::'marketingStruct'|translate|capitalize}}" line-width="6" grid-width="8">
+            <dropdown-sistema ng-model="filters.cdSistema" required read-only></dropdown-sistema>
+        </form-field>
+        <form-field title="{{::'department'|translate|capitalize}}" line-width="6" grid-width="12">
+            <lookup-departamento ng-model="filters.cdDepartamento" sistema="filters.cdSistema" item-out="filters.departamento" ng-required="requiredOptions.departamento" description-width="medium"></lookup-departamento>
+        </form-field>
+        <form-field title="{{::'code'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="cdCategoria" ng-model="filters.cdCategoria" number maxlength="4" ui-number-mask="0" ui-hide-group-sep class="form-control input-width-small" />
+        </form-field>
+        <form-field title="{{::'description'|translate|capitalize}}" line-width="6" grid-width="12">
+            <input type="text" name="dsCategoria" ng-model="filters.dsCategoria" maxlength="25" class="form-control input-full-width" />
+        </form-field>
+    </div>
+    <br />
+    <widget has-box="no-padding">
+        <div class="form-inline">
+            <table class="table simple table-striped table-checkable table-highlight-head table-no-inner-border table-hover table-condensed">
+                <thead>
+                    <tr>
+                        <th class="identifier">{{::'categoryCode'|translate|capitalize}}</th>
+                        <th>{{::'categoryDescription'|translate|capitalize}}</th>
+                        <th>{{::'department'|translate}}</th>
+                        <th>{{::'division'|translate}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-if="data.values && data.values.length > 0" ng-repeat="item in data.values" ng-click="select(item)">
+                        <td class="identifier">{{item.cdCategoria}}</td>
+                        <td>{{item.dsCategoria}}</td>
+                        <td>{{item.departamento|departmentProfile}}</td>
+                        <td>{{item.departamento.divisao|divisionProfile}}</td>
+                    </tr>
+                    <tr ng-if="!data.values || data.values.length === 0">
+                        <td colspan="4" class="domain">{{::'noCategoryFound'|translate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="row">
+                <div class="table-footer">
+                    <div class="col-md-12">
+                        <grid-pager ng-model="data.values" page-method="search" settings="data.paging"></grid-pager>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+</form>

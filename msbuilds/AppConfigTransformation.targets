@@ -1,0 +1,28 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- Transform the app config per project configuration.-->
+  <PropertyGroup>
+    <!-- This ensures compatibility across multiple versions of Visual Studio when using a solution file.
+         However, when using MSBuild directly you may need to override this property to 11.0 or 12.0 
+         accordingly as part of the MSBuild script, ie /p:VisualStudioVersion=11.0;
+         See http://blogs.msdn.com/b/webdev/archive/2012/08/22/visual-studio-project-compatability-and-visualstudioversion.aspx -->
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">12.0</VisualStudioVersion>
+  </PropertyGroup>
+
+  <UsingTask TaskName="TransformXml" AssemblyFile="C:\Program Files (x86)\MSBuild\Microsoft\VisualStudio\v12.0\Web\Microsoft.Web.Publishing.Tasks.dll"/>
+
+  <Target Name="SetTransformAppConfigDestination" BeforeTargets="PrepareForBuild" 
+          Condition="exists('app.$(Configuration).config')">
+    <PropertyGroup>
+      <!-- Force build process to use the transformed configuration file from now on. -->
+      <AppConfig>$(IntermediateOutputPath)$(TargetFileName).config</AppConfig>
+    </PropertyGroup>
+    <Message Text="AppConfig transformation destination: = $(AppConfig)" />
+  </Target>
+
+  <!-- Transform the app.config after the prepare for build completes. -->
+  <Target Name="TransformAppConfig" AfterTargets="PrepareForBuild" Condition="exists('app.$(Configuration).config')">
+    <!-- Generate transformed app config in the intermediate directory -->
+    <TransformXml Source="app.config" Destination="$(AppConfig)" Transform="app.$(Configuration).config" />
+  </Target>
+
+</Project>

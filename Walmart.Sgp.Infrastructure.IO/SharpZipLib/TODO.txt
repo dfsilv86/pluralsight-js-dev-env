@@ -1,0 +1,3 @@
+﻿O SGP legado utiliza código do SharpZip para descomprimir os arquivos .Z de inventário, mas não adicionou a lib inteira.
+
+TODO: encontrar uma alternativa ou importar a lib
