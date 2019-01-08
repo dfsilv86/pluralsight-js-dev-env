@@ -1,0 +1,17 @@
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Walmart.Sgp.Application.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Walmart.Sgp.Application.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Pstore.Domain.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Walmart.Sgp.Infrastructure.Framework.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Walmart.Sgp.Infrastructure.IO.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\System.Linq.Dynamic.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\log4net.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\EPPlus.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Pstore.Domain.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Walmart.Sgp.Infrastructure.Framework.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Walmart.Sgp.Infrastructure.Framework.xml
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\Walmart.Sgp.Infrastructure.IO.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\log4net.xml
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\bin\DEVCWI\EPPlus.xml
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\obj\DEVCWI\Pstore.Application.csprojResolveAssemblyReference.cache
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\obj\DEVCWI\Walmart.Sgp.Application.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Application\obj\DEVCWI\Walmart.Sgp.Application.pdb

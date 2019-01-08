@@ -254,7 +254,7 @@ namespace Walmart.Sgp.Infrastructure.Bootstrap
             container.Register<ITipoMovimentacaoService, TipoMovimentacaoService>(m_createLifetime());
             container.Register<ITraitService, TraitService>(m_createLifetime());
             container.Register<IUsuarioService, UsuarioService>(m_createLifetime());
-            container.Register<IAlcadaService, AlcadaService>(m_createLifetime());
+           
 
             container.Register<ISsoService>((factory) =>
             {

@@ -1,0 +1,732 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{20D8C6FA-065E-41BB-814C-DDFAAC7D406D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Pstore.Infrastructure.Data</RootNamespace>
+    <AssemblyName>Pstore.Infrastructure.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEV|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;SQL_DIAGNOSTICS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SIT|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\Release\Pstore.Infrastructure.Data.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\CI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS;CI</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\CI\Pstore.Infrastructure.Data.xml</DocumentationFile>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TST\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\TST\Pstore.Infrastructure.Data.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TSTAUTOMACAO|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TSTAUTOMACAO\</OutputPath>
+    <DefineConstants>
+    </DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DocumentationFile>bin\TSTAUTOMACAO\Pstore.Infrastructure.Data.xml</DocumentationFile>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEVCWI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DEVCWI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEV;DEVCWI</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PRD|AnyCPU'">
+    <OutputPath>bin\PRD\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\Walmart.Sgp.Infrastructure.Data.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\Walmart.Sgp.Infrastructure.Data.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dapper, Version=1.40.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.42\lib\net45\Dapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Humanizer, Version=1.37.7.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Humanizer.1.37.7\lib\portable-win+net40+sl50+wp8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Humanizer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Ado\AdoBandeiraGateway.cs" />
+    <Compile Include="Ado\AdoDataGatewayBase.cs" />
+    <Compile Include="Ado\AdoSistemaGateway.cs" />
+    <Compile Include="Ado\AdoFineLineGateway.cs" />
+    <Compile Include="Ado\EntityAdoDataGatewayBase.cs" />
+    <Compile Include="Ado\AdoUsuarioGateway.cs" />
+    <Compile Include="Ado\AdoFormatoGateway.cs" />
+    <Compile Include="Ado\AdoInventarioGateway.cs" />
+    <Compile Include="Ado\AdoItemDetalheGateway.cs" />
+    <Compile Include="Ado\AdoLojaGateway.cs" />
+    <Compile Include="Ado\AdoMovimentacaoGateway.cs" />
+    <Compile Include="Commons\DBExtensions.cs" />
+    <Compile Include="Dapper\DapperAlcadaDetalheGateway.cs" />
+    <Compile Include="Dapper\DapperAlcadaGateway.cs" />
+    <Compile Include="Dapper\DapperAuditGateway.cs" />
+    <Compile Include="Dapper\DapperAutorizaPedidoGateway.cs" />
+    <Compile Include="Dapper\DapperBandeiraGateway.cs" />
+    <Compile Include="Dapper\DapperCDGateway.cs" />
+    <Compile Include="Dapper\DapperCategoriaGateway.cs" />
+    <Compile Include="Dapper\DapperDistritoGateway.cs" />
+    <Compile Include="Dapper\DapperFechamentoFiscalGateway.cs" />
+    <Compile Include="Dapper\DapperImportacaoLogGateway.cs" />
+    <Compile Include="Dapper\DapperInventarioAgendamentoGateway.cs" />
+    <Compile Include="Dapper\DapperInventarioCriticaGateway.cs" />
+    <Compile Include="Dapper\DapperInventarioItemGateway.cs" />
+    <Compile Include="Dapper\DapperLogMensagemReturnSheetVigenteGateway.cs" />
+    <Compile Include="Dapper\DapperLogRelacionamentoTransferenciaGateway.cs" />
+    <Compile Include="Dapper\DapperProcessoGateway.cs" />
+    <Compile Include="Dapper\DapperNotaFiscalItemGateway.cs" />
+    <Compile Include="Dapper\DapperMotivoRevisaoCustoGateway.cs" />
+    <Compile Include="Dapper\DapperNotaFiscalGateway.cs" />
+    <Compile Include="Dapper\DapperEstoqueGateway.cs" />
+    <Compile Include="Dapper\DapperFornecedorGateway.cs" />
+    <Compile Include="Dapper\DapperFornecedorParametroGateway.cs" />
+    <Compile Include="Dapper\DapperGradeSugestaoGateway.cs" />
+    <Compile Include="Dapper\DapperItemDetalheHistGateway.cs" />
+    <Compile Include="Dapper\DapperItemRelacionamentoGateway.cs" />
+    <Compile Include="Dapper\DapperRegiaoAdministrativaGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\CompraCasada\DapperCompraCasadaGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\SugestaoPedidoCD\DapperRelacaoItemCDGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\Roteirizacao\DapperRoteiroLojaGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\Roteirizacao\DapperRoteiroGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\Roteirizacao\DapperRoteiroPedidoGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\SugestaoPedidoCD\DapperSugestaoPedidoCDGateway.cs" />
+    <Compile Include="Dapper\DapperReabastecimentoFornecedorCDGateway.cs" />
+    <Compile Include="Dapper\DapperReabastecimentoItemFornecedorCDGateway.cs" />
+    <Compile Include="Dapper\DapperParametroSistemaGateway.cs" />
+    <Compile Include="Dapper\DapperProcessOrderServiceGateway.cs" />
+    <Compile Include="Dapper\DapperProcessOrderArgumentGateway.cs" />
+    <Compile Include="Dapper\DapperProcessOrderGateway.cs" />
+    <Compile Include="Dapper\DapperRegiaoCompraGateway.cs" />
+    <Compile Include="Dapper\DapperRegiaoGateway.cs" />
+    <Compile Include="Dapper\DapperRelacaoItemLojaCDGateway.cs" />
+    <Compile Include="Dapper\DapperBandeiraDetalheGateway.cs" />
+    <Compile Include="Dapper\DapperRelacionamentoItemSecundarioGateway.cs" />
+    <Compile Include="Dapper\DapperRelacionamentoItemSecundarioHistGateway.cs" />
+    <Compile Include="Dapper\DapperRelacionamentoItemPrincipalHistGateway.cs" />
+    <Compile Include="Dapper\DapperParametroGateway.cs" />
+    <Compile Include="Dapper\DapperDataGatewayBase.cs" />
+    <Compile Include="Dapper\DapperFineLineGateway.cs" />
+    <Compile Include="Dapper\DapperLogMultiSourcingGateway.cs" />
+    <Compile Include="Dapper\DapperMultisourcingGateway.cs" />
+    <Compile Include="Dapper\DapperLojaCdParametroGateway.cs" />
+    <Compile Include="Dapper\DapperRelacionamentoTransferenciaGateway.cs" />
+    <Compile Include="Dapper\DapperRevisaoCustoGateway.cs" />
+    <Compile Include="Dapper\DapperResult.cs" />
+    <Compile Include="Dapper\DapperSoftPagingStrategy.cs" />
+    <Compile Include="Dapper\DapperNotaFiscalItemStatusGateway.cs" />
+    <Compile Include="Dapper\DapperStatusRevisaoCustoGateway.cs" />
+    <Compile Include="Dapper\DapperSugestaoPedidoGateway.cs" />
+    <Compile Include="Dapper\DapperTextQueryPagingStrategy.cs" />
+    <Compile Include="Dapper\DapperMotivoMovimentacaoGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\ReturnSheet\DapperReturnSheetGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\ReturnSheet\DapperReturnSheetItemLojaGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\ReturnSheet\DapperReturnSheetItemPrincipalGateway.cs" />
+    <Compile Include="Dapper\Reabastecimento\ReturnSheet\DapperSugestaoReturnSheetGateway.cs" />
+    <Compile Include="Dapper\DapperTipoMovimentacaoGateway.cs" />
+    <Compile Include="Dapper\DapperPermissaoLojaGateway.cs" />
+    <Compile Include="Dapper\DapperPermissaoBandeiraGateway.cs" />
+    <Compile Include="Dapper\DapperPermissaoGateway.cs" />
+    <Compile Include="Dapper\DapperDepartamentoGateway.cs" />
+    <Compile Include="Dapper\DapperDivisaoGateway.cs" />
+    <Compile Include="Dapper\DapperQuery.cs">
+      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="Dapper\DapperStatusItemHostGateway.cs" />
+    <Compile Include="Dapper\DapperSubcategoriaGateway.cs" />
+    <Compile Include="Dapper\DapperPapelGateway.cs" />
+    <Compile Include="Dapper\DapperTraitGateway.cs" />
+    <Compile Include="Dapper\EntityDapperDataGatewayBase.cs">
+      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="Dapper\DapperFormatoGateway.cs" />
+    <Compile Include="Dapper\DapperInventarioGateway.cs" />
+    <Compile Include="Dapper\DapperItemDetalheGateway.cs" />
+    <Compile Include="Dapper\DapperLojaGateway.cs" />
+    <Compile Include="Dapper\DapperMovimentacaoGateway.cs" />
+    <Compile Include="Dapper\DapperProxy.cs" />
+    <Compile Include="Dapper\DapperSistemaGateway.cs" />
+    <Compile Include="Dapper\DapperUsuarioGateway.cs" />
+    <Compile Include="Dapper\FixedValuesTypeHandler.cs" />
+    <Compile Include="Dapper\IDapperPagingStrategy.cs" />
+    <Compile Include="Dapper\IDapperQuery.cs" />
+    <Compile Include="Dapper\MemoryResult.cs" />
+    <Compile Include="Dapper\PropertyGatewayMap.cs" />
+    <Compile Include="Dapper\ResourceDapperProxy.cs" />
+    <Compile Include="Dapper\ChildrenHelper.cs" />
+    <Compile Include="Dapper\SqlDiagnostics.cs" />
+    <Compile Include="Databases\ApplicationDatabases.cs" />
+    <Compile Include="Databases\DatabaseContext.cs" />
+    <Compile Include="Dtos\DtoHelper.cs" />
+    <Compile Include="Dtos\InventarioUsuariosDto.cs" />
+    <Compile Include="Dtos\SelecionarItemInformacoesResult.cs" />
+    <Compile Include="Memory\MemoryLojaGateway.cs" />
+    <Compile Include="Memory\MemoryCategoriaGateway.cs" />
+    <Compile Include="Memory\MemoryInventarioCriticaGateway.cs" />
+    <Compile Include="Memory\MemoryInventarioAgendamentoGateway.cs" />
+    <Compile Include="Memory\MemoryInventarioGateway.cs" />
+    <Compile Include="Memory\MemoryCDGateway.cs" />
+    <Compile Include="Memory\MemoryNotaFiscalItemGateway.cs" />
+    <Compile Include="Memory\MemoryMotivoMovimentacaoGateway.cs" />
+    <Compile Include="Memory\MemoryDepartamentoGateway.cs" />
+    <Compile Include="Memory\MemoryGradeSugestaoGateway.cs" />
+    <Compile Include="Memory\MemoryItemDetalheHistGateway.cs" />
+    <Compile Include="Memory\MemoryItemDetalheGateway.cs" />
+    <Compile Include="Memory\MemoryNotaFiscalItemStatusGateway.cs" />
+    <Compile Include="Memory\MemoryParametroSistemaGateway.cs" />
+    <Compile Include="Memory\MemoryPermissaoBandeiraGateway.cs" />
+    <Compile Include="Memory\MemoryRelacionamentoItemSecundarioHistGateway.cs" />
+    <Compile Include="Memory\MemoryRelacionamentoItemPrincipalHistGateway.cs" />
+    <Compile Include="Memory\MemoryPapelGateway.cs" />
+    <Compile Include="Memory\MemoryItemRelacionamentoGateway.cs" />
+    <Compile Include="Memory\MemoryAlcadaGateway.cs" />
+    <Compile Include="Memory\MemorySugestaoPedidoGateway.cs" />
+    <Compile Include="Memory\MemoryUsuarioGateway.cs" />
+    <Compile Include="Memory\MemoryParametroGateway.cs" />
+    <Compile Include="Memory\MemoryPermissaoGateway.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Commons\SqlResourceReader.cs" />
+    <Compile Include="CommandInfo.cs" />
+    <Compile Include="Sql\SqlConstantsGenerator.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlConstantsGenerator.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Walmart.Sgp.Domain\Pstore.Domain.csproj">
+      <Project>{99965c62-48a7-4b64-b3a5-13e8138f087c}</Project>
+      <Name>Pstore.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Walmart.Sgp.Infrastructure.Framework\Pstore.Infrastructure.Framework.csproj">
+      <Project>{3d0d3692-e5fa-42a6-85af-4779f580eeb6}</Project>
+      <Name>Pstore.Infrastructure.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CodeAnalysisDictionary Include="..\CustomDictionary.xml">
+      <Link>CustomDictionary.xml</Link>
+    </CodeAnalysisDictionary>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sql\SugestaoReturnSheet.PossuiReturnsVigentesQuantidadesVazias.sql" />
+    <EmbeddedResource Include="Sql\Trait.PesquisaPorItemSistemaELoja_Count.sql" />
+    <EmbeddedResource Include="Sql\Trait.PossuiTrait.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedidoCD.QtdPedidosGradeAberta.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedido.QtdPedidosGradeAberta.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedidoCD.ObterSugestoesPorFiltro.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedidoCD.ExisteSugestoesFinalizadasMesmoItemDetalheSaida.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedidoCD.Pesquisar.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedido.ObterEstruturado.sql" />
+    <EmbeddedResource Include="Sql\RevisaoCusto.PesquisarPorFiltros.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedido.ContarPorDataPedidoLojaEDepartamento.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedido.ObterDisponibilidade.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedido.PesquisarPorFornecedorParametroELoja.sql" />
+    <EmbeddedResource Include="Sql\LojaCdParametro.PesquisarPorFiltros_Paging.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedido.PesquisarPorFiltros_Count.sql" />
+    <EmbeddedResource Include="Sql\SugestaoPedido.PesquisarPorFiltros_Paging.sql" />
+    <EmbeddedResource Include="Sql\SugestaoReturnSheet.ConsultaReturnSheetRA.sql" />
+    <EmbeddedResource Include="Sql\FineLine.ObterPorFineLineESistema.sql" />
+    <EmbeddedResource Include="Sql\Subcategoria.ObterPorSubcategoriaESistema.sql" />
+    <EmbeddedResource Include="Sql\FineLine.PesquisarPorFineLineSubcategoriaCategoriaDepartamentoESistema.sql" />
+    <EmbeddedResource Include="Sql\Subcategoria.PesquisarPorSubcategoriaCategoriaDepartamentoESistema.sql" />
+    <EmbeddedResource Include="Sql\StatusItemHost.ObterPorCultura.sql" />
+    <EmbeddedResource Include="Sql\Loja.Pesquisar.sql" />
+    <EmbeddedResource Include="Sql\Loja.ObterPorBandeira.sql" />
+    <EmbeddedResource Include="Sql\Permissao.Pesquisar.sql" />
+    <EmbeddedResource Include="Sql\Categoria.ObterPorCategoriaESistema.sql" />
+    <EmbeddedResource Include="Sql\Categoria.PesquisarPorCategoriaDepartamentoESistema.sql" />
+    <EmbeddedResource Include="Sql\Departamento.PesquisarPorDivisaoESistema.sql" />
+    <EmbeddedResource Include="Sql\Divisao.PesquisarPorSistema.sql" />
+    <EmbeddedResource Include="Sql\Divisao.ObterPorDivisaoESistema.sql" />
+    <EmbeddedResource Include="Sql\Departamento.ObterPorDepartamentoESistema.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarPorFiltros.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarPorFiltros_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarPorFiltros_Paging.sql" />
+    <EmbeddedResource Include="Sql\Loja.Pesquisar_Paging.sql" />
+    <EmbeddedResource Include="Sql\Loja.Pesquisar_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarItemCD.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarItensEntradaPorSaidaCD.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarItensEntradaPorSaidaCD_Count.sql" />
+    <EmbeddedResource Include="Sql\Fornecedor.ObterAtivoPorCodigoESistemaComProjecao.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ItemPertenceFornecedor.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ItemDetalheEntradaPertenceItemDetalheSaida.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemPrincipal.PesquisarPorTipoRelacionamento.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemPrincipal.ObterPorId.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemPrincipal.ContarItemDetalheComoSaidaEmOutrosRelacionamentos.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemPrincipal.ObterPercentualRendimentoTransformado.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemSecundario.ObterPercentualRendimentoDerivado.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.AlterarDadosCustos.sql" />
+    <EmbeddedResource Include="Sql\Estoque.ObterUltimoCustoDoItemPorLoja_Paging.sql" />
+    <EmbeddedResource Include="Sql\Estoque.ObterUltimoCustoDoItemPorLoja_Count.sql" />
+    <EmbeddedResource Include="Sql\Multisourcing.ObterComDetalhes.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ItemDetalheSaidaPertenceCD.sql" />
+    <EmbeddedResource Include="Sql\Multisourcing.ObterPorCdItemSaidaEcdCD.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarPorFiltrosComTipoReabastecimento.sql" />
+    <EmbeddedResource Include="Sql\Estoque.ObterOrigensItem.sql" />
+    <EmbeddedResource Include="Sql\Estoque.ObterOsCincoUltimosRecebimentosDoItemPorLoja.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterFornecedorParametro.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\Estoque.ObterUltimoCustoDoItemNaLoja.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemPrincipal.ObterPrincipaisPorItem.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemSecundario.ObterSecundariosPorItem.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterPorItemESistema.sql" />
+    <EmbeddedResource Include="Sql\Fornecedor.ObterPorSistemaCodigoNome.sql" />
+    <EmbeddedResource Include="Sql\GradeSugestao.ObterGradeSugestoesSeFechada.sql" />
+    <EmbeddedResource Include="Sql\Estoque.ObterUltimoCustoContabilItem.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterItemSaidaPorFornecedorItemEntrada.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterItemSaidaPorFornecedorItemEntrada_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterItemSaidaPorFornecedorItemEntrada_Paging.sql" />
+    <EmbeddedResource Include="Sql\LojaCdParametro.PesquisarPorFiltros_Count.sql" />
+    <EmbeddedResource Include="Sql\FornecedorParametro.PesquisarPorFiltros.sql" />
+    <EmbeddedResource Include="Sql\FornecedorParametro.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\LojaCdParametro.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.PesquisarPorFiltros.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\FornecedorParametro.PesquisarPorSistemaCodigo9DigitosENomeFornecedor_Paging.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterItemEntradaPorItemSaida.sql" />
+    <EmbeddedResource Include="Sql\Permissao.ObterPermissoesDoUsuario.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.PesquisarUltimasEntradasPorFiltros.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterPorFiltro_Paging.sql" />
+    <EmbeddedResource Include="Sql\Alcada.ObterEstruturadoPorPerfil.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterItemEntradaDisponivel.sql" />
+    <EmbeddedResource Include="Sql\Movimentacao.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.ObterCustosPorItem.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.ExisteNotasPendentesPorItem.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.PesquisarCustosPorFiltros.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.ObterItemNaUltimaNotaRecebidaDaLoja.sql" />
+    <EmbeddedResource Include="Sql\Movimentacao.ObterDatasDeQuebra.sql" />
+    <EmbeddedResource Include="Sql\GradeSugestao.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\NotaFiscal.ObterItensDaNotaFiscal.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterItensDetalheReturnSheet.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterEstruturadoExtraPorId.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheetItemLoja.ObterLojasValidasItem.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheetItemLoja.ObterLojasPorReturnSheetEItemDetalheSaida.sql" />
+    <EmbeddedResource Include="Sql\SugestaoReturnSheet.ConsultaLoja.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheetItemPrincipal.ObterPorReturnSheetEItemDetalheSaida.sql" />
+    <EmbeddedResource Include="Sql\Roteiro.ObterRoteirosPorFornecedor.sql" />
+    <EmbeddedResource Include="Sql\RoteiroPedido.ObterPedidosRoteirizados.sql" />
+    <EmbeddedResource Include="Sql\RoteiroLoja.ObterLojasValidas.sql" />
+    <EmbeddedResource Include="Sql\Roteiro.ObterPorId.sql" />
+    <EmbeddedResource Include="Sql\RoteiroPedido.ObterSugestaoPedidoPorRoteiro.sql" />
+    <EmbeddedResource Include="Sql\RevisaoCusto.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\InventarioAgendamento.ObterAgendamentos.sql" />
+    <EmbeddedResource Include="Sql\InventarioAgendamento.ObterNaoAgendados.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoTransferencia.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoTransferencia.PesquisarPorFiltro.sql" />
+    <EmbeddedResource Include="Sql\InventarioAgendamento.ObterQuantidadeAgendamentos.sql" />
+    <EmbeddedResource Include="Sql\InventarioAgendamento.ObterEstruturadosPorIds.sql" />
+    <EmbeddedResource Include="Sql\Loja.PesquisarPorItemDestinoOrigem.sql" />
+    <EmbeddedResource Include="Sql\Inventario.ObterSumarizadoPorFiltro.sql" />
+    <EmbeddedResource Include="Sql\Inventario.ObterCustoTotalPorFiltro.sql" />
+    <EmbeddedResource Include="Sql\InventarioAgendamento.ContarAgendamentos.sql" />
+    <EmbeddedResource Include="Sql\Inventario.ContarInventarios.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoTransferencia.PesquisarItensRelacionados.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoTransferencia.ObterQuantidadePorItemDestino.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoTransferencia.PesquisarPorItemDestinoOrigemLojaStatus.sql" />
+    <EmbeddedResource Include="Sql\Inventario.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\FechamentoFiscal.ObterUltimoPorLoja.sql" />
+    <EmbeddedResource Include="Sql\Audit.ObterRelatorio.sql" />
+    <EmbeddedResource Include="Sql\Inventario.ObterUltimoPorLojaDepartamento.sql" />
+    <EmbeddedResource Include="Sql\InventarioItem.ObterEstruturadoPorFiltro.sql" />
+    <EmbeddedResource Include="Sql\Processo.PesquisarCargas_Paging.sql" />
+    <EmbeddedResource Include="Sql\Processo.PesquisarCargas_Count.sql" />
+    <EmbeddedResource Include="Sql\Roteiro.ObterPorIdComLojas.sql" />
+    <EmbeddedResource Include="Sql\RoteiroPedido.ObterRoteirosPedidosParaAutorizar.sql" />
+    <EmbeddedResource Include="Sql\RoteiroPedido.ObterRoteirosPedidosPorRoteiroEdtPedido.sql" />
+    <EmbeddedResource Include="Sql\RoteiroPedido.QtdPedidosNaoAutorizadosParaDataCorrente.sql" />
+    <EmbeddedResource Include="Sql\RoteiroPedido.ObterSugestaoPedidoPorRoteiroItem.sql" />
+    <EmbeddedResource Include="Sql\Roteiro.ObterItemLojaRoteiroDetalhe.sql" />
+    <EmbeddedResource Include="Sql\RoteiroPedido.ObterDadosAutorizacao.sql" />
+    <EmbeddedResource Include="Sql\Multisourcing.VerificarRipVinculado.sql" />
+    <EmbeddedResource Include="Sql\AutorizaPedido.ObterAutorizacoesPorSugestaoPedido.sql" />
+    <EmbeddedResource Include="Sql\Inventario.PossuiItemInativoDeletado.sql" />
+    <EmbeddedResource Include="Sql\Inventario.PossuiItemComCustoDeCadastro.sql" />
+    <EmbeddedResource Include="Sql\Inventario.PossuiSortimentoInvalido.sql" />
+    <EmbeddedResource Include="Sql\InventarioCritica.ExcluirInventarioCritica.sql" />
+    <EmbeddedResource Include="Sql\Processo.PesquisarProcessosExecucao.sql" />
+    <EmbeddedResource Include="Sql\Inventario.PossuiItemVinculadoEntrada.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoTransferencia.PesquisarItensRelacionadosPorCdItemDestino.sql" />
+    <EmbeddedResource Include="Sql\Parametro.ObterEstruturado.sql" />
+    <EmbeddedResource Include="Sql\Departamento.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\Loja.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\Bandeira.PesquisarPorFiltros_Paging.sql" />
+    <EmbeddedResource Include="Sql\Bandeira.PesquisarPorFiltros_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterPorPluESistema.sql" />
+    <EmbeddedResource Include="Sql\Bandeira.ObterEstruturadoPorId.sql" />
+    <EmbeddedResource Include="Sql\Permissao.PesquisarComFilhos_Paging.sql" />
+    <EmbeddedResource Include="Sql\Permissao.PesquisarComFilhos_Count.sql" />
+    <EmbeddedResource Include="Sql\Distrito.Pesquisar_Paging.sql" />
+    <EmbeddedResource Include="Sql\Permissao.ObterPorId.sql" />
+    <EmbeddedResource Include="Sql\PermissaoBandeira.UsuarioPossuiPermissaoBandeira.sql" />
+    <EmbeddedResource Include="Sql\InventarioCritica.Pesquisar.sql" />
+    <EmbeddedResource Include="Sql\Permissao.PossuiPermissaoLoja.sql" />
+    <EmbeddedResource Include="Sql\Bandeira.ObterPorIdLoja.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarAbertoPorBandeira_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.PesquisarAbertoPorBandeira_Paging.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterItemCustos_Paging.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterItemCustos_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterInformacoesEstoquePorLoja_Paging.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterInformacoesEstoquePorLoja_Count.sql" />
+    <EmbeddedResource Include="Sql\PermissaoLoja.UsuarioPossuiPermissaoLoja.sql" />
+    <EmbeddedResource Include="Sql\FornecedorParametro.PesquisarPorSistemaCodigo9DigitosENomeFornecedor_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterPorOldNumberESistemaEDepartamento.sql" />
+    <EmbeddedResource Include="Sql\FornecedorParametro.PesquisarItensDSD_Count.sql" />
+    <EmbeddedResource Include="Sql\RelacionamentoItemPrincipal.ContarItemDetalheEmOutrosRelacionamentos.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterPorFiltro_Count.sql" />
+    <EmbeddedResource Include="Sql\Distrito.Pesquisar_Count.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheetItemLoja.ObterEstadosLojasValidasItem.sql" />
+    <EmbeddedResource Include="Sql\CompraCasada.Pesquisar.sql" />
+    <EmbeddedResource Include="Sql\CompraCasada.PesquisarItensEntrada.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterTraitsPorItem.sql" />
+    <EmbeddedResource Include="Sql\CompraCasada.PesquisarItensEntrada_Count.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.EstaVinculadoCompraCasada.sql" />
+    <EmbeddedResource Include="Sql\ProcessOrder.GetProcessOrderDetail.sql" />
+    <EmbeddedResource Include="Sql\ProcessOrder.GetNextTicketToRun.sql" />
+    <EmbeddedResource Include="Sql\ProcessOrder.FindAllByUser_Paging.sql" />
+    <EmbeddedResource Include="Sql\ProcessOrder.FindAllByUser_Count.sql" />
+    <EmbeddedResource Include="Sql\ProcessOrder.FindAllReadyToBeRemoved.sql" />
+    <EmbeddedResource Include="Sql\ProcessOrderArgument.HasFileVaultTicket.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ExportacaoCadastroReabastecimento.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.RelacionamentoSGP_Count.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterDadosImportacao.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.Cadastro_Count.sql" />
+    <EmbeddedResource Include="Sql\CompraCasada.ObterCdPaiPorCdFilho.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.VerificarItemXrefPossuiSecundarios.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ItemXrefPrime.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterPorVinculo.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterProcessamentosImportacao_Paging.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterProcessamentosImportacao_Count.sql" />
+    <None Include="Databases\Changelog\db.changelog-master.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\changelog.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\GradeSugestao.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PR_GeraSugestaoManual.sql" />
+    <None Include="Databases\Changelog\sprint-02\changelog.xml" />
+    <None Include="Databases\Changelog\sprint-02\rollback-02.sql" />
+    <None Include="Databases\Changelog\sprint-02\TG_RelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-02\VW_ConsultaAlteracaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-02\RegioCompra.sql" />
+    <None Include="Databases\Changelog\sprint-02\RelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\AreaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\AtualizacaoRelacionamentoItem.sql" />
+    <None Include="Databases\Changelog\sprint-03\CWIRole.sql" />
+    <None Include="Databases\Changelog\sprint-03\Estoque.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_AtualizaRelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\PRC_CorrigirRelacionamentos.sql" />
+    <None Include="Databases\Changelog\sprint-03\rollback-03.sql" />
+    <None Include="Databases\Changelog\sprint-03\Stage.Item.sql" />
+    <None Include="Databases\Changelog\sprint-03\NotaFiscalItem.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelLogManutencaoCadastroItens.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_AtualizaFornecedorParametroItem.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelItensExcluidosHost.sql" />
+    <None Include="Databases\Changelog\sprint-03\LogExcecao.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelLogAlteracaoRelacionamentoItens.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelItensRelacionadosDeletadosInativos.sql" />
+    <None Include="Databases\Changelog\sprint-03\RegiaoCompra.sql" />
+    <None Include="Databases\Changelog\sprint-03\RevisaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-03\StatusRevisaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-03\MotivoRevisaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-03\SugestaoPedidoLog.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_ReportItensPesoVariavel.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_ReportItensDerivados.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_ReportItensTransformados.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelVendasABC_2.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelFinanceiroItem_2.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_Get_InventariosAbertosParaImportacao.sql" />
+    <None Include="Databases\Changelog\sprint-03\ItemDetalhe.sql" />
+    <None Include="Databases\Changelog\sprint-03\RelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\changelog.xml" />
+    <None Include="Databases\Changelog\piloto\changelog.xml" />
+    <None Include="Databases\Changelog\piloto\PR_SelecionarFornecedorLojaCDParam.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PRC_ATENDEPEDIDOMINIMO.1.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PRC_ATENDEPEDIDOMINIMO.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PR_ImportarNotasFiscais.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\FornecedorParametro.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\NotaFiscal.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\ItemDetalhe.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\Loja.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\ReviewDateCD.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\FornecedorLojaParametro.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\RelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PR_RelItemVisivelNaoVisivelInterferir.1.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PR_RelItemVisivelNaoVisivelInterferir.xml" />
+    <None Include="Databases\Changelog\sprint-02\changelog.xml" />
+    <None Include="Databases\Changelog\sprint-02\TG_RelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-02\VW_ConsultaAlteracaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-02\RegioCompra.sql" />
+    <None Include="Databases\Changelog\sprint-02\RelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\AreaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\AtualizacaoRelacionamentoItem.sql" />
+    <None Include="Databases\Changelog\sprint-03\CWIRole.sql" />
+    <None Include="Databases\Changelog\sprint-03\Estoque.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_AtualizaRelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\PRC_CorrigirRelacionamentos.sql" />
+    <None Include="Databases\Changelog\sprint-03\Stage.Item.sql" />
+    <None Include="Databases\Changelog\sprint-03\NotaFiscalItem.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelLogManutencaoCadastroItens.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_AtualizaFornecedorParametroItem.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelItensExcluidosHost.sql" />
+    <None Include="Databases\Changelog\sprint-03\LogExcecao.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelLogAlteracaoRelacionamentoItens.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelItensRelacionadosDeletadosInativos.sql" />
+    <None Include="Databases\Changelog\sprint-03\RegiaoCompra.sql" />
+    <None Include="Databases\Changelog\sprint-03\RevisaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-03\StatusRevisaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-03\MotivoRevisaoCusto.sql" />
+    <None Include="Databases\Changelog\sprint-03\SugestaoPedidoLog.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_ReportItensPesoVariavel.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_ReportItensDerivados.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_ReportItensTransformados.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelVendasABC_2.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_RelFinanceiroItem_2.sql" />
+    <None Include="Databases\Changelog\sprint-03\PR_Get_InventariosAbertosParaImportacao.sql" />
+    <None Include="Databases\Changelog\sprint-03\ItemDetalhe.sql" />
+    <None Include="Databases\Changelog\sprint-03\RelacaoItemLojaCD.sql" />
+    <None Include="Databases\Changelog\sprint-03\changelog.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\Stage.SaldoPedidoItemEntrada.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\Stage.SugestaoPedido.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\LogTipoProcesso.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\SugestaoPedido.sql" />
+    <None Include="Databases\Changelog\db.changelog-stage-master.xml" />
+    <None Include="Databases\Changelog\processing\changelog.xml" />
+    <None Include="Databases\Changelog\processing\ProcessOrder.sql" />
+    <None Include="Databases\Changelog\processing\ProcessOrderArgument.sql" />
+    <None Include="Databases\Changelog\processing\ProcessOrderLog.sql" />
+    <EmbeddedResource Include="Sql\ItemDetalhe.ObterValorTipoReabastecimento.sql" />
+    <EmbeddedResource Include="Sql\Multisourcing.ObtemItemDetalheSaidaEntradaMultisourcing.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheet.PossuiAutorizacao.sql" />
+    <None Include="Databases\Changelog\stage\01-ReabastecimentoFornecedorCD.sql" />
+    <None Include="Databases\Changelog\stage\02-ReabastecimentoItemFornecedorCD.sql" />
+    <None Include="Databases\Changelog\stage\03-SugestaoPedido.sql" />
+    <None Include="Databases\Changelog\stage\04-SugestaoPedidoCD.sql" />
+    <None Include="Databases\Changelog\stage\05-ItemEstoqueCD.sql" />
+    <None Include="Databases\Changelog\stage\06-IX_RelacaoItemLojaCD_cdItem_cdCD.sql" />
+    <None Include="Databases\Changelog\stage\07-SugestaoPedidoItemEntrada.sql" />
+    <None Include="Databases\Changelog\stage\08-ItemCustoCD.sql" />
+    <None Include="Databases\Changelog\stage\09-forecast.sql" />
+    <None Include="Databases\Changelog\stage\10-SugestaoPedidoItemRelacionado.sql" />
+    <None Include="Databases\Changelog\stage\11-ForecastDiarioCd.sql" />
+    <None Include="Databases\Changelog\stage\12-ForecastSugestaoCd.sql" />
+    <None Include="Databases\Changelog\stage\13-SugestaoPedidoCdItemRelacionado.sql" />
+    <None Include="Databases\Changelog\stage\changelog.xml" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterQtdLojasAtivas.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterQtdCDAtivos.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.VerificaLojaAtendidaCD.sql" />
+    <None Include="Databases\Changelog\pess\01-Multisourcing.xml" />
+    <None Include="Databases\Changelog\pess\02-PedidoMultisourcing.xml" />
+    <None Include="Databases\Changelog\pess\03-LogMultiSourcing.xml" />
+    <None Include="Databases\Changelog\pess\04-ReturnSheet.xml" />
+    <None Include="Databases\Changelog\pess\05-ReturnSheetItemPrincipal.xml" />
+    <None Include="Databases\Changelog\pess\06-ReturnSheetItemLoja.xml" />
+    <None Include="Databases\Changelog\pess\07-LogReturnSheet.xml" />
+    <None Include="Databases\Changelog\pess\08-SugestaoReturnSheet.xml" />
+    <None Include="Databases\Changelog\pess\09-LogSugestaoReturnSheet.xml" />
+    <None Include="Databases\Changelog\pess\10-ReabastecimentoFornecedorCD.xml" />
+    <None Include="Databases\Changelog\pess\100-CompraCasadaLog.xml" />
+    <None Include="Databases\Changelog\pess\101-RelacaoItemLojaCDLog.xml" />
+    <None Include="Databases\Changelog\pess\102-VW_ConsistenciaVendorNoveDigitos.xml" />
+    <None Include="Databases\Changelog\pess\107-AtualizacaoRelacionamentoItem.xml" />
+    <None Include="Databases\Changelog\pess\11-ReabastecimentoItemFornecedorCD.xml" />
+    <None Include="Databases\Changelog\pess\12-fnExisteReturnSheet.xml" />
+    <None Include="Databases\Changelog\pess\13-VW_REAB_RelacionamentosGerais.xml" />
+    <None Include="Databases\Changelog\pess\16-IX_ItemDetalhe_blAtivo.xml" />
+    <None Include="Databases\Changelog\pess\17-IX_SugestaoPedido_dtPedido2.xml" />
+    <None Include="Databases\Changelog\pess\20-IX_RelacaoItemLojaCD_IDLojaCDParametro.xml" />
+    <None Include="Databases\Changelog\pess\22-IX_RelacaoItemLojaCD_blAtivo.xml" />
+    <None Include="Databases\Changelog\pess\25-fnReabObterItensInferir.xml" />
+    <None Include="Databases\Changelog\pess\27-PRC_CorrigirRelacionamentosMultisourcing.xml" />
+    <None Include="Databases\Changelog\pess\28-PR_AtualizaFornecedorParametroItem.xml" />
+    <None Include="Databases\Changelog\pess\29-PRC_CorrigirRelacionamentos.xml" />
+    <None Include="Databases\Changelog\pess\30-SugestaoPedido.xml" />
+    <None Include="Databases\Changelog\pess\31-RelacionamentoItemPrime.xml" />
+    <None Include="Databases\Changelog\pess\32-PR_ExportarPrePedidosReturnSheet.xml" />
+    <None Include="Databases\Changelog\pess\33-PR_ExportarPrePedidosReturnSheet_20_40.xml" />
+    <None Include="Databases\Changelog\pess\34-LogTipoProcesso.xml" />
+    <None Include="Databases\Changelog\pess\35-Roteiro.xml" />
+    <None Include="Databases\Changelog\pess\36-RoteiroFornecedorLoja.xml" />
+    <None Include="Databases\Changelog\pess\37-RoteiroPedido.xml" />
+    <None Include="Databases\Changelog\pess\38-FornecedorParametro.xml" />
+    <None Include="Databases\Changelog\pess\40-PR_GeraRoteiroPedido.xml" />
+    <None Include="Databases\Changelog\pess\43-VW_REAB_ItensEnvioSDP.xml" />
+    <None Include="Databases\Changelog\pess\44-RelacaoItemLojaCD.xml" />
+    <None Include="Databases\Changelog\pess\45-fnObterTipoReabastecimento.xml" />
+    <None Include="Databases\Changelog\pess\47-IX_ItemDetalhe_IDDepartamento2.xml" />
+    <None Include="Databases\Changelog\pess\48-fnValidarTipoReabastecimentoXCDConvertido.xml" />
+    <None Include="Databases\Changelog\pess\49-IX_FornecedorLojaParametro_IDFornecedorParametro.xml" />
+    <None Include="Databases\Changelog\pess\50-IX_FornecedorCDParametro.xml" />
+    <None Include="Databases\Changelog\pess\51-IX_SugestaoPedido_tpStatusEnvio.xml" />
+    <None Include="Databases\Changelog\pess\52-IX_ItemDetalhe_cdSistema.xml" />
+    <None Include="Databases\Changelog\pess\52-VW_REAB_ItensEnvioOMSPickPedidos.xml" />
+    <None Include="Databases\Changelog\pess\53-ItemEstoqueCD.xml" />
+    <None Include="Databases\Changelog\pess\53-PR_AtualizaItemEstoqueCd.xml" />
+    <None Include="Databases\Changelog\pess\54-RelacaoItemCD.xml" />
+    <None Include="Databases\Changelog\pess\55-SugestaoPedidoCD.xml" />
+    <None Include="Databases\Changelog\pess\56-PR_AtualizaRelacaoItemLojaCD.xml" />
+    <None Include="Databases\Changelog\pess\58-VW_REAB_SugestaoPedidoItensRelacionados.xml" />
+    <None Include="Databases\Changelog\pess\59-PR_CalcularForecastCD.xml" />
+    <None Include="Databases\Changelog\pess\60-PR_GeraSugestaoPedidoCD.xml" />
+    <None Include="Databases\Changelog\pess\62-PRC_AtualizaSugestoesDeReviewSheet.xml" />
+    <None Include="Databases\Changelog\pess\63-PRC_ATENDEPEDIDOMINIMO.xml" />
+    <None Include="Databases\Changelog\pess\64-ItemCustoCD.xml" />
+    <None Include="Databases\Changelog\pess\65-PR_AtualizaItemCustoCD.xml" />
+    <None Include="Databases\Changelog\pess\66-ALTER_FUNCTION_dbo.fnPossuiVendasPeriodo.xml" />
+    <None Include="Databases\Changelog\pess\67-ALTER_FUNCTION_dbo.fnReabSugestaoPedidoItensCross.xml" />
+    <None Include="Databases\Changelog\pess\68-ALTER_FUNCTION_dbo.fnReabSugestaoPedidoItensDiretoSaida.xml" />
+    <None Include="Databases\Changelog\pess\69-ALTER_FUNCTION_dbo.fnReabSugestaoPedidoItensDSD.xml" />
+    <None Include="Databases\Changelog\pess\70-ALTER_FUNCTION_dbo.fnReabSugestaoPedidoItensStaple.xml" />
+    <None Include="Databases\Changelog\pess\71-ALTER_FUNCTION_dbo.fnTotalNotaNoPeriodo.xml" />
+    <None Include="Databases\Changelog\pess\71-CompraCasada.xml" />
+    <None Include="Databases\Changelog\pess\73-ALTER_VIEW_dbo.VW_REAB_SaldoItensEntrada.xml" />
+    <None Include="Databases\Changelog\pess\74-ALTER_VIEW_dbo.VW_REAB_SaldosPedidos.xml" />
+    <None Include="Databases\Changelog\pess\75-ALTER_VIEW_dbo.VW_REAB_SugestaoPedidoItensEntrada.xml" />
+    <None Include="Databases\Changelog\pess\76-ALTER_VIEW_dbo.VW_REAB_SugestaoPedidoItensRelacionados.xml" />
+    <None Include="Databases\Changelog\pess\77-CREATE_PROCEDURE_dbo.PR_AtualizaEstoqueSugestoPedidoItemEntrada.xml" />
+    <None Include="Databases\Changelog\pess\78-CREATE_VIEW_dbo.VW_REAB_SugestaoPedidoCdItensRelacionados.xml" />
+    <None Include="Databases\Changelog\pess\79-VW_LogMultiSourcing.xml" />
+    <None Include="Databases\Changelog\pess\80-PR_ReportItensPesoVariavel.xml" />
+    <None Include="Databases\Changelog\pess\81-PR_ReportItensDerivados.xml" />
+    <None Include="Databases\Changelog\pess\82-PR_ReportItensTransformados.xml" />
+    <None Include="Databases\Changelog\pess\83-fnAcaoRefCruzada.xml" />
+    <None Include="Databases\Changelog\pess\84-PRC_ATENDEPEDIDOMINIMO_XDoc.xml" />
+    <None Include="Databases\Changelog\pess\85-PRC_CONSOLIDAPEDIDOMINIMO.xml" />
+    <None Include="Databases\Changelog\pess\88-SugestaoPedidoCDLog.xml" />
+    <None Include="Databases\Changelog\pess\91-TabelasLog.xml" />
+    <None Include="Databases\Changelog\pess\92-PRC_AtualizaSugestoesDeReviewSheetFinalizacao.xml" />
+    <None Include="Databases\Changelog\pess\93-ReturnSheetLog.xml" />
+    <None Include="Databases\Changelog\pess\95-PR_GeraSugestaoReturnSheet.xml" />
+    <None Include="Databases\Changelog\pess\96-PR_GeraPedidoOMS.xml" />
+    <None Include="Databases\Changelog\pess\97-LogCompraCasada.xml" />
+    <None Include="Databases\Changelog\pess\97-PR_SelecionarItemInformacoes.xml" />
+    <None Include="Databases\Changelog\pess\98-PRC_ValidarCadastroCompraCasada.xml" />
+    <None Include="Databases\Changelog\pess\changelog.xml" />
+    <None Include="Databases\Changelog\processing\ProcessOrder.2.sql" />
+    <None Include="Databases\Changelog\processing\ProcessOrderService.sql" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PRC_ATENDEPEDIDOMINIMO.2.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PRC_ATENDEPEDIDOMINIMO.3.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PRC_ATENDEPEDIDOMINIMO.4.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PRC_ATENDEPEDIDOMINIMO_XDoc.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\PRC_CONSOLIDAPEDIDOMINIMO.xml" />
+    <None Include="Databases\Changelog\ra2016-sprint01\Stage.SaldoPedido.sql" />
+    <None Include="Databases\Changelog\stage\14-fnObterForcastDia.xml" />
+    <None Include="Databases\Changelog\stage\15-FORCASTESTE.xml" />
+    <EmbeddedResource Include="Sql\AlcadaDetalhe.ObterPorIdAlcada.sql" />
+    <EmbeddedResource Include="Sql\Alcada.ObterEstruturado.sql" />
+    <EmbeddedResource Include="Sql\Fornecedor.VerificaVendorWalmart.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.PossuiRelacionamento.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterTipoReabastecimentoItemVinculadoXrefPrime.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.ObterItemSaidaAtendeRequisitos.sql" />
+    <EmbeddedResource Include="Sql\RelacaoItemLojaCD.LojaCDPossuiCadastroItemControleEstoque.sql" />
+    <Content Include="Sql\SqlConstantsGenerator.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>SqlConstantsGenerator.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sql\Bandeira.ObterPorUsuarioESistema.sql" />
+    <EmbeddedResource Include="Sql\Sistema.ObterPorUsuario.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <EmbeddedResource Include="Sql\GradeSugestao.PesquisarEstruturadoPorFiltro.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheet.Pesquisar.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheetItemPrincipal.PesquisarPorIdReturnSheet.sql" />
+    <EmbeddedResource Include="Sql\ReturnSheet.PossuiExportacao.sql" />
+    <EmbeddedResource Include="Sql\InventarioItem.ObterEstruturadoPorId.sql" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

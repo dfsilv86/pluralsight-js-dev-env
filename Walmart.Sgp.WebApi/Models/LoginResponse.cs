@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Walmart.Sgp.WebApi.Models
+namespace Pstore.WebApi.Models
 {
     public class LoginResponse
     {

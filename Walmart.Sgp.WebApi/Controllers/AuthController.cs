@@ -14,6 +14,7 @@ using Walmart.Sgp.Infrastructure.Web.Security;
 using Walmart.Sgp.WebApi.App_Start;
 using Walmart.Sgp.WebApi.Models;
 using Walmart.Sgp.WebApi.Properties;
+using Pstore.WebApi.Models;
 
 namespace Walmart.Sgp.WebApi.Controllers
 {
@@ -56,9 +57,30 @@ namespace Walmart.Sgp.WebApi.Controllers
         [HttpPost]
         public LoginResponse Login([FromBody]LoginRequest authInfo)
         {
-            return !authInfo.IdExternoPapel.HasValue || authInfo.IdExternoPapel.Value == 0
-                ? LogarSemPapel(authInfo)
-                : LogarComPapel(authInfo);
+          //  var user = MainService.ObterPorUserName(authInfo.UserName);
+
+            var userModel = new UserModel
+            {
+                Nome = authInfo.UserName,
+                Dispensa = null
+               //Papeis = papeis,
+               //Lojas = usuarioPermissoes.TipoPermissao == TipoPermissao.PorLoja ? usuarioPermissoes.Lojas : null,
+               //HasPermissions = false,
+               //TipoPermissao = usuarioPermissoes.TipoPermissao,
+               //Culture = RuntimeContext.Current.Culture
+            };
+
+            Commit();
+
+            return new LoginResponse
+            {
+                Token = CreateToken(userModel),
+                User = userModel
+            };
+
+            //return !authInfo.IdExternoPapel.HasValue || authInfo.IdExternoPapel.Value == 0
+            //    ? LogarSemPapel(authInfo)
+            //    : LogarComPapel(authInfo);
         }
 
         [HttpPut]
@@ -107,7 +129,7 @@ namespace Walmart.Sgp.WebApi.Controllers
         }
 
         private LoginResponse LogarSemPapel(LoginRequest authInfo)
-        {
+        {/*
             var settings = Settings.Default;
             IEnumerable<Papel> papeis;
 
@@ -134,11 +156,12 @@ namespace Walmart.Sgp.WebApi.Controllers
 
             var userModel = new UserModel
             {
-                UserName = authInfo.UserName,
-                Papeis = papeis,
-                Lojas = usuarioPermissoes.TipoPermissao == TipoPermissao.PorLoja ? usuarioPermissoes.Lojas : null,
-                HasPermissions = false,
-                TipoPermissao = usuarioPermissoes.TipoPermissao,
+                Nome = authInfo.UserName,
+                Dispensa = authInfo.
+                //Papeis = papeis,
+                //Lojas = usuarioPermissoes.TipoPermissao == TipoPermissao.PorLoja ? usuarioPermissoes.Lojas : null,
+                //HasPermissions = false,
+                //TipoPermissao = usuarioPermissoes.TipoPermissao,
                 Culture = RuntimeContext.Current.Culture
             };
 
@@ -149,10 +172,12 @@ namespace Walmart.Sgp.WebApi.Controllers
                 Token = CreateToken(userModel),
                 User = userModel
             };
+            */
+            return null;
         }
 
         private LoginResponse LogarComPapel(LoginRequest authInfo)
-        {
+        {/*
             var settings = Settings.Default;
 
             try
@@ -180,16 +205,16 @@ namespace Walmart.Sgp.WebApi.Controllers
                     FullName = user.FullName,
                     Id = user.Id,
                     UserName = user.UserName,
-                    HasPermissions = true,
+                    //HasPermissions = true,
                     Menus = menus,
                     Actions = papelInfo.GrantedActions,
-                    Role = papel,
-                    IdLoja = authInfo.IdLoja,
-                    BandeiraId = authInfo.IdLoja.HasValue ? m_lojaService.ObterPorId(authInfo.IdLoja.Value).IDBandeira : 0,
-                    Lojas = usuarioPermissoes.TipoPermissao == TipoPermissao.PorLoja ? usuarioPermissoes.Lojas : null,
+                   // Role = papel,
+                  //  IdLoja = authInfo.IdLoja,
+                   // BandeiraId = authInfo.IdLoja.HasValue ? m_lojaService.ObterPorId(authInfo.IdLoja.Value).IDBandeira : 0,
+                  //  Lojas = usuarioPermissoes.TipoPermissao == TipoPermissao.PorLoja ? usuarioPermissoes.Lojas : null,
                     Culture = RuntimeContext.Current.Culture,
-                    CdLoja = authInfo.IdLoja.HasValue ? new int?(m_lojaService.ObterPorId(authInfo.IdLoja.Value).cdLoja) : null,
-                    TipoPermissao = usuarioPermissoes.TipoPermissao
+                  //  CdLoja = authInfo.IdLoja.HasValue ? new int?(m_lojaService.ObterPorId(authInfo.IdLoja.Value).cdLoja) : null,
+                  //  TipoPermissao = usuarioPermissoes.TipoPermissao
                 };
 
                 Commit();
@@ -208,6 +233,8 @@ namespace Walmart.Sgp.WebApi.Controllers
             {
                 throw new ArgumentException(Texts.UnableToLogin, ex);
             }
+            */
+            return null;
         }
 
         private void ImportSsoData(LoginRequest authInfo, Settings settings)
@@ -243,13 +270,12 @@ namespace Walmart.Sgp.WebApi.Controllers
             var runtimeUser = new MemoryRuntimeUser
             {
                 Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                FullName = user.FullName,                
-                Actions = user.Actions,
-                StoreId = user.IdLoja,
-                TipoPermissao = user.TipoPermissao,
-                HasAccessToSingleStore = user.HasAccessToSingleStore
+                UserName = user.Nome,
+                Email = user.Email,                        
+                Actions = user.Actions
+              //  StoreId = user.IdLoja,
+              //  TipoPermissao = user.TipoPermissao,
+              //  HasAccessToSingleStore = user.HasAccessToSingleStore
             };
 
             var papel = user.Role;

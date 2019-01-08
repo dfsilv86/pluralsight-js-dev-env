@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{35A8812F-E9AF-436E-9848-632D83FA401F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Walmart.Sgp.Infrastructure.Framework.UnitTests</RootNamespace>
+    <AssemblyName>Walmart.Sgp.Infrastructure.Framework.UnitTests</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEV|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SIT|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\CI\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TST\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TSTAUTOMACAO|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TSTAUTOMACAO\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEVCWI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DEVCWI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEV;DEVCWI</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PRD|AnyCPU'">
+    <OutputPath>bin\PRD\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="nunit.framework, Version=3.0.5813.39031, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.0.1\lib\net45\nunit.framework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commons\UserInvalidOperationExceptionTest.cs" />
+    <Compile Include="Commons\RangeValueTest.cs" />
+    <Compile Include="Data\EntityTableModelRegistryTest.cs" />
+    <Compile Include="Domain\AuditKindTest.cs" />
+    <Compile Include="Domain\AuditRecordTest.cs" />
+    <Compile Include="Domain\AuditServiceTest.cs" />
+    <Compile Include="Domain\EntityDomainServiceBaseTest.cs" />
+    <Compile Include="Domain\DomainServiceBaseTest.cs" />
+    <Compile Include="Domain\DomainServiceStub.cs" />
+    <Compile Include="Domain\EntityBaseTest.cs" />
+    <Compile Include="Domain\EntityDomainServiceStub.cs" />
+    <Compile Include="Domain\EntityNoAggregateRootStub.cs" />
+    <Compile Include="Domain\EntityStub.cs" />
+    <Compile Include="Domain\FixedValuesBaseTest.cs" />
+    <Compile Include="Domain\FixedValuesHelperTest.cs" />
+    <Compile Include="Domain\MemoryDataGatewayTest.cs" />
+    <Compile Include="Domain\MoneyTest.cs" />
+    <Compile Include="Domain\PagingTest.cs" />
+    <Compile Include="Domain\TestEntity.cs" />
+    <Compile Include="ExceptionTestHelper.cs" />
+    <Compile Include="Extensions\DateTimeExtensionsTest.cs" />
+    <Compile Include="Extensions\PluralizingMessageExtensionsTest.cs" />
+    <Compile Include="Extensions\StringExtensionsTest.cs" />
+    <Compile Include="FileVault\FileVaultTicketTest.cs" />
+    <Compile Include="Globalization\CultureInfoHelperTest.cs" />
+    <Compile Include="Globalization\GlobalizationHelperTest.cs" />
+    <Compile Include="Helpers\AuditRecordHelperTest.cs" />
+    <Compile Include="Helpers\CalcHelperTest.cs" />
+    <Compile Include="Helpers\ExceptionHelperTest.cs" />
+    <Compile Include="Helpers\TestEntity.cs" />
+    <Compile Include="Logging\LogSectionTest.cs" />
+    <Compile Include="Logging\LogServiceTest.cs" />
+    <Compile Include="Net\SmtpServiceTest.cs" />
+    <Compile Include="Processing\ExposedParameterAttributeTest.cs" />
+    <Compile Include="Processing\ProcessingContextTest.cs" />
+    <Compile Include="Processing\ProcessNotFinishedExceptionTest.cs" />
+    <Compile Include="Processing\ProcessExceptionTest.cs" />
+    <Compile Include="Processing\ProcessOrderArgumentExtensionsTest.cs" />
+    <Compile Include="Processing\ProcessOrderResultTest.cs" />
+    <Compile Include="Processing\ProcessOrderModelTest.cs" />
+    <Compile Include="Processing\ProcessOrderTest.cs" />
+    <Compile Include="Processing\ServiceMethodCallExpressionVisitorTest.cs" />
+    <Compile Include="Processing\ServiceProcessAttributeTest.cs" />
+    <Compile Include="Processing\Specs\ProcessOrderCanBeExecutedSpecTest.cs" />
+    <Compile Include="Processing\Specs\ProcessOrderSpecTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\RuntimeContext.cs" />
+    <Compile Include="Runtime\UserMenuInfoTest.cs" />
+    <Compile Include="Runtime\UserActionInfoTest.cs" />
+    <Compile Include="Specs\AggregatedSpecResultTest.cs" />
+    <Compile Include="Specs\AllMustBeEqualSpecTests.cs" />
+    <Compile Include="Specs\AllMustBeGreaterThanSpecTest.cs" />
+    <Compile Include="Specs\AllDatesMustBeGreaterThanNowSpecTest.cs" />
+    <Compile Include="Specs\AllMustBeInformedSpecTest.cs" />
+    <Compile Include="Specs\AllMustBeInRangeSpecTest.cs" />
+    <Compile Include="Specs\MustRespectRangeSpecTest.cs" />
+    <Compile Include="Specs\AtLeastOneMustBeInformedSpecTest.cs" />
+    <Compile Include="Specs\DataValidaSpecTest.cs" />
+    <Compile Include="Specs\ItemDeveSerMultisourcingPossivelSpecTest.cs" />
+    <Compile Include="Specs\MaxLenghtSpecTest.cs" />
+    <Compile Include="Specs\EntityMustBeNewSpecTest.cs" />
+    <Compile Include="Specs\NotSatisfiedSpecExceptionTest.cs" />
+    <Compile Include="Specs\NotSpecTest.cs" />
+    <Compile Include="Specs\SpecExtensionsTest.cs" />
+    <Compile Include="Specs\SpecServiceTest.cs" />
+    <Compile Include="Specs\SpecResultTest.cs" />
+    <Compile Include="Specs\ValidMilitaryTimeSpecTest.cs" />
+    <Compile Include="Text\StringExtensionsTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Walmart.Sgp.Domain\Pstore.Domain.csproj">
+      <Project>{99965c62-48a7-4b64-b3a5-13e8138f087c}</Project>
+      <Name>Pstore.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Walmart.Sgp.Infrastructure.Framework\Pstore.Infrastructure.Framework.csproj">
+      <Project>{3d0d3692-e5fa-42a6-85af-4779f580eeb6}</Project>
+      <Name>Pstore.Infrastructure.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

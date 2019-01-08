@@ -53,3 +53,388 @@
 08/01/19 11:06:28 [INFO] 	Inserting DateTime model binder provider
 08/01/19 11:06:28 [INFO] 	Inserting FixedValues model binder provider
 08/01/19 11:06:28 [INFO] </WEB API>
+08/01/19 11:59:31 [INFO] <WEB API>
+08/01/19 11:59:31 [INFO] 	Version: DEV
+08/01/19 11:59:31 [INFO] 	<CONFIG>
+08/01/19 11:59:31 [INFO] 		<APPSETTINGS>
+08/01/19 11:59:31 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 11:59:31 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 11:59:31 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 11:59:31 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 11:59:31 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 11:59:31 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 11:59:31 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 11:59:31 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 11:59:31 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 11:59:31 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 11:59:31 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 11:59:31 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 11:59:31 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 11:59:31 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 11:59:31 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 11:59:31 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 11:59:31 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 11:59:31 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 11:59:31 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 11:59:31 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 11:59:31 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 11:59:31 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 11:59:31 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 11:59:31 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 11:59:31 [INFO] 		</APPSETTINGS>
+08/01/19 11:59:31 [INFO] 		<CONNECTIONSTRING>
+08/01/19 11:59:31 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 11:59:31 [INFO] 		</CONNECTIONSTRING>
+08/01/19 11:59:31 [INFO] 	</CONFIG>
+08/01/19 11:59:31 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 11:59:31 [INFO] 		Initializing LightInject
+08/01/19 11:59:31 [INFO] 		Enabling LightInject support to web api...
+08/01/19 11:59:31 [INFO] 		Registering services
+08/01/19 11:59:31 [INFO] 		Registering table data gateways
+08/01/19 11:59:31 [INFO] 		Registering inventory files
+08/01/19 11:59:31 [INFO] 		Registering sheet dependencies
+08/01/19 11:59:31 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 11:59:31 [INFO] 	<CORS>
+08/01/19 11:59:31 [INFO] 		Origins: *
+08/01/19 11:59:31 [INFO] 		Headers: *
+08/01/19 11:59:31 [INFO] 		Methods: *
+08/01/19 11:59:31 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 11:59:31 [INFO] 	</CORS>
+08/01/19 11:59:31 [INFO] 	Registering routes
+08/01/19 11:59:31 [INFO] 	Adding token validation delegating handler
+08/01/19 11:59:31 [INFO] 	Adding filters
+08/01/19 11:59:31 [INFO] 	Registering output cache provider
+08/01/19 11:59:31 [INFO] 	Setting json formatter
+08/01/19 11:59:31 [INFO] 	Inserting DateTime model binder provider
+08/01/19 11:59:31 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 11:59:31 [INFO] </WEB API>
+08/01/19 12:31:07 [INFO] <WEB API>
+08/01/19 12:31:07 [INFO] 	Version: DEV
+08/01/19 12:31:07 [INFO] 	<CONFIG>
+08/01/19 12:31:07 [INFO] 		<APPSETTINGS>
+08/01/19 12:31:07 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 12:31:07 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 12:31:07 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 12:31:07 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 12:31:07 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 12:31:07 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 12:31:07 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 12:31:07 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 12:31:07 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 12:31:07 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 12:31:07 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 12:31:07 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 12:31:07 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 12:31:07 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 12:31:07 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 12:31:07 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 12:31:07 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 12:31:07 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 12:31:07 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 12:31:07 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 12:31:07 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 12:31:07 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 12:31:07 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 12:31:07 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 12:31:07 [INFO] 		</APPSETTINGS>
+08/01/19 12:31:07 [INFO] 		<CONNECTIONSTRING>
+08/01/19 12:31:07 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 12:31:07 [INFO] 		</CONNECTIONSTRING>
+08/01/19 12:31:07 [INFO] 	</CONFIG>
+08/01/19 12:31:07 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 12:31:07 [INFO] 		Initializing LightInject
+08/01/19 12:31:07 [INFO] 		Enabling LightInject support to web api...
+08/01/19 12:31:07 [INFO] 		Registering services
+08/01/19 12:31:07 [INFO] 		Registering table data gateways
+08/01/19 12:31:07 [INFO] 		Registering inventory files
+08/01/19 12:31:07 [INFO] 		Registering sheet dependencies
+08/01/19 12:31:07 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 12:31:07 [INFO] 	<CORS>
+08/01/19 12:31:07 [INFO] 		Origins: *
+08/01/19 12:31:07 [INFO] 		Headers: *
+08/01/19 12:31:07 [INFO] 		Methods: *
+08/01/19 12:31:07 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 12:31:07 [INFO] 	</CORS>
+08/01/19 12:31:07 [INFO] 	Registering routes
+08/01/19 12:31:07 [INFO] 	Adding token validation delegating handler
+08/01/19 12:31:07 [INFO] 	Adding filters
+08/01/19 12:31:07 [INFO] 	Registering output cache provider
+08/01/19 12:31:07 [INFO] 	Setting json formatter
+08/01/19 12:31:07 [INFO] 	Inserting DateTime model binder provider
+08/01/19 12:31:07 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 12:31:07 [INFO] </WEB API>
+08/01/19 13:09:36 [INFO] <WEB API>
+08/01/19 13:09:37 [INFO] 	Version: DEV
+08/01/19 13:09:37 [INFO] 	<CONFIG>
+08/01/19 13:09:37 [INFO] 		<APPSETTINGS>
+08/01/19 13:09:37 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 13:09:37 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 13:09:37 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 13:09:37 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 13:09:37 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 13:09:37 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 13:09:37 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 13:09:37 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 13:09:37 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 13:09:37 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 13:09:37 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 13:09:37 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 13:09:37 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 13:09:37 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 13:09:37 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 13:09:37 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 13:09:37 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 13:09:37 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 13:09:37 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 13:09:37 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 13:09:37 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 13:09:37 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 13:09:37 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 13:09:37 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 13:09:37 [INFO] 		</APPSETTINGS>
+08/01/19 13:09:37 [INFO] 		<CONNECTIONSTRING>
+08/01/19 13:09:37 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 13:09:37 [INFO] 		</CONNECTIONSTRING>
+08/01/19 13:09:37 [INFO] 	</CONFIG>
+08/01/19 13:09:37 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 13:09:37 [INFO] 		Initializing LightInject
+08/01/19 13:09:37 [INFO] 		Enabling LightInject support to web api...
+08/01/19 13:09:37 [INFO] 		Registering services
+08/01/19 13:09:37 [INFO] 		Registering table data gateways
+08/01/19 13:09:37 [INFO] 		Registering inventory files
+08/01/19 13:09:37 [INFO] 		Registering sheet dependencies
+08/01/19 13:09:37 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 13:09:37 [INFO] 	<CORS>
+08/01/19 13:09:37 [INFO] 		Origins: *
+08/01/19 13:09:37 [INFO] 		Headers: *
+08/01/19 13:09:37 [INFO] 		Methods: *
+08/01/19 13:09:37 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 13:09:37 [INFO] 	</CORS>
+08/01/19 13:09:37 [INFO] 	Registering routes
+08/01/19 13:09:37 [INFO] 	Adding token validation delegating handler
+08/01/19 13:09:37 [INFO] 	Adding filters
+08/01/19 13:09:37 [INFO] 	Registering output cache provider
+08/01/19 13:09:37 [INFO] 	Setting json formatter
+08/01/19 13:09:37 [INFO] 	Inserting DateTime model binder provider
+08/01/19 13:09:37 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 13:09:37 [INFO] </WEB API>
+08/01/19 13:35:00 [INFO] <WEB API>
+08/01/19 13:35:00 [INFO] 	Version: DEV
+08/01/19 13:35:00 [INFO] 	<CONFIG>
+08/01/19 13:35:00 [INFO] 		<APPSETTINGS>
+08/01/19 13:35:00 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 13:35:00 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 13:35:00 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 13:35:00 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 13:35:00 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 13:35:00 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 13:35:00 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 13:35:00 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 13:35:00 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 13:35:00 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 13:35:00 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 13:35:00 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 13:35:00 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 13:35:00 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 13:35:00 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 13:35:00 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 13:35:00 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 13:35:00 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 13:35:00 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 13:35:00 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 13:35:00 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 13:35:00 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 13:35:00 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 13:35:00 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 13:35:00 [INFO] 		</APPSETTINGS>
+08/01/19 13:35:00 [INFO] 		<CONNECTIONSTRING>
+08/01/19 13:35:00 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 13:35:00 [INFO] 		</CONNECTIONSTRING>
+08/01/19 13:35:00 [INFO] 	</CONFIG>
+08/01/19 13:35:00 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 13:35:00 [INFO] 		Initializing LightInject
+08/01/19 13:35:00 [INFO] 		Enabling LightInject support to web api...
+08/01/19 13:35:00 [INFO] 		Registering services
+08/01/19 13:35:00 [INFO] 		Registering table data gateways
+08/01/19 13:35:00 [INFO] 		Registering inventory files
+08/01/19 13:35:00 [INFO] 		Registering sheet dependencies
+08/01/19 13:35:00 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 13:35:00 [INFO] 	<CORS>
+08/01/19 13:35:00 [INFO] 		Origins: *
+08/01/19 13:35:00 [INFO] 		Headers: *
+08/01/19 13:35:00 [INFO] 		Methods: *
+08/01/19 13:35:00 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 13:35:00 [INFO] 	</CORS>
+08/01/19 13:35:00 [INFO] 	Registering routes
+08/01/19 13:35:00 [INFO] 	Adding token validation delegating handler
+08/01/19 13:35:00 [INFO] 	Adding filters
+08/01/19 13:35:00 [INFO] 	Registering output cache provider
+08/01/19 13:35:00 [INFO] 	Setting json formatter
+08/01/19 13:35:00 [INFO] 	Inserting DateTime model binder provider
+08/01/19 13:35:00 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 13:35:00 [INFO] </WEB API>
+08/01/19 17:01:59 [INFO] <WEB API>
+08/01/19 17:01:59 [INFO] 	Version: DEV
+08/01/19 17:01:59 [INFO] 	<CONFIG>
+08/01/19 17:01:59 [INFO] 		<APPSETTINGS>
+08/01/19 17:01:59 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 17:01:59 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 17:01:59 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 17:01:59 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 17:01:59 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 17:01:59 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 17:01:59 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 17:01:59 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 17:01:59 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 17:01:59 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 17:01:59 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 17:01:59 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 17:01:59 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 17:01:59 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 17:01:59 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 17:01:59 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 17:01:59 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 17:01:59 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 17:01:59 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 17:01:59 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 17:01:59 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 17:01:59 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 17:01:59 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 17:01:59 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 17:01:59 [INFO] 		</APPSETTINGS>
+08/01/19 17:01:59 [INFO] 		<CONNECTIONSTRING>
+08/01/19 17:01:59 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 17:01:59 [INFO] 		</CONNECTIONSTRING>
+08/01/19 17:01:59 [INFO] 	</CONFIG>
+08/01/19 17:01:59 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 17:01:59 [INFO] 		Initializing LightInject
+08/01/19 17:01:59 [INFO] 		Enabling LightInject support to web api...
+08/01/19 17:01:59 [INFO] 		Registering services
+08/01/19 17:02:00 [INFO] 		Registering table data gateways
+08/01/19 17:02:00 [INFO] 		Registering inventory files
+08/01/19 17:02:00 [INFO] 		Registering sheet dependencies
+08/01/19 17:02:00 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 17:02:00 [INFO] 	<CORS>
+08/01/19 17:02:00 [INFO] 		Origins: *
+08/01/19 17:02:00 [INFO] 		Headers: *
+08/01/19 17:02:00 [INFO] 		Methods: *
+08/01/19 17:02:00 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 17:02:00 [INFO] 	</CORS>
+08/01/19 17:02:00 [INFO] 	Registering routes
+08/01/19 17:02:00 [INFO] 	Adding token validation delegating handler
+08/01/19 17:02:00 [INFO] 	Adding filters
+08/01/19 17:02:00 [INFO] 	Registering output cache provider
+08/01/19 17:02:00 [INFO] 	Setting json formatter
+08/01/19 17:02:00 [INFO] 	Inserting DateTime model binder provider
+08/01/19 17:02:00 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 17:02:00 [INFO] </WEB API>
+08/01/19 18:40:37 [INFO] <WEB API>
+08/01/19 18:40:37 [INFO] 	Version: DEV
+08/01/19 18:40:37 [INFO] 	<CONFIG>
+08/01/19 18:40:37 [INFO] 		<APPSETTINGS>
+08/01/19 18:40:37 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 18:40:37 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 18:40:37 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 18:40:37 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 18:40:37 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 18:40:37 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 18:40:37 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 18:40:37 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 18:40:37 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 18:40:37 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 18:40:37 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:40:37 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 18:40:37 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 18:40:37 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:40:37 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 18:40:37 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 18:40:37 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 18:40:37 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 18:40:37 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 18:40:37 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 18:40:37 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 18:40:37 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 18:40:37 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 18:40:37 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 18:40:37 [INFO] 		</APPSETTINGS>
+08/01/19 18:40:37 [INFO] 		<CONNECTIONSTRING>
+08/01/19 18:40:37 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 18:40:37 [INFO] 		</CONNECTIONSTRING>
+08/01/19 18:40:37 [INFO] 	</CONFIG>
+08/01/19 18:40:37 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 18:40:37 [INFO] 		Initializing LightInject
+08/01/19 18:40:37 [INFO] 		Enabling LightInject support to web api...
+08/01/19 18:40:37 [INFO] 		Registering services
+08/01/19 18:40:37 [INFO] 		Registering table data gateways
+08/01/19 18:40:37 [INFO] 		Registering inventory files
+08/01/19 18:40:37 [INFO] 		Registering sheet dependencies
+08/01/19 18:40:37 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 18:40:37 [INFO] 	<CORS>
+08/01/19 18:40:37 [INFO] 		Origins: *
+08/01/19 18:40:37 [INFO] 		Headers: *
+08/01/19 18:40:37 [INFO] 		Methods: *
+08/01/19 18:40:37 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 18:40:37 [INFO] 	</CORS>
+08/01/19 18:40:37 [INFO] 	Registering routes
+08/01/19 18:40:37 [INFO] 	Adding token validation delegating handler
+08/01/19 18:40:37 [INFO] 	Adding filters
+08/01/19 18:40:37 [INFO] 	Registering output cache provider
+08/01/19 18:40:37 [INFO] 	Setting json formatter
+08/01/19 18:40:37 [INFO] 	Inserting DateTime model binder provider
+08/01/19 18:40:37 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 18:40:37 [INFO] </WEB API>
+08/01/19 18:50:30 [INFO] <WEB API>
+08/01/19 18:50:30 [INFO] 	Version: DEV
+08/01/19 18:50:30 [INFO] 	<CONFIG>
+08/01/19 18:50:30 [INFO] 		<APPSETTINGS>
+08/01/19 18:50:30 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 18:50:30 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 18:50:30 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 18:50:30 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 18:50:30 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 18:50:30 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 18:50:30 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 18:50:30 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 18:50:30 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 18:50:30 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 18:50:30 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:50:30 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 18:50:30 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 18:50:30 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:50:30 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 18:50:30 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 18:50:30 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 18:50:30 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 18:50:30 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 18:50:30 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 18:50:30 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 18:50:30 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 18:50:30 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 18:50:30 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 18:50:30 [INFO] 		</APPSETTINGS>
+08/01/19 18:50:30 [INFO] 		<CONNECTIONSTRING>
+08/01/19 18:50:30 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 18:50:30 [INFO] 		</CONNECTIONSTRING>
+08/01/19 18:50:30 [INFO] 	</CONFIG>
+08/01/19 18:50:30 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 18:50:30 [INFO] 		Initializing LightInject
+08/01/19 18:50:30 [INFO] 		Enabling LightInject support to web api...
+08/01/19 18:50:30 [INFO] 		Registering services
+08/01/19 18:50:30 [INFO] 		Registering table data gateways
+08/01/19 18:50:30 [INFO] 		Registering inventory files
+08/01/19 18:50:30 [INFO] 		Registering sheet dependencies
+08/01/19 18:50:30 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 18:50:30 [INFO] 	<CORS>
+08/01/19 18:50:30 [INFO] 		Origins: *
+08/01/19 18:50:30 [INFO] 		Headers: *
+08/01/19 18:50:30 [INFO] 		Methods: *
+08/01/19 18:50:30 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 18:50:30 [INFO] 	</CORS>
+08/01/19 18:50:30 [INFO] 	Registering routes
+08/01/19 18:50:30 [INFO] 	Adding token validation delegating handler
+08/01/19 18:50:30 [INFO] 	Adding filters
+08/01/19 18:50:30 [INFO] 	Registering output cache provider
+08/01/19 18:50:30 [INFO] 	Setting json formatter
+08/01/19 18:50:30 [INFO] 	Inserting DateTime model binder provider
+08/01/19 18:50:30 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 18:50:30 [INFO] </WEB API>

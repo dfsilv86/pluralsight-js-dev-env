@@ -1,0 +1,283 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{BF71769E-5C8F-4EB5-A492-C112CCED7C4E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Walmart.Sgp.Infrastructure.IO</RootNamespace>
+    <AssemblyName>Walmart.Sgp.Infrastructure.IO</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'DEV|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SIT|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\CI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;CODE_ANALYSIS</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>..\Walmart.Sgp-none.ruleset</CodeAnalysisRuleSet>
+    <DocumentationFile>bin\CI\Walmart.Sgp.Infrastructure.IO.XML</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TSTAUTOMACAO|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TSTAUTOMACAO\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'TST|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\TST\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DEVCWI|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\DEVCWI\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;DEV;DEVCWI</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'PRD|AnyCPU'">
+    <OutputPath>bin\PRD\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UAT|AnyCPU'">
+    <OutputPath>bin\UAT\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EPPlus">
+      <HintPath>..\packages\EPPlus.4.0.5\lib\net20\EPPlus.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Excel\ExcelReaderResult.cs" />
+    <Compile Include="Excel\IRelacaoItemLojaCDDesvinculoExcelDataTranslator.cs" />
+    <Compile Include="Excel\IRelacaoItemLojaCDVinculoExcelDataTranslator.cs" />
+    <Compile Include="Excel\RelacaoItemLojaCDDesvinculoExcelDataTranslator.cs" />
+    <Compile Include="Excel\RelacaoItemLojaCDExcelDataTranslatorBase.cs" />
+    <Compile Include="Excel\RelacaoItemLojaCDVinculoExcelDataTranslator.cs" />
+    <Compile Include="Excel\Specs\ColumnsNotFoundSpec.cs" />
+    <Compile Include="Excel\Specs\ColumnValueSpec.cs" />
+    <Compile Include="FileVault\FileVaultStream.cs" />
+    <Compile Include="FileVault\IFile.cs" />
+    <Compile Include="FileVault\IFileVaultService.cs" />
+    <Compile Include="FileVault\IntermediateStreamFile.cs" />
+    <Compile Include="Helpers\DirectoryHelper.cs" />
+    <Compile Include="Helpers\DownloadFtpHelper.cs" />
+    <Compile Include="Helpers\ArquivoFtp.cs" />
+    <Compile Include="Importing\FakeSsoService.cs" />
+    <Compile Include="Importing\Inventario\ImportacaoArquivoInventarioException.cs" />
+    <Compile Include="Importing\Inventario\LeitorArquivoInventario.cs" />
+    <Compile Include="Importing\Inventario\LeitorArquivoInventarioBase.cs" />
+    <Compile Include="Importing\Inventario\LeitorArquivoInventarioPipe.cs" />
+    <Compile Include="Importing\Inventario\LeitorArquivoInventarioRtlBase.cs" />
+    <Compile Include="Importing\Inventario\LeitorArquivoInventarioRtlSams.cs" />
+    <Compile Include="Importing\Inventario\LeitorArquivoInventarioRtlSupercenter.cs" />
+    <Compile Include="Importing\Inventario\SGPZCompressionHelper.cs" />
+    <Compile Include="Importing\Inventario\Specs\ArquivoPipeDeveSerValidoSpec.cs" />
+    <Compile Include="Importing\Inventario\Specs\ArquivoRtlDeveSerValidoSpec.cs" />
+    <Compile Include="Importing\Inventario\TransferidorArquivosInventario.cs" />
+    <Compile Include="Importing\Range.cs" />
+    <Compile Include="Importing\StatefulFileReader.cs" />
+    <Compile Include="Importing\WebGuardian\EventosAplicacaoResultado.cs" />
+    <Compile Include="Importing\ISsoService.cs" />
+    <Compile Include="Importing\WebGuardian\WebGuardianException.cs" />
+    <Compile Include="Importing\WebGuardian\Status.cs" />
+    <Compile Include="Importing\WebGuardian\UsuariosAplicacaoResultado.cs" />
+    <Compile Include="Importing\WebGuardian\MenusAplicacaoResultado.cs" />
+    <Compile Include="Importing\WebGuardian\FormulariosAplicacaoResultado.cs" />
+    <Compile Include="Excel\Column.cs" />
+    <Compile Include="Excel\ColumnMetadata.cs" />
+    <Compile Include="Excel\EPPlusExcelReader.cs" />
+    <Compile Include="Excel\EPPlusExcelWriter.cs" />
+    <Compile Include="Excel\IExcelReader.cs" />
+    <Compile Include="Excel\IExcelWriter.cs" />
+    <Compile Include="Excel\IMultisourcingExcelDataTranslator.cs" />
+    <Compile Include="Excel\MultisourcingExcelDataTranslator.cs" />
+    <Compile Include="Excel\Row.cs" />
+    <Compile Include="Excel\Specs\ColumnDecimalIntegerPartSpec.cs" />
+    <Compile Include="Excel\Specs\ColumnDecimalFractionalPartSpec.cs" />
+    <Compile Include="Excel\Specs\ColumnLengthSpec.cs" />
+    <Compile Include="Excel\Specs\ExcelExtensionSpec.cs" />
+    <Compile Include="Excel\Specs\ColumnTypeSpec.cs" />
+    <Compile Include="Importing\WebGuardian\IWebGuardianResultado.cs" />
+    <Compile Include="Importing\WebGuardian\PerfisResultado.cs" />
+    <Compile Include="Importing\WebGuardian\PerfilResultado.cs" />
+    <Compile Include="Importing\WebGuardian\PermissoesResultado.cs" />
+    <Compile Include="Importing\WebGuardian\UsuarioResultado.cs" />
+    <Compile Include="Importing\WebGuardian\UsuarioTOEqualityComparer.cs" />
+    <Compile Include="Importing\SsoException.cs" />
+    <Compile Include="Importing\SsoOptions.cs" />
+    <Compile Include="Importing\WebGuardian\WebGuardianResultado.cs" />
+    <Compile Include="Importing\WebGuardian\WebGuardianSsoService.cs" />
+    <Compile Include="Importing\SsoUsuarioDataTranslator.cs" />
+    <Compile Include="Logging\Log4netLogStrategy.cs" />
+    <Compile Include="Mail\MailClient.cs" />
+    <Compile Include="Processing\FileWrapper.cs" />
+    <Compile Include="Processing\ProcessingService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service References\Importing.WebGuardian\Reference.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </Compile>
+    <Compile Include="SharpZipLib\LzwConstants.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="SharpZipLib\LzwException.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="SharpZipLib\LzwInputStream.cs" />
+    <Compile Include="SharpZipLib\SharpZipBaseException.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Walmart.Sgp.Domain\Pstore.Domain.csproj">
+      <Project>{99965c62-48a7-4b64-b3a5-13e8138f087c}</Project>
+      <Name>Pstore.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Walmart.Sgp.Infrastructure.Framework\Pstore.Infrastructure.Framework.csproj">
+      <Project>{3d0d3692-e5fa-42a6-85af-4779f580eeb6}</Project>
+      <Name>Pstore.Infrastructure.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Walmart.Sgp.Infrastructure.Framework\Pstore.Infrastructure.Framework.csproj">
+      <Project>{3d0d3692-e5fa-42a6-85af-4779f580eeb6}</Project>
+      <Name>Pstore.Infrastructure.Framework</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+    <None Include="Service References\Importing.WebGuardian\servicewebguardian.wsdl" />
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.AplicacaoResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.AplicacoesResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.EventosAplicacaoResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.FormularioResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.FormulariosAplicacaoResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.MenusAplicacaoResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.PerfilResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.PerfisResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.PermissoesResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.Status.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.UsuarioResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+    <None Include="Service References\Importing.WebGuardian\Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian.UsuariosAplicacaoResultado.datasource">
+      <DependentUpon>Reference.svcmap</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadataStorage Include="Service References\Importing.WebGuardian\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Importing.WebGuardian\servicewebguardian.disco" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Importing.WebGuardian\configuration91.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Importing.WebGuardian\configuration.svcinfo" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Service References\Importing.WebGuardian\Reference.svcmap">
+      <Generator>WCF Proxy Generator</Generator>
+      <LastGenOutput>Reference.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SharpZipLib\TODO.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
