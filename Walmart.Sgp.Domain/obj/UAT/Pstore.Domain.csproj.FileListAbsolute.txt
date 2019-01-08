@@ -1,0 +1,10 @@
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\bin\UAT\Pstore.Domain.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\bin\UAT\Pstore.Domain.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\bin\UAT\Walmart.Sgp.Domain.XML
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\bin\UAT\Walmart.Sgp.Infrastructure.Framework.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\bin\UAT\System.Linq.Dynamic.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\bin\UAT\Walmart.Sgp.Infrastructure.Framework.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\bin\UAT\Walmart.Sgp.Infrastructure.Framework.xml
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\obj\UAT\Pstore.Domain.csprojResolveAssemblyReference.cache
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\obj\UAT\Pstore.Domain.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Domain\obj\UAT\Pstore.Domain.pdb

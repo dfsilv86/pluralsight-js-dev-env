@@ -493,7 +493,7 @@ namespace Walmart.Sgp.Infrastructure.Framework.Globalization {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Walmart - Inventário de Perecíveis.
+        ///   Looks up a localized string similar to Personal Store.
         /// </summary>
         public static string AppTitle {
             get {

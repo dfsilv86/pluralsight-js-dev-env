@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Walmart.Sgp.Application</name>
+    </assembly>
+    <members>
+        <member name="T:Walmart.Sgp.Application.Exporting.SugestaoReturnSheetRAExporter">
+            <summary>
+            Responsável pela exportação de SugestaoReturnSheet.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.SugestaoReturnSheetRAExporter.#ctor(Walmart.Sgp.Domain.Reabastecimento.ISugestaoReturnSheetGateway,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Exporting.SugestaoReturnSheetRAExporter"/>.
+            </summary>
+            <param name="sugestaoReturnSheetGateway">O data table gateway de SugestaoReturnSheet.</param>
+            <param name="excelWriter">O escritor de excel.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.SugestaoReturnSheetRAExporter.Exportar(System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Nullable{System.Int64},System.String,System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Boolean},System.Nullable{System.Boolean},Walmart.Sgp.Infrastructure.Framework.Domain.Paging)">
+            <summary>
+            Realiza a exportação dos registros de sugestão return sheet.
+            </summary>
+            <param name="dtInicioReturn">A data de início da return sheet.</param>
+            <param name="dtFinalReturn">A data final da return sheet.</param>
+            <param name="cdV9D">O código de 9 dígitos do vendor.</param>
+            <param name="evento">O nome do evento.</param>
+            <param name="cdItemDetalhe">O código do item detalhe de entrada.</param>
+            <param name="cdDepartamento">O código do departamento.</param>
+            <param name="cdLoja">O código da loja.</param>
+            <param name="idRegiaoCompra">O identificador da região de compra.</param>
+            <param name="blExportado">O flag indicando se a sugestão foi exportada.</param>
+            <param name="blAutorizado">O flag indicando se a sugestão foi autorizada.</param>
+            <param name="paging">Dados de paginação.</param>
+            <returns>Retorna planilha contendo sugestões.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Exporting.CompraCasadaExcelExporter">
+            <summary>
+            Responsável pela exportação de compra casada.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.CompraCasadaExcelExporter.#ctor(Walmart.Sgp.Domain.Reabastecimento.CompraCasada.ICompraCasadaGateway,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Exporting.CompraCasadaExcelExporter"/>.
+            </summary>
+            <param name="compraCasadaGateway">O data table gateway de compra casada.</param>
+            <param name="excelWriter">O escritor de excel.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.CompraCasadaExcelExporter.Exportar(Walmart.Sgp.Domain.Reabastecimento.CompraCasada.PesquisaCompraCasadaFiltro)">
+            <summary>
+            Realiza a exportação dos registros de cadastro de compra casada.
+            </summary>
+            <param name="filtro">Os filtros da exportação.</param>
+            <returns>Stream com o XLSX.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Exporting.RelacaoItemLojaCDExcelExporter">
+            <summary>
+            Responsável pela exportação de relacao item loja.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.RelacaoItemLojaCDExcelExporter.#ctor(Walmart.Sgp.Domain.Reabastecimento.IRelacaoItemLojaCDGateway,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Exporting.RelacaoItemLojaCDExcelExporter"/>.
+            </summary>
+            <param name="relacaoItemLojaCDGateway">O data table gateway de relação item loja cd.</param>
+            <param name="excelWriter">O escritor do excel.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.RelacaoItemLojaCDExcelExporter.Exportar(Walmart.Sgp.Domain.Reabastecimento.RelacaoItemLojaCDFiltro)">
+            <summary>
+            Realiza a exportação dos registros de relação item loja cd
+            </summary>
+            <param name="filtro">O filtro.</param>
+            <returns>O stream com o XLSX.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Exporting.SugestaoPedidoCDExcelExporter">
+            <summary>
+            Responsável pela exportação de SugestaoPedidoCD.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.SugestaoPedidoCDExcelExporter.#ctor(Walmart.Sgp.Domain.Reabastecimento.ISugestaoPedidoCDGateway,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Exporting.SugestaoPedidoCDExcelExporter"/>.
+            </summary>
+            <param name="sugestaoPedidoCDGateway">O data table gateway de SugestaoPedidoCD.</param>
+            <param name="excelWriter">O escritor de excel.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.SugestaoPedidoCDExcelExporter.Exportar(System.Nullable{System.DateTime},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Realiza a exportação dos registros de multisourcing.
+            </summary>
+            <param name="dtSolicitacao">Data de solicitacao do pedido.</param>
+            <param name="idDepartamento">ID do departamento.</param>
+            <param name="idCD">ID do CD.</param>
+            <param name="idItem">ID do item. (Entrada ou Saida)</param>
+            <param name="idFornecedorParametro">ID do FornecedorParametro.</param>
+            <param name="statusPedido">Filtrar por status do pedido: 0 - Nao finalizado, 1 - Finalizado, 2 - Todos</param>
+            <returns>O stream com o XLSX.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Exporting.MultisourcingExcelExporter">
+            <summary>
+            Responsável pela exportação de multisourcing.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.MultisourcingExcelExporter.#ctor(Walmart.Sgp.Domain.MultisourcingVendor.IMultisourcingGateway,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Exporting.MultisourcingExcelExporter"/>.
+            </summary>
+            <param name="multisourcingGateway">O data table gateway de multisourcing.</param>
+            <param name="excelWriter">O escritor de excel.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Exporting.MultisourcingExcelExporter.Exportar(System.Nullable{System.Int64},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{System.Int32},System.Int32,System.Int32)">
+            <summary>
+            Realiza a exportação dos registros de multisourcing.
+            </summary>
+            <param name="idItemDetalhe">O id do item detalhe.</param>
+            <param name="idDepartamento">O id do departamento.</param>
+            <param name="cdSistema">O código de estrutura mercadológica.</param>
+            <param name="idCD">O id do CD.</param>
+            <param name="filtroMS">Se deve incluir itens possível multisourcing (1 - Sim, 0 - Não, 2 - Todos).</param>
+            <param name="filtroCadastro">Incluir itens que possuem cadastro (1 - Sim, 0 - Não, 2 - Todos).</param>
+            <returns>O stream com o XLSX.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Importing.MultisourcingExcelImporter">
+            <summary>
+            Responsável pela importação de multisourcing.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.MultisourcingExcelImporter.#ctor(Walmart.Sgp.Domain.MultisourcingVendor.IMultisourcingService,Walmart.Sgp.Domain.Item.IItemDetalheService,Walmart.Sgp.Domain.EstruturaMercadologica.ICDService,Walmart.Sgp.Domain.Gerenciamento.IFornecedorService,Walmart.Sgp.Infrastructure.IO.Excel.IExcelReader,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter,Walmart.Sgp.Infrastructure.IO.Excel.IMultisourcingExcelDataTranslator,Walmart.Sgp.Infrastructure.IO.FileVault.IFileVaultService)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Importing.MultisourcingExcelImporter"/>.
+            </summary>
+            <param name="mainService">O service de multisourcing.</param>
+            <param name="itemDetalheService">O service item detalhe.</param>
+            <param name="cdService">O service de CD.</param>
+            <param name="fornecedorService">O service de Fornecedor.</param>
+            <param name="excelReader">O leitor de excel.</param>
+            <param name="excelWriter">O escritor de excel.</param>
+            <param name="multisourcingExcelDataTranslator">O tradutor de excel para multisourcing.</param>
+            <param name="fileVaultService">O service de FileVault.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.MultisourcingExcelImporter.ImportarMultisourcing(Walmart.Sgp.Domain.MultisourcingVendor.ImportarMultisourcingRequest)">
+            <summary>
+            Realiza a importação massiva de multisourcing através de um arquivo excel.
+            </summary>
+            <param name="model">A requisição da importação.</param>
+            <returns>FileVaultTicket com o resultado da importação.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDDesvinculoExcelImporter">
+            <summary>
+            Classe responsável pela importação de desvinculos de RelacaoItemLojaCD.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDDesvinculoExcelImporter.#ctor(Walmart.Sgp.Domain.Reabastecimento.CargaMassivaVendorPrimarioConfiguracao,Walmart.Sgp.Infrastructure.Framework.Net.IMailService,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter,Walmart.Sgp.Infrastructure.IO.Excel.IExcelReader,Walmart.Sgp.Infrastructure.IO.Excel.IRelacaoItemLojaCDDesvinculoExcelDataTranslator,Walmart.Sgp.Domain.Reabastecimento.IRelacaoItemLojaCDService,Walmart.Sgp.Infrastructure.IO.FileVault.IFileVaultService)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDDesvinculoExcelImporter"/>.
+            </summary>
+            <param name="configuracao">A configuração da importação.</param>
+            <param name="mailService">O service de email.</param>
+            <param name="excelWriter">O escritor de excel.</param>
+            <param name="excelReader">O leitor de excel.</param>
+            <param name="relacaoItemLojaCDDesvinculoExcelDataTranslator">O tradutor de excel para RelacaoItemLojaCDVinculo.</param>
+            <param name="mainService">O main service.</param>
+            <param name="fileVaultService">O service do FileVault.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDDesvinculoExcelImporter.ImportarDesvincular(Walmart.Sgp.Domain.Reabastecimento.ImportarRelacaoItemLojaCDRequest)">
+            <summary>
+            Realiza a importação de desvinculos RelacaoItemLojaCD.
+            </summary>
+            <param name="model">Parametros para a importação.</param>
+            <returns>O retorno da importação.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDImporterBase">
+            <summary>
+            Classe base de importação massiva.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDImporterBase.SetarParametros(Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter,Walmart.Sgp.Infrastructure.Framework.Net.IMailService,Walmart.Sgp.Domain.Reabastecimento.CargaMassivaVendorPrimarioConfiguracao,Walmart.Sgp.Infrastructure.IO.FileVault.IFileVaultService,Walmart.Sgp.Infrastructure.IO.Excel.ColumnMetadata)">
+            <summary>
+            Seta os parametros.
+            </summary>
+            <param name="excelWriter">O escritor de excel.</param>
+            <param name="mailService">O service de email.</param>
+            <param name="configuracao">A configuração da importação.</param>
+            <param name="fileVaultService">O servico de filevault.</param>
+            <param name="colunaMetadata">Informação da coluna de metadados.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDImporterBase.ValidarColunas(Walmart.Sgp.Infrastructure.IO.Excel.ExcelReaderResult,System.Collections.Generic.IEnumerable{Walmart.Sgp.Domain.Reabastecimento.RelacaoItemLojaCDVinculo})">
+            <summary>
+            Valida as colunas do XLSX.
+            </summary>
+            <param name="readerResult">O excelReader com o resultado.</param>
+            <param name="vinculos">Os vinculos.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDImporterBase.StoreResult(System.IO.Stream,Walmart.Sgp.Infrastructure.Framework.FileVault.FileVaultTicket,System.Collections.Generic.IEnumerable{Walmart.Sgp.Domain.Reabastecimento.RelacaoItemLojaCDVinculo},System.Boolean)">
+            <summary>
+            Armazena um resultado em FileVault.
+            </summary>
+            <param name="stream">O stream.</param>
+            <param name="arquivo">O arquivo.</param>
+            <param name="vinculos">Os vinculos.</param>
+            <param name="sucesso">Se teve sucesso na validação de RN.</param>
+            <returns>Ticket filevault.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDVinculoExcelImporter">
+            <summary>
+            Classe responsável pela importação de vinculos de RelacaoItemLojaCD.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDVinculoExcelImporter.#ctor(Walmart.Sgp.Domain.Reabastecimento.CargaMassivaVendorPrimarioConfiguracao,Walmart.Sgp.Infrastructure.IO.Excel.IExcelReader,Walmart.Sgp.Infrastructure.IO.Excel.IExcelWriter,Walmart.Sgp.Infrastructure.IO.Excel.IRelacaoItemLojaCDVinculoExcelDataTranslator,Walmart.Sgp.Infrastructure.IO.FileVault.IFileVaultService,Walmart.Sgp.Domain.Item.IItemDetalheService,Walmart.Sgp.Domain.Gerenciamento.IFornecedorParametroService,Walmart.Sgp.Domain.Reabastecimento.ITraitService,Walmart.Sgp.Domain.Reabastecimento.IRelacaoItemLojaCDService,Walmart.Sgp.Domain.Reabastecimento.CompraCasada.ICompraCasadaService,Walmart.Sgp.Infrastructure.Framework.Net.IMailService)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDVinculoExcelImporter"/>.
+            </summary>
+            <param name="configuracao">A configuração da importação.</param>
+            <param name="excelReader">O leitor de excel.</param>
+            <param name="excelWriter">O escritor de excel.</param>
+            <param name="relacaoItemLojaCDVinculoExcelDataTranslator">O tradutor de excel para RelacaoItemLojaCDVinculo.</param>
+            <param name="fileVaultService">O servico de filevault.</param>
+            <param name="itemDetalheService">O service de ItemDetalhe.</param>
+            <param name="fornecedorParametroService">O service de FornecedorParametro.</param>
+            <param name="traitService">O service de Trait.</param>
+            <param name="relacaoItemLojaCDService">O service de RelacaoItemLojaCD.</param>
+            <param name="compraCasadaService">O service de CompraCasada.</param>
+            <param name="mailService">O service de envio de e-mails.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Application.Importing.RelacaoItemLojaCDVinculoExcelImporter.ImportarVincular(Walmart.Sgp.Domain.Reabastecimento.ImportarRelacaoItemLojaCDRequest)">
+            <summary>
+            Realiza a importação de vinculos RelacaoItemLojaCD.
+            </summary>
+            <param name="model">Parametros para a importação.</param>
+            <returns>O retorno da importação.</returns>
+        </member>
+    </members>
+</doc>

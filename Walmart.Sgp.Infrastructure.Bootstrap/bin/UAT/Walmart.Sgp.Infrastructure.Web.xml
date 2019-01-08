@@ -1,0 +1,621 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Walmart.Sgp.Infrastructure.Web</name>
+    </assembly>
+    <members>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Extensions.FileAttachmentExtensions">
+            <summary>
+            File attachment extensions
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Extensions.FileAttachmentExtensions.SendOverHttp(System.Byte[],System.String)">
+            <summary>
+            Send the byte array content over HTTP current response.
+            </summary>
+            <param name="data">The content to be send.</param>
+            <param name="fileName">The suggested file name to the HTTP client.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Extensions.FileAttachmentExtensions.WithFileVault(System.IO.Stream,System.String,Walmart.Sgp.Infrastructure.IO.FileVault.IFileVaultService)">
+            <summary>
+            Armazena o arquivo no file vault e cria uma resposta HTTP que retorna headers de file vault que serão interceptados pelo file-vault.interceptor.js.
+            </summary>
+            <param name="content">O conteúdo a ser armazenado no file vault.</param>
+            <param name="fileName">O nome do arquivo.</param>
+            <param name="fileVaultService">O serviço de file vault.</param>
+            <returns>A resposta http.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Extensions.FileAttachmentExtensions.AsAttachment(System.IO.Stream,System.String)">
+            <summary>
+            Cria uma resposta HTTP com o arquivo informado como conteúdo.
+            </summary>
+            <param name="content">O conteúdo do arquivo.</param>
+            <param name="fileName">O nome do arquivo.</param>
+            <returns>A resposta http.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Extensions.HttpPostedFileExtensions">
+            <summary>
+            Extensions methods para HttpPostedFile.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Extensions.HttpPostedFileExtensions.ToFileVault(System.Web.HttpPostedFile)">
+            <summary>
+            Transforma o HttpPostedFile em arquivopara ser utilizado no file vault.
+            </summary>
+            <param name="file">O arquivo postado.</param>
+            <returns>O arquivo para entrada no file vault.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Extensions.HttpContextExtensions">
+            <summary>
+            Extensions methods para HttpContext.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Extensions.HttpContextExtensions.GetFirstFile(System.Web.HttpContext)">
+            <summary>
+            Obtém o primeiro arquivo enviado no request.
+            </summary>
+            <remarks>
+            Caso atinja o tamanho máximo de upload, lança exceção com mensagem globalizada e amigável.
+            Caso não tenha arquivo, lança exceção também.
+            </remarks>
+            <param name="context">O contexto http..</param>
+            <returns>O arquivo.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService">
+            <summary>
+            Serviço de domínio relacionado ao gerenciamento de arquivos em caráter temporário.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService.#ctor(Walmart.Sgp.Infrastructure.Framework.FileVault.FileVaultConfiguration,Walmart.Sgp.Infrastructure.Framework.Processing.IProcessOrderArgumentGateway)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService"/>.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService.Store(Walmart.Sgp.Infrastructure.IO.FileVault.IFile)">
+            <summary>
+            Armazena um arquivo.
+            </summary>
+            <param name="file">O arquivo a ser armazenado.</param>
+            <returns>O ticket para o arquivo.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService.SavePermanently(Walmart.Sgp.Infrastructure.Framework.FileVault.FileVaultTicket,System.String)">
+            <summary>
+            Move o arquivo para fora da área temporária.
+            </summary>
+            <param name="ticket">O ticket.</param>
+            <param name="path">O caminho para o diretório de destino.</param>
+            <returns>O caminho completo para o arquivo salvo.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService.Retrieve(Walmart.Sgp.Infrastructure.Framework.FileVault.FileVaultTicket)">
+            <summary>
+            Obtém um arquivo previamente armazenado, retornando um Stream, e remove o arquivo assim que o Stream for descartado.
+            </summary>
+            <param name="ticket">O ticket para o arquivo.</param>
+            <returns>O Stream para leitura do arquivo.</returns>
+            <remarks>O arquivo é removido após o descarte do Stream.</remarks>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService.Cleanup">
+            <summary>
+            Remove arquivos antigos.
+            </summary>
+            <remarks>O arquivo é considerado antigo se foi armazenado há mais de 24 horas.</remarks>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.FileVault.FileVaultService.Discard(Walmart.Sgp.Infrastructure.Framework.FileVault.FileVaultTicket)">
+            <summary>
+            Remove um arquivo, se existe.
+            </summary>
+            <param name="theTicket">O ticket.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Filters.WebApiModelStateEnforcerFilterAttribute">
+            <summary>
+            Filtro para expor erros na deserialização de parametros de actions da api, levantando exceptions antes do início da execução da action.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Filters.WebApiModelStateEnforcerFilterAttribute.OnActionExecuting(System.Web.Http.Controllers.HttpActionContext)">
+            <summary>
+            Occurs before the action method is invoked.
+            </summary>
+            <param name="actionContext">The action context.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Filters.WebApiProcessingFilterAttribute">
+            <summary>
+            Filtro para adicionar informações de paginação no cabeçalho da resposta HTTP, caso presentes.
+            </summary>
+            <seealso cref="T:System.Web.Http.Filters.ActionFilterAttribute" />
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Filters.WebApiProcessingFilterAttribute.OnActionExecuted(System.Web.Http.Filters.HttpActionExecutedContext)">
+            <summary>
+            Occurs after the action method is invoked.
+            </summary>
+            <param name="actionExecutedContext">The action executed context.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Filters.WebApiVersionFilterAttribute">
+            <summary>
+            Filtro para adicionar informações de versão no cabeçalho da resposta HTTP.
+            </summary>
+            <seealso cref="T:System.Web.Http.Filters.ActionFilterAttribute" />
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Filters.WebApiVersionFilterAttribute.#ctor(System.String)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.Filters.WebApiVersionFilterAttribute"/>.
+            </summary>
+            <param name="version">A versão da web api.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Filters.WebApiVersionFilterAttribute.OnActionExecuted(System.Web.Http.Filters.HttpActionExecutedContext)">
+            <summary>
+            Occurs after the action method is invoked.
+            </summary>
+            <param name="actionExecutedContext">The action executed context.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Filters.WebApiPagingFilterAttribute">
+            <summary>
+            Filtro para adicionar informações de paginação no cabeçalho da resposta HTTP, caso presentes.
+            </summary>
+            <seealso cref="T:System.Web.Http.Filters.ActionFilterAttribute" />
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Filters.WebApiPagingFilterAttribute.OnActionExecuted(System.Web.Http.Filters.HttpActionExecutedContext)">
+            <summary>
+            Occurs after the action method is invoked.
+            </summary>
+            <param name="actionExecutedContext">The action executed context.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Logging.WebApiExceptionLogger">
+            <summary>
+            Logger de exceptions para a WebApi
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Logging.WebApiExceptionLogger.Log(System.Web.Http.ExceptionHandling.ExceptionLoggerContext)">
+            <summary>
+            Registra o log.
+            </summary>
+            <param name="context">O contexto.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Optimization.BundleExtensions">
+            <summary>
+            Extensions methods para bundles.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Optimization.BundleExtensions.AsVersioned(System.Web.Optimization.Bundle)">
+            <summary>
+            Faz com que os arquivos entregues pelo bundle recebam uma query string de versão.
+            </summary>
+            <param name="bundle">O bundle.</param>
+            <returns>Bundle versionado.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Optimization.BundleExtensions.AsVersioned(System.Web.Optimization.BundleCollection)">
+            <summary>
+            Faz com que os arquivos entregues pelos bundles recebam uma query string de versão.
+            </summary>
+            <param name="bundles">Os bundles.</param>
+            <returns>Bundles versionados.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Optimization.BundleExtensions.AsNonOrdering(System.Web.Optimization.Bundle)">
+            <summary>
+            Não tenta inferir qualquer tipo de ordenação ao renderizar os recursos e 
+            assim garante que a ordenação dos recursos na página html será a mesma que a definida dentro dos bundles.
+            </summary>
+            <param name="bundle">O bundle.</param>
+            <returns>O bundle não ordenado.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Optimization.BundleExtensions.AsNonOrdering(System.Web.Optimization.BundleCollection)">
+            <summary>
+            Não tenta inferir qualquer tipo de ordenação ao renderizar os recursos e 
+            assim garante que a ordenação dos recursos na página html será a mesma que a definida dentro dos bundles.
+            </summary>
+            <param name="bundles">Os bundles.</param>
+            <returns>Os bundles não ordenados.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Optimization.FileHashVersionBundleTransform">
+            <summary>
+            BundleTransform para o caso da otimização não estar habilitada, assim adiciona um hash de versão na query string 
+            e evita que se o arquivo for alterado ainda entre no cache do navegador.
+            <remarks>Código original: http://stackoverflow.com/a/26490575/956886 </remarks>
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Optimization.FileHashVersionBundleTransform.Process(System.Web.Optimization.BundleContext,System.Web.Optimization.BundleResponse)">
+            <summary>
+            Transforms the content in the <see cref="T:System.Web.Optimization.BundleResponse" /> object.
+            </summary>
+            <param name="context">The bundle context.</param>
+            <param name="response">The bundle response.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Optimization.FileHashVersionBundleTransform.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Optimization.NonOrderingBundleOrderer">
+            <summary>
+            Implementação de IBundleOrderer que não faz ordenação.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Optimization.NonOrderingBundleOrderer.OrderFiles(System.Web.Optimization.BundleContext,System.Collections.Generic.IEnumerable{System.Web.Optimization.BundleFile})">
+            <summary>
+            Orders the files.
+            </summary>
+            <param name="context">The context.</param>
+            <param name="files">The files.</param>
+            <returns>Ordered files.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter">
+            <summary>
+            Provê acesso a arquivos individuais que foram carregados por um cliente.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter.#ctor(System.Web.HttpPostedFile)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter"/>.
+            </summary>
+            <param name="postedFile">O arquivo.</param>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter.FileName">
+            <summary>
+            Obtém o nome completo do arquivo.
+            </summary>
+            <value>
+            O nome completo do arquivo, incluindo seu diretório.
+            </value>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter.ContentType">
+            <summary>
+            Obtém tipo de conteúdo MIME do arquivo.
+            </summary>
+            <value>
+            O tipo de conteudo MIME do arquivo.
+            </value>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter.ContentLength">
+            <summary>
+            Obtém o tamanho do arquivo, em bytes.
+            </summary>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter.InputStream">
+            <summary>
+            Obtém o stream de entrada do arquivo.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Resources.HttpPostedFileAdapter.SaveAs(System.String)">
+            <summary>
+            Salva o conteúdo do arquivo.
+            </summary>
+            <param name="fileName">O nome do arquivo salvo.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Resources.IPostedFile">
+            <summary>
+            Suporte para acesso a um arquivo.
+            </summary>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.IPostedFile.FileName">
+            <summary>
+            Obtém o nome completo do arquivo.
+            </summary>
+            <value>
+            O nome completo do arquivo, incluindo seu diretório.
+            </value>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.IPostedFile.ContentType">
+            <summary>
+            Obtém tipo de conteúdo MIME do arquivo.
+            </summary>
+            <value>
+            O tipo de conteudo MIME do arquivo.
+            </value>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Resources.IPostedFile.SaveAs(System.String)">
+            <summary>
+            Salva o conteúdo do arquivo.
+            </summary>
+            <param name="fileName">O nome do arquivo salvo.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Resources.LocalPostedFile">
+            <summary>
+            Provê acesso a arquivos individuais criados manualmente no servidor. 
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Resources.LocalPostedFile.#ctor(System.Byte[],System.String)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.Resources.LocalPostedFile"/>.
+            </summary>
+            <param name="fileContents">O conteúdo do arquivo.</param>
+            <param name="fileName">O nome do arquivo.</param>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.LocalPostedFile.FileName">
+            <summary>
+            Obtém o nome completo do arquivo.
+            </summary>
+            <value>
+            O nome completo do arquivo, incluindo seu diretório.
+            </value>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Resources.LocalPostedFile.ContentType">
+            <summary>
+            Obtém tipo de conteúdo MIME do arquivo.
+            </summary>
+            <value>
+            O tipo de conteudo MIME do arquivo.
+            </value>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Resources.LocalPostedFile.GetContentType(System.String)">
+            <summary>
+            Retorna o tipo de conteudo do arquivo especificado.
+            </summary>
+            <param name="fileName">O nome do arquivo.</param>
+            <returns>O tipo de contúdo MIME baseado na extensão do arquivo.</returns>
+            <exception cref="T:System.InvalidOperationException">Quando o arquivo não possui uma extensão conhecida.</exception>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Resources.LocalPostedFile.SaveAs(System.String)">
+            <summary>
+            Salva o conteúdo do arquivo.
+            </summary>
+            <param name="fileName">O nome do arquivo salvo.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Runtime.WebApiRuntimeContext">
+            <summary>
+            Contexto de execução da WebApi.
+            </summary>
+        </member>
+        <member name="F:Walmart.Sgp.Infrastructure.Web.Runtime.WebApiRuntimeContext.DebugHttpHeaderName">
+            <summary>
+            O nome do HTTP header que define se a web api deve retornar informações de debug nas respostas das requisições realizadas.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Runtime.WebApiRuntimeContext.#ctor">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.Runtime.WebApiRuntimeContext"/>.
+            </summary>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Runtime.WebApiRuntimeContext.User">
+            <summary>
+            Obtém o usuário corrente.
+            </summary>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Runtime.WebApiRuntimeContext.Culture">
+            <summary>
+            Obtém a cultura.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Runtime.WebApiRuntimeContext.IsDebugEnabled(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Verifica se o request solicitou informações de debug.
+            </summary>
+            <param name="request">O request.</param>
+            <returns>True se o debug foi solicitado.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Security.SecurityConstants">
+            <summary>
+            Constantes utilizadas no contexto de segurança.
+            </summary>
+        </member>
+        <member name="F:Walmart.Sgp.Infrastructure.Web.Security.SecurityConstants.TokenIssuer">
+            <summary>
+            O nome do emissor do JSON Web Token.
+            </summary>
+        </member>
+        <member name="F:Walmart.Sgp.Infrastructure.Web.Security.SecurityConstants.TokenAudience">
+            <summary>
+            A url para identicar a audiência.
+            </summary>
+        </member>
+        <member name="F:Walmart.Sgp.Infrastructure.Web.Security.SecurityConstants.TokenLifetimeMinutes">
+            <summary>
+            O tempo de vida do token.
+            </summary>
+        </member>
+        <member name="F:Walmart.Sgp.Infrastructure.Web.Security.SecurityConstants.TokenSecret">
+            <summary>
+            A chave utilizada na criptografia.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.SecurityConstants.#cctor">
+            <summary>
+            Inicia os membros estáticos da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.Security.SecurityConstants"/>.
+            </summary>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute">
+            <summary>
+            Atributo utilizado para marcar actions que devem ter permissão de acesso.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute.#ctor">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute"/>.
+            </summary>
+            <remarks>
+            Se não possui uma action id, então todos os métodos de escrita (POST|PUT|DELETE) devem ter permissões cadastradas.
+            </remarks>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute.#ctor(System.String)">
+            <summary>
+            Inicia uma nova instância da classe <see cref="T:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute"/>.
+            </summary>
+            <param name="actionId">O id da action.</param>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute.ActionId">
+            <summary>
+            Obtém o id da ação segura.
+            </summary>
+            <remarks>
+            Se não possui uma action id, então todos os métodos de escrita (POST|PUT|DELETE) devem ter permissões cadastradas.
+            </remarks>
+        </member>
+        <member name="P:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute.AllowWriteActionWithoutPermission">
+            <summary>
+            Obtém ou define um valor que indica se permite que uma ação de escrita (POST|PUT|DELETE) não tenha permissão, bastando estar autenticado para acessar.
+            </summary>
+            <remarks>
+            Deve ser utilizado nos casos de requests com muitos argumentos que não podem ser por GET e foi necessário ser por POST.
+            </remarks>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute.OnAuthorization(System.Web.Http.Controllers.HttpActionContext)">
+            <summary>
+            Calls when an action is being authorized.
+            </summary>
+            <param name="actionContext">The context.</param>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.SecurityWebApiActionAttribute.IsWriteActionAutoPermission(System.String,System.Web.Http.Controllers.HttpActionDescriptor)">
+            <summary>
+            Verfica se o atributo não foi sobrecarregado na action e é uma action de escrita (POST|PUT|DELETE).
+            </summary>
+            <param name="permissionName">O nome da permissão.</param>
+            <param name="actionDescriptor">A action.</param>
+            <returns>True se deve ser utilizado como uma action de escrita.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Security.TokenService">
+            <summary>
+            Serviço de infraestrutura pra JSON Web Token.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.TokenService.CreateToken(Walmart.Sgp.Infrastructure.Framework.Runtime.IRuntimeUser)">
+            <summary>
+            Cria o JSON Web Token.
+            </summary>
+            <param name="user">O usuário para qual será criado o token.</param>
+            <returns>O token.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.TokenService.ValidateToken(System.String)">
+            <summary>
+            Valida o JSON Web Token.
+            </summary>
+            <param name="token">O token.</param>
+            <returns>Os claims obtidos do token.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.TokenService.ConvertTo(System.Security.Claims.ClaimsPrincipal)">
+            <summary>
+            Converte os claims para o usuário.
+            </summary>
+            <param name="principal">Os claims.</param>
+            <returns>O usuário.</returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Security.TokenValidationDelegatingHandler">
+            <summary>
+            O delegating handler responsável por validar o JSON Web Token.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Security.TokenValidationDelegatingHandler.SendAsync(System.Net.Http.HttpRequestMessage,System.Threading.CancellationToken)">
+            <summary>
+            Sends an HTTP request to the inner handler to send to the server as an asynchronous operation.
+            </summary>
+            <param name="request">The HTTP request message to send to the server.</param>
+            <param name="cancellationToken">A cancellation token to cancel operation.</param>
+            <returns>
+            Returns <see cref="T:System.Threading.Tasks.Task`1" />. The task object representing the asynchronous operation.
+            </returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Serialization.ProcessOrderConverter">
+            <summary>
+            Serializador/deserializador de FileVaultTicket para Json.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.ProcessOrderConverter.CanConvert(System.Type)">
+            <summary>
+            Indica se pode converter o tipo do objeto.
+            </summary>
+            <param name="objectType">O tipo do objeto.</param>
+            <returns>True se for um FileVaultTicket.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.ProcessOrderConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Deserializa o ticket.
+            </summary>
+            <param name="reader">O reader.</param>
+            <param name="objectType">O tipo do objeto.</param>
+            <param name="existingValue">O valor já lido.</param>
+            <param name="serializer">O serializador.</param>
+            <returns>O ticket.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.ProcessOrderConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Serializa o ticket.
+            </summary>
+            <param name="writer">O writer.</param>
+            <param name="value">O ticket.</param>
+            <param name="serializer">O serializador.</param>
+            <remarks>Remove a propriedade PartialPath.</remarks>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Serialization.SelectiveSerializeContractResolver">
+            <summary>
+            Permite o retorno apenas das propriedades selecionadas.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.SelectiveSerializeContractResolver.CreateProperty(System.Reflection.MemberInfo,Newtonsoft.Json.MemberSerialization)">
+            <summary>
+            Creates a <see cref="T:Newtonsoft.Json.Serialization.JsonProperty" /> for the given <see cref="T:System.Reflection.MemberInfo" />.
+            </summary>
+            <param name="member">The member to create a <see cref="T:Newtonsoft.Json.Serialization.JsonProperty" /> for.</param>
+            <param name="memberSerialization">The member's parent <see cref="T:Newtonsoft.Json.MemberSerialization" />.</param>
+            <returns>
+            A created <see cref="T:Newtonsoft.Json.Serialization.JsonProperty" /> for the given <see cref="T:System.Reflection.MemberInfo" />.
+            </returns>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Serialization.FileVaultTicketConverter">
+            <summary>
+            Serializador/deserializador de FileVaultTicket para Json.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.FileVaultTicketConverter.CanConvert(System.Type)">
+            <summary>
+            Indica se pode converter o tipo do objeto.
+            </summary>
+            <param name="objectType">O tipo do objeto.</param>
+            <returns>True se for um FileVaultTicket.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.FileVaultTicketConverter.ReadJson(Newtonsoft.Json.JsonReader,System.Type,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Deserializa o ticket.
+            </summary>
+            <param name="reader">O reader.</param>
+            <param name="objectType">O tipo do objeto.</param>
+            <param name="existingValue">O valor já lido.</param>
+            <param name="serializer">O serializador.</param>
+            <returns>O ticket.</returns>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.FileVaultTicketConverter.WriteJson(Newtonsoft.Json.JsonWriter,System.Object,Newtonsoft.Json.JsonSerializer)">
+            <summary>
+            Serializa o ticket.
+            </summary>
+            <param name="writer">O writer.</param>
+            <param name="value">O ticket.</param>
+            <param name="serializer">O serializador.</param>
+            <remarks>Remove a propriedade PartialPath.</remarks>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Serialization.SharedConverterHelper">
+            <summary>
+            Classe para compartilhar código usado pelos converters.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.SharedConverterHelper.CreateReaderDeserialize``1(Newtonsoft.Json.JsonReader,Newtonsoft.Json.JsonSerializer,Newtonsoft.Json.Linq.JObject,``0)">
+            <summary>
+            Cria um reader de JSON e deserializa um objeto.
+            </summary>
+            <param name="reader">O reader.</param>
+            <param name="serializer">O serializador.</param>
+            <param name="jsonObject">O objeto json.</param>
+            <param name="target">A instancia sendo deserializada.</param>
+            <typeparam name="T">O tipo do objeto sendo deserializado.</typeparam>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Web.Serialization.WebApiErrorHandlingFilterAttribute">
+            <summary>
+            Filtro utilizado pela web api para retornar uma mensagem de erro customizada quando um exceção acontece.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Web.Serialization.WebApiErrorHandlingFilterAttribute.OnException(System.Web.Http.Filters.HttpActionExecutedContext)">
+            <summary>
+            Raises the exception event.
+            </summary>
+            <param name="actionExecutedContext">Filter context.</param>
+        </member>
+        <member name="T:Walmart.Sgp.Infrastructure.Framework.Runtime.UserExtensions">
+            <summary>
+            Extensões para usuário.
+            </summary>
+        </member>
+        <member name="M:Walmart.Sgp.Infrastructure.Framework.Runtime.UserExtensions.ToMemoryRuntimeUser(Walmart.Sgp.Domain.Acessos.Usuario,Walmart.Sgp.Domain.Acessos.IUsuarioService)">
+            <summary>
+            // Traduz o usuário para as informações necessárias para o usuário durante a execução.
+            </summary>
+            <param name="user">O usuário.</param>
+            <param name="userService">O serviço de usuário.</param>
+            <returns>O MemoryRuntimeUser</returns>
+        </member>
+    </members>
+</doc>

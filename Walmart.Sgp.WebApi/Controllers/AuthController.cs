@@ -13,8 +13,8 @@ using Walmart.Sgp.Infrastructure.IO.Importing;
 using Walmart.Sgp.Infrastructure.Web.Security;
 using Walmart.Sgp.WebApi.App_Start;
 using Walmart.Sgp.WebApi.Models;
-using Walmart.Sgp.WebApi.Properties;
 using Pstore.WebApi.Models;
+using Pstore.WebApi.Properties;
 
 namespace Walmart.Sgp.WebApi.Controllers
 {

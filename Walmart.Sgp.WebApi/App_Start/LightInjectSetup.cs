@@ -23,7 +23,7 @@ using Walmart.Sgp.Infrastructure.IO.Importing;
 using Walmart.Sgp.Infrastructure.IO.Importing.Inventario;
 using Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian;
 using Walmart.Sgp.Infrastructure.Web.FileVault;
-using Walmart.Sgp.WebApi.Properties;
+using Pstore.WebApi.Properties;
 
 namespace Walmart.Sgp.WebApi.App_Start
 {

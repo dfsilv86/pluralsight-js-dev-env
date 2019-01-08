@@ -438,3 +438,515 @@
 08/01/19 18:50:30 [INFO] 	Inserting DateTime model binder provider
 08/01/19 18:50:30 [INFO] 	Inserting FixedValues model binder provider
 08/01/19 18:50:30 [INFO] </WEB API>
+08/01/19 18:52:49 [INFO] <WEB API>
+08/01/19 18:52:49 [INFO] 	Version: DEV
+08/01/19 18:52:49 [INFO] 	<CONFIG>
+08/01/19 18:52:49 [INFO] 		<APPSETTINGS>
+08/01/19 18:52:49 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 18:52:49 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 18:52:49 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 18:52:49 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 18:52:49 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 18:52:49 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 18:52:49 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 18:52:49 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 18:52:49 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 18:52:49 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 18:52:49 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:52:49 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 18:52:49 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 18:52:49 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:52:49 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 18:52:49 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 18:52:49 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 18:52:49 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 18:52:49 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 18:52:49 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 18:52:49 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 18:52:49 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 18:52:49 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 18:52:49 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 18:52:49 [INFO] 		</APPSETTINGS>
+08/01/19 18:52:49 [INFO] 		<CONNECTIONSTRING>
+08/01/19 18:52:49 [INFO] 			WLMSLP: PBRNT56112BR\WLMSLP_RA_UAT (Connect Timeout: 15)
+08/01/19 18:52:49 [INFO] 		</CONNECTIONSTRING>
+08/01/19 18:52:49 [INFO] 	</CONFIG>
+08/01/19 18:52:49 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 18:52:49 [INFO] 		Initializing LightInject
+08/01/19 18:52:49 [INFO] 		Enabling LightInject support to web api...
+08/01/19 18:52:49 [INFO] 		Registering services
+08/01/19 18:52:49 [INFO] 		Registering table data gateways
+08/01/19 18:52:49 [INFO] 		Registering inventory files
+08/01/19 18:52:49 [INFO] 		Registering sheet dependencies
+08/01/19 18:52:49 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 18:52:49 [INFO] 	<CORS>
+08/01/19 18:52:49 [INFO] 		Origins: *
+08/01/19 18:52:49 [INFO] 		Headers: *
+08/01/19 18:52:49 [INFO] 		Methods: *
+08/01/19 18:52:49 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 18:52:49 [INFO] 	</CORS>
+08/01/19 18:52:49 [INFO] 	Registering routes
+08/01/19 18:52:49 [INFO] 	Adding token validation delegating handler
+08/01/19 18:52:49 [INFO] 	Adding filters
+08/01/19 18:52:49 [INFO] 	Registering output cache provider
+08/01/19 18:52:49 [INFO] 	Setting json formatter
+08/01/19 18:52:49 [INFO] 	Inserting DateTime model binder provider
+08/01/19 18:52:49 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 18:52:49 [INFO] </WEB API>
+08/01/19 18:53:29 [ERROR] http://localhost:55685/Walmart.Sgp.WebApi/Auth/: Erro de rede ou específico à instância ao estabelecer conexão com o SQL Server. O servidor não foi encontrado ou não estava acessível. Verifique se o nome da instância está correto e se o SQL Server está configurado para permitir conexões remotas. (provider: Named Pipes Provider, error: 40 - Não foi possível abrir uma conexão com o SQL Server)
+   em System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   em System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   em System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   em System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   em System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   em System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   em System.Data.SqlClient.SqlConnection.Open()
+   em Walmart.Sgp.Infrastructure.Data.Databases.DatabaseContext.get_Transaction() na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Data\Databases\DatabaseContext.cs:linha 68
+   em Walmart.Sgp.WebApi.Controllers.ApiControllerBase`1.Commit() na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.WebApi\Controllers\ApiControllerBase.cs:linha 53
+   em Walmart.Sgp.WebApi.Controllers.AuthController.Login(LoginRequest authInfo) na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.WebApi\Controllers\AuthController.cs:linha 73
+   em lambda_method(Closure , Object , Object[] )
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.AuthorizationFilterAttribute.<ExecuteAuthorizationFilterAsyncCore>d__2.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+08/01/19 18:53:29 [ERROR] O caminho da rede não foi encontrado
+
+08/01/19 18:55:06 [INFO] <WEB API>
+08/01/19 18:55:06 [INFO] 	Version: DEV
+08/01/19 18:55:06 [INFO] 	<CONFIG>
+08/01/19 18:55:06 [INFO] 		<APPSETTINGS>
+08/01/19 18:55:06 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 18:55:06 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 18:55:06 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 18:55:06 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 18:55:06 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 18:55:06 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 18:55:06 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 18:55:06 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 18:55:06 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 18:55:06 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 18:55:06 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:55:06 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 18:55:06 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 18:55:06 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:55:06 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 18:55:06 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 18:55:06 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 18:55:06 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 18:55:06 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 18:55:06 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 18:55:06 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 18:55:06 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 18:55:06 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 18:55:06 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 18:55:06 [INFO] 		</APPSETTINGS>
+08/01/19 18:55:06 [INFO] 		<CONNECTIONSTRING>
+08/01/19 18:55:06 [INFO] 			WLMSLP: PS_Store\DAVID-LAPTOP (Connect Timeout: 15)
+08/01/19 18:55:06 [INFO] 		</CONNECTIONSTRING>
+08/01/19 18:55:06 [INFO] 	</CONFIG>
+08/01/19 18:55:06 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 18:55:06 [INFO] 		Initializing LightInject
+08/01/19 18:55:06 [INFO] 		Enabling LightInject support to web api...
+08/01/19 18:55:06 [INFO] 		Registering services
+08/01/19 18:55:06 [INFO] 		Registering table data gateways
+08/01/19 18:55:06 [INFO] 		Registering inventory files
+08/01/19 18:55:06 [INFO] 		Registering sheet dependencies
+08/01/19 18:55:06 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 18:55:06 [INFO] 	<CORS>
+08/01/19 18:55:06 [INFO] 		Origins: *
+08/01/19 18:55:06 [INFO] 		Headers: *
+08/01/19 18:55:06 [INFO] 		Methods: *
+08/01/19 18:55:06 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 18:55:06 [INFO] 	</CORS>
+08/01/19 18:55:06 [INFO] 	Registering routes
+08/01/19 18:55:06 [INFO] 	Adding token validation delegating handler
+08/01/19 18:55:06 [INFO] 	Adding filters
+08/01/19 18:55:06 [INFO] 	Registering output cache provider
+08/01/19 18:55:06 [INFO] 	Setting json formatter
+08/01/19 18:55:06 [INFO] 	Inserting DateTime model binder provider
+08/01/19 18:55:06 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 18:55:06 [INFO] </WEB API>
+08/01/19 18:55:43 [ERROR] http://localhost:55685/Walmart.Sgp.WebApi/Auth/: Erro de rede ou específico à instância ao estabelecer conexão com o SQL Server. O servidor não foi encontrado ou não estava acessível. Verifique se o nome da instância está correto e se o SQL Server está configurado para permitir conexões remotas. (provider: Named Pipes Provider, error: 40 - Não foi possível abrir uma conexão com o SQL Server)
+   em System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   em System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   em System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   em System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   em System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   em System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   em System.Data.SqlClient.SqlConnection.Open()
+   em Walmart.Sgp.Infrastructure.Data.Databases.DatabaseContext.get_Transaction() na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Data\Databases\DatabaseContext.cs:linha 68
+   em Walmart.Sgp.WebApi.Controllers.ApiControllerBase`1.Commit() na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.WebApi\Controllers\ApiControllerBase.cs:linha 53
+   em Walmart.Sgp.WebApi.Controllers.AuthController.Login(LoginRequest authInfo) na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.WebApi\Controllers\AuthController.cs:linha 73
+   em lambda_method(Closure , Object , Object[] )
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.AuthorizationFilterAttribute.<ExecuteAuthorizationFilterAsyncCore>d__2.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+08/01/19 18:55:43 [ERROR] O caminho da rede não foi encontrado
+
+08/01/19 18:56:39 [ERROR] http://localhost:55685/Walmart.Sgp.WebApi/Auth/: Erro de rede ou específico à instância ao estabelecer conexão com o SQL Server. O servidor não foi encontrado ou não estava acessível. Verifique se o nome da instância está correto e se o SQL Server está configurado para permitir conexões remotas. (provider: Named Pipes Provider, error: 40 - Não foi possível abrir uma conexão com o SQL Server)
+   em System.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, DbConnectionPool pool, String accessToken, Boolean applyTransientFaultHandling)
+   em System.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   em System.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   em System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   em System.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   em System.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   em System.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   em System.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry)
+   em System.Data.SqlClient.SqlConnection.Open()
+   em Walmart.Sgp.Infrastructure.Data.Databases.DatabaseContext.get_Transaction() na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Data\Databases\DatabaseContext.cs:linha 68
+   em Walmart.Sgp.WebApi.Controllers.ApiControllerBase`1.Commit() na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.WebApi\Controllers\ApiControllerBase.cs:linha 53
+   em Walmart.Sgp.WebApi.Controllers.AuthController.Login(LoginRequest authInfo) na C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.WebApi\Controllers\AuthController.cs:linha 73
+   em lambda_method(Closure , Object , Object[] )
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.<>c__DisplayClass10.<GetExecutor>b__9(Object instance, Object[] methodParameters)
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ActionExecutor.Execute(Object instance, Object[] arguments)
+   em System.Web.Http.Controllers.ReflectedHttpActionDescriptor.ExecuteAsync(HttpControllerContext controllerContext, IDictionary`2 arguments, CancellationToken cancellationToken)
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ApiControllerActionInvoker.<InvokeActionAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Web.Http.Filters.ActionFilterAttribute.<CallOnActionExecutedAsync>d__5.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.ActionFilterAttribute.<ExecuteActionFilterAsyncCore>d__0.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ActionFilterResult.<ExecuteAsync>d__2.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Filters.AuthorizationFilterAttribute.<ExecuteAuthorizationFilterAsyncCore>d__2.MoveNext()
+--- Fim do rastreamento de pilha do local anterior onde a exceção foi gerada ---
+   em System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   em System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   em System.Web.Http.Controllers.ExceptionFilterResult.<ExecuteAsync>d__0.MoveNext()
+08/01/19 18:56:39 [ERROR] O caminho da rede não foi encontrado
+
+08/01/19 18:59:10 [INFO] <WEB API>
+08/01/19 18:59:10 [INFO] 	Version: DEV
+08/01/19 18:59:10 [INFO] 	<CONFIG>
+08/01/19 18:59:10 [INFO] 		<APPSETTINGS>
+08/01/19 18:59:10 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 18:59:10 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 18:59:10 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 18:59:10 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 18:59:10 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 18:59:10 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 18:59:10 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 18:59:10 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 18:59:10 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 18:59:10 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 18:59:10 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:59:10 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 18:59:10 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 18:59:10 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 18:59:10 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 18:59:10 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 18:59:10 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 18:59:10 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 18:59:10 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 18:59:10 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 18:59:10 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 18:59:10 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 18:59:10 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 18:59:10 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 18:59:10 [INFO] 		</APPSETTINGS>
+08/01/19 18:59:10 [INFO] 		<CONNECTIONSTRING>
+08/01/19 18:59:10 [INFO] 			WLMSLP: DAVID-LAPTOP\PS_STORE (Connect Timeout: 15)
+08/01/19 18:59:10 [INFO] 		</CONNECTIONSTRING>
+08/01/19 18:59:10 [INFO] 	</CONFIG>
+08/01/19 18:59:10 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 18:59:10 [INFO] 		Initializing LightInject
+08/01/19 18:59:10 [INFO] 		Enabling LightInject support to web api...
+08/01/19 18:59:10 [INFO] 		Registering services
+08/01/19 18:59:10 [INFO] 		Registering table data gateways
+08/01/19 18:59:10 [INFO] 		Registering inventory files
+08/01/19 18:59:10 [INFO] 		Registering sheet dependencies
+08/01/19 18:59:10 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 18:59:10 [INFO] 	<CORS>
+08/01/19 18:59:10 [INFO] 		Origins: *
+08/01/19 18:59:10 [INFO] 		Headers: *
+08/01/19 18:59:10 [INFO] 		Methods: *
+08/01/19 18:59:10 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 18:59:10 [INFO] 	</CORS>
+08/01/19 18:59:10 [INFO] 	Registering routes
+08/01/19 18:59:10 [INFO] 	Adding token validation delegating handler
+08/01/19 18:59:10 [INFO] 	Adding filters
+08/01/19 18:59:10 [INFO] 	Registering output cache provider
+08/01/19 18:59:10 [INFO] 	Setting json formatter
+08/01/19 18:59:10 [INFO] 	Inserting DateTime model binder provider
+08/01/19 18:59:10 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 18:59:10 [INFO] </WEB API>
+08/01/19 19:06:55 [INFO] <WEB API>
+08/01/19 19:06:55 [INFO] 	Version: DEV
+08/01/19 19:06:55 [INFO] 	<CONFIG>
+08/01/19 19:06:55 [INFO] 		<APPSETTINGS>
+08/01/19 19:06:55 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 19:06:55 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 19:06:55 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 19:06:55 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 19:06:55 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 19:06:55 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 19:06:55 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 19:06:55 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 19:06:55 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 19:06:55 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 19:06:55 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 19:06:55 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 19:06:55 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 19:06:55 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 19:06:55 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 19:06:55 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 19:06:55 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 19:06:55 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 19:06:55 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 19:06:55 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 19:06:55 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 19:06:55 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 19:06:55 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 19:06:55 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 19:06:55 [INFO] 		</APPSETTINGS>
+08/01/19 19:06:55 [INFO] 		<CONNECTIONSTRING>
+08/01/19 19:06:55 [INFO] 			WLMSLP: DAVID-LAPTOP\PS_STORE (Connect Timeout: 15)
+08/01/19 19:06:55 [INFO] 		</CONNECTIONSTRING>
+08/01/19 19:06:55 [INFO] 	</CONFIG>
+08/01/19 19:06:55 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 19:06:55 [INFO] 		Initializing LightInject
+08/01/19 19:06:55 [INFO] 		Enabling LightInject support to web api...
+08/01/19 19:06:55 [INFO] 		Registering services
+08/01/19 19:06:55 [INFO] 		Registering table data gateways
+08/01/19 19:06:55 [INFO] 		Registering inventory files
+08/01/19 19:06:55 [INFO] 		Registering sheet dependencies
+08/01/19 19:06:55 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 19:06:55 [INFO] 	<CORS>
+08/01/19 19:06:55 [INFO] 		Origins: *
+08/01/19 19:06:55 [INFO] 		Headers: *
+08/01/19 19:06:55 [INFO] 		Methods: *
+08/01/19 19:06:55 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 19:06:55 [INFO] 	</CORS>
+08/01/19 19:06:55 [INFO] 	Registering routes
+08/01/19 19:06:55 [INFO] 	Adding token validation delegating handler
+08/01/19 19:06:55 [INFO] 	Adding filters
+08/01/19 19:06:55 [INFO] 	Registering output cache provider
+08/01/19 19:06:55 [INFO] 	Setting json formatter
+08/01/19 19:06:55 [INFO] 	Inserting DateTime model binder provider
+08/01/19 19:06:55 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 19:06:55 [INFO] </WEB API>
+08/01/19 20:05:46 [INFO] <WEB API>
+08/01/19 20:05:46 [INFO] 	Version: DEV
+08/01/19 20:05:46 [INFO] 	<CONFIG>
+08/01/19 20:05:46 [INFO] 		<APPSETTINGS>
+08/01/19 20:05:46 [INFO] 			SGP:CommandTimeout: 120
+08/01/19 20:05:46 [INFO] 			SGP:TokenLifetimeMinutes: 2880
+08/01/19 20:05:46 [INFO] 			SGP:ReportServer:Url: http://labbrnts5018/ReportServer?/REE/RA2016/DEV/SGP/
+08/01/19 20:05:46 [INFO] 			SGP:InventarioAgendamento:DiasLimiteExpurgo: 90
+08/01/19 20:05:46 [INFO] 			SGP:Inventario:StorageRoot: 
+08/01/19 20:05:46 [INFO] 			SGP:Inventario:CaminhoDownload: Resources\TempDownloadFtp
+08/01/19 20:05:46 [INFO] 			SGP:Inventario:ExtensaoArquivo: .Z
+08/01/19 20:05:46 [INFO] 			SGP:Inventario:PrefixoArquivoPipe: CINV
+08/01/19 20:05:46 [INFO] 			SGP:Inventario:PrefixoArquivoRtl: spi28.
+08/01/19 20:05:46 [INFO] 			SGP:Inventario:DiasPermanenciaArquivos: 60
+08/01/19 20:05:46 [INFO] 			SGP:FileVault:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 20:05:46 [INFO] 			SGP:FileVault:Staging: Resources\TempUploads
+08/01/19 20:05:46 [INFO] 			SGP:FileVault:MaxAge: 1
+08/01/19 20:05:46 [INFO] 			SGP:Processing:StorageRoot: \\10.135.96.13\Apps\Temp
+08/01/19 20:05:46 [INFO] 			SGP:Processing:EnableQueueing: true
+08/01/19 20:05:46 [INFO] 			SGP:Processing:InputFiles: Resources\Processing\InputFiles
+08/01/19 20:05:46 [INFO] 			SGP:Processing:Results: Resources\Processing\Results
+08/01/19 20:05:46 [INFO] 			SGP:Processing:MaxAge: 31
+08/01/19 20:05:46 [INFO] 			SGP:SMTP:Server: smtp.wal-mart.com
+08/01/19 20:05:46 [INFO] 			SGP:SMTP:Port: 25
+08/01/19 20:05:46 [INFO] 			SGP:SMTP:Domain: 
+08/01/19 20:05:46 [INFO] 			SGP:SMTP:FromAddress: sgp-noreply@walmart.com
+08/01/19 20:05:46 [INFO] 			SGP:SMTP:FromDisplayName: SGP - Solução de Pereciveis
+08/01/19 20:05:46 [INFO] 			SGP:CargaMassivaVendorPrimario:EmailsRetornoImportacao: Caio.Schunck@walmart.com;Maxwel.Peruchi@walmart.com;Pablo.Brodt@walmart.com;Rafael.Bueno@walmart.com
+08/01/19 20:05:46 [INFO] 		</APPSETTINGS>
+08/01/19 20:05:46 [INFO] 		<CONNECTIONSTRING>
+08/01/19 20:05:46 [INFO] 			WLMSLP: DAVID-LAPTOP\PS_STORE (Connect Timeout: 15)
+08/01/19 20:05:46 [INFO] 		</CONNECTIONSTRING>
+08/01/19 20:05:46 [INFO] 	</CONFIG>
+08/01/19 20:05:46 [INFO] 	<DEPENDENCY INJECTION>
+08/01/19 20:05:46 [INFO] 		Initializing LightInject
+08/01/19 20:05:46 [INFO] 		Enabling LightInject support to web api...
+08/01/19 20:05:47 [INFO] 		Registering services
+08/01/19 20:05:47 [INFO] 		Registering table data gateways
+08/01/19 20:05:47 [INFO] 		Registering inventory files
+08/01/19 20:05:47 [INFO] 		Registering sheet dependencies
+08/01/19 20:05:47 [INFO] 	</DEPENDENCY INJECTION>
+08/01/19 20:05:47 [INFO] 	<CORS>
+08/01/19 20:05:47 [INFO] 		Origins: *
+08/01/19 20:05:47 [INFO] 		Headers: *
+08/01/19 20:05:47 [INFO] 		Methods: *
+08/01/19 20:05:47 [INFO] 		Exposed headers: content-disposition,x-web-api-version,x-file-vault-ticket-id,x-file-vault-ticket-created-date,x-paging-total-count,x-paging-offset,x-paging-limit,x-paging-order-by,x-processing-ticket,x-processing-state,x-processing-current-progress,x-processing-total-progress,x-processing-status-message,x-processing-name,x-processing-created-date,x-processing-modified-date
+08/01/19 20:05:47 [INFO] 	</CORS>
+08/01/19 20:05:47 [INFO] 	Registering routes
+08/01/19 20:05:47 [INFO] 	Adding token validation delegating handler
+08/01/19 20:05:47 [INFO] 	Adding filters
+08/01/19 20:05:47 [INFO] 	Registering output cache provider
+08/01/19 20:05:47 [INFO] 	Setting json formatter
+08/01/19 20:05:47 [INFO] 	Inserting DateTime model binder provider
+08/01/19 20:05:47 [INFO] 	Inserting FixedValues model binder provider
+08/01/19 20:05:47 [INFO] </WEB API>

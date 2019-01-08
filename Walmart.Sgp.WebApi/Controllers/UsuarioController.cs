@@ -7,7 +7,7 @@ using Walmart.Sgp.Infrastructure.Framework.Runtime;
 using Walmart.Sgp.Infrastructure.IO.Importing;
 using Walmart.Sgp.Infrastructure.IO.Importing.WebGuardian;
 using Walmart.Sgp.WebApi.Models;
-using Walmart.Sgp.WebApi.Properties;
+using Pstore.WebApi.Properties;
 
 namespace Walmart.Sgp.WebApi.Controllers
 {

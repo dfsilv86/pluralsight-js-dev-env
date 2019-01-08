@@ -1,0 +1,16 @@
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Walmart.Sgp.Infrastructure.IO.dll.config
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Walmart.Sgp.Infrastructure.IO.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Walmart.Sgp.Infrastructure.IO.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\EPPlus.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\log4net.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Pstore.Domain.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Walmart.Sgp.Infrastructure.Framework.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\System.Linq.Dynamic.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Pstore.Domain.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Walmart.Sgp.Infrastructure.Framework.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\Walmart.Sgp.Infrastructure.Framework.xml
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\log4net.xml
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\bin\UAT\EPPlus.xml
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\obj\UAT\Pstore.Infrastructure.IO.csprojResolveAssemblyReference.cache
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\obj\UAT\Walmart.Sgp.Infrastructure.IO.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.IO\obj\UAT\Walmart.Sgp.Infrastructure.IO.pdb

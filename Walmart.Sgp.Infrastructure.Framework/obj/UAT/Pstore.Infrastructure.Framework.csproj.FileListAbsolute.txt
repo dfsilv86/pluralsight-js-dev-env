@@ -1,0 +1,9 @@
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\bin\UAT\Walmart.Sgp.Infrastructure.Framework.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\bin\UAT\Walmart.Sgp.Infrastructure.Framework.pdb
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\bin\UAT\Walmart.Sgp.Infrastructure.Framework.XML
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\bin\UAT\System.Linq.Dynamic.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\obj\UAT\Pstore.Infrastructure.Framework.csprojResolveAssemblyReference.cache
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\obj\UAT\Walmart.Sgp.Infrastructure.Framework.Globalization.Texts.resources
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\obj\UAT\Pstore.Infrastructure.Framework.csproj.GenerateResource.Cache
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\obj\UAT\Walmart.Sgp.Infrastructure.Framework.dll
+C:\Users\David\Source\Repos\ps-cond-app\Walmart.Sgp.Infrastructure.Framework\obj\UAT\Walmart.Sgp.Infrastructure.Framework.pdb

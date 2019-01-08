@@ -15,7 +15,7 @@ using Walmart.Sgp.Infrastructure.Web.Logging;
 using Walmart.Sgp.Infrastructure.Web.Runtime;
 using Walmart.Sgp.Infrastructure.Web.Security;
 using Walmart.Sgp.Infrastructure.Web.Serialization;
-using Walmart.Sgp.WebApi.Properties;
+using Pstore.WebApi.Properties;
 using global::WebApi.OutputCache.Core.Cache;
 using global::WebApi.OutputCache.V2;
 
